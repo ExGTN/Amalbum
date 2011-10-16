@@ -37,7 +37,7 @@ public class ControllerSample {
     	
     	List<String> barkList = new ArrayList<String>();
     	barkList.add( barkMessage );
-    	barkList.add( "にゃー" ); //$NON-NLS-1$
+    	barkList.add( "にゃん" ); //$NON-NLS-1$
     	barkList.add( "ぴよぴよ" ); //$NON-NLS-1$
     	modelMap.addAttribute("barkList",barkList); //$NON-NLS-1$
     	
