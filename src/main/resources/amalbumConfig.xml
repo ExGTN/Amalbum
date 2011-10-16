@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AmalbumConfig>
+	<View>
+		<Paging>
+			<Unit>20</Unit>
+		</Paging>
+		<Thumbnail>
+			<Prefix>thumb/thumb.</Prefix>
+			<Postfix></Postfix>
+		</Thumbnail>
+	</View>
+</AmalbumConfig>
