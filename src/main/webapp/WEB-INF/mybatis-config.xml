@@ -9,13 +9,21 @@
 		<setting name="lazyLoadingEnabled" value="false" />
 	</settings>
 
-	<!--
 	<typeAliases>
-		<typeAlias alias="Sample" type="com.mugenunagi.amalbum.entity.Sample"/>
+		<typeAlias alias="userRoleEntity" type="com.mugenunagi.amalbum.datamodel.entity.UserRoleEntity"/>
+		<typeAlias alias="contentsRoleEntity" type="com.mugenunagi.amalbum.datamodel.entity.ContentsRoleEntity"/>
+		<typeAlias alias="contentsGroupEntity" type="com.mugenunagi.amalbum.datamodel.entity.ContentsGroupEntity"/>
+		<typeAlias alias="backupRuleEntity" type="com.mugenunagi.amalbum.datamodel.entity.BackupRuleEntity"/>
+		<typeAlias alias="materialRoleEntity" type="com.mugenunagi.amalbum.datamodel.entity.MaterialRoleEntity"/>
+		<typeAlias alias="materialEntity" type="com.mugenunagi.amalbum.datamodel.entity.MaterialEntity"/>
+		<typeAlias alias="loginUserEntity" type="com.mugenunagi.amalbum.datamodel.entity.LoginUserEntity"/>
+		<typeAlias alias="contentsEntity" type="com.mugenunagi.amalbum.datamodel.entity.ContentsEntity"/>
+		<typeAlias alias="roleMasterEntity" type="com.mugenunagi.amalbum.datamodel.entity.RoleMasterEntity"/>
+		<typeAlias alias="backupMasterEntity" type="com.mugenunagi.amalbum.datamodel.entity.BackupMasterEntity"/>
 	</typeAliases>
-	-->
 
 	<mappers>
 		<mapper resource="com/mugenunagi/amalbum/dao/SampleMapper.xml" />
+		<mapper resource="com/mugenunagi/amalbum/dao/ContentsGroupMapper.xml" />
 	</mappers>
 </configuration>

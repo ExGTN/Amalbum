@@ -3,7 +3,7 @@ package com.mugenunagi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mugenunagi.amalbum.dao.SampleMapper;
+import com.mugenunagi.amalbum.datamodel.dao.SampleMapper;
 
 @Service
 public class SampleService {
