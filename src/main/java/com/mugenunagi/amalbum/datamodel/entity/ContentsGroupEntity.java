@@ -1,31 +1,26 @@
 /**
- * PhotoEntity
+ * ContentsGroupEntity
  */
 
-package com.mugenunagi.amalbum.entity;
+package com.mugenunagi.amalbum.datamodel.entity;
 
 import java.util.Date;
 
-public class PhotoEntity {
+public class ContentsGroupEntity {
 	/**
-	 * 写真ID
+	 * コンテンツグループID
 	 */
-	private Integer photoID;
+	private Integer contentsGroupID;
 
 	/**
-	 * アルバムID
+	 * コンテンツグループ名
 	 */
-	private Integer albumID;
+	private String name;
 
 	/**
-	 * ファイル名
+	 * 親コンテンツグループID
 	 */
-	private String filename;
-
-	/**
-	 * ステータス
-	 */
-	private Integer status;
+	private Integer parentID;
 
 	/**
 	 * 説明
@@ -53,67 +48,51 @@ public class PhotoEntity {
 	private Date createDate;
 
 	/**
-	 * 写真IDを取得する
-	 * @return 写真ID
+	 * コンテンツグループIDを取得する
+	 * @return コンテンツグループID
 	 */
-	public Integer getPhotoID() {
-		return photoID;
+	public Integer getContentsGroupID() {
+		return contentsGroupID;
 	}
 
 	/**
-	 * 写真IDを設定する
-	 * @param photoID 写真ID
+	 * コンテンツグループIDを設定する
+	 * @param contentsGroupID コンテンツグループID
 	 */
-	public void setPhotoID(Integer photoID) {
-		this.photoID = photoID;
+	public void setContentsGroupID(Integer contentsGroupID) {
+		this.contentsGroupID = contentsGroupID;
 	}
 
 	/**
-	 * アルバムIDを取得する
-	 * @return アルバムID
+	 * コンテンツグループ名を取得する
+	 * @return コンテンツグループ名
 	 */
-	public Integer getAlbumID() {
-		return albumID;
+	public String getName() {
+		return name;
 	}
 
 	/**
-	 * アルバムIDを設定する
-	 * @param albumID アルバムID
+	 * コンテンツグループ名を設定する
+	 * @param name コンテンツグループ名
 	 */
-	public void setAlbumID(Integer albumID) {
-		this.albumID = albumID;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
-	 * ファイル名を取得する
-	 * @return ファイル名
+	 * 親コンテンツグループIDを取得する
+	 * @return 親コンテンツグループID
 	 */
-	public String getFilename() {
-		return filename;
+	public Integer getParentID() {
+		return parentID;
 	}
 
 	/**
-	 * ファイル名を設定する
-	 * @param filename ファイル名
+	 * 親コンテンツグループIDを設定する
+	 * @param parentID 親コンテンツグループID
 	 */
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
-
-	/**
-	 * ステータスを取得する
-	 * @return ステータス
-	 */
-	public Integer getStatus() {
-		return status;
-	}
-
-	/**
-	 * ステータスを設定する
-	 * @param status ステータス
-	 */
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setParentID(Integer parentID) {
+		this.parentID = parentID;
 	}
 
 	/**

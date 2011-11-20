@@ -2,7 +2,7 @@
  * UserRoleEntity
  */
 
-package com.mugenunagi.amalbum.entity;
+package com.mugenunagi.amalbum.datamodel.entity;
 
 import java.util.Date;
 

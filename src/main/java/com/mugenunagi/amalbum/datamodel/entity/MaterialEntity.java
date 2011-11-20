@@ -1,31 +1,36 @@
 /**
- * AlbumEntity
+ * MaterialEntity
  */
 
-package com.mugenunagi.amalbum.entity;
+package com.mugenunagi.amalbum.datamodel.entity;
 
 import java.util.Date;
 
-public class AlbumEntity {
+public class MaterialEntity {
 	/**
-	 * アルバムID
+	 * マテリアルID
 	 */
-	private Integer albumID;
+	private Integer materialID;
 
 	/**
-	 * アルバムグループID
+	 * コンテンツID
 	 */
-	private Integer albumGroupID;
+	private Integer contentsID;
 
 	/**
-	 * アルバム名
+	 * タイプ
 	 */
-	private String name;
+	private Integer materialType;
 
 	/**
-	 * ディレクトリ
+	 * ファイルパス
 	 */
-	private String dir;
+	private String path;
+
+	/**
+	 * ステータス
+	 */
+	private Integer status;
 
 	/**
 	 * 説明
@@ -53,67 +58,83 @@ public class AlbumEntity {
 	private Date createDate;
 
 	/**
-	 * アルバムIDを取得する
-	 * @return アルバムID
+	 * マテリアルIDを取得する
+	 * @return マテリアルID
 	 */
-	public Integer getAlbumID() {
-		return albumID;
+	public Integer getMaterialID() {
+		return materialID;
 	}
 
 	/**
-	 * アルバムIDを設定する
-	 * @param albumID アルバムID
+	 * マテリアルIDを設定する
+	 * @param materialID マテリアルID
 	 */
-	public void setAlbumID(Integer albumID) {
-		this.albumID = albumID;
+	public void setMaterialID(Integer materialID) {
+		this.materialID = materialID;
 	}
 
 	/**
-	 * アルバムグループIDを取得する
-	 * @return アルバムグループID
+	 * コンテンツIDを取得する
+	 * @return コンテンツID
 	 */
-	public Integer getAlbumGroupID() {
-		return albumGroupID;
+	public Integer getContentsID() {
+		return contentsID;
 	}
 
 	/**
-	 * アルバムグループIDを設定する
-	 * @param albumGroupID アルバムグループID
+	 * コンテンツIDを設定する
+	 * @param contentsID コンテンツID
 	 */
-	public void setAlbumGroupID(Integer albumGroupID) {
-		this.albumGroupID = albumGroupID;
+	public void setContentsID(Integer contentsID) {
+		this.contentsID = contentsID;
 	}
 
 	/**
-	 * アルバム名を取得する
-	 * @return アルバム名
+	 * タイプを取得する
+	 * @return タイプ
 	 */
-	public String getName() {
-		return name;
+	public Integer getMaterialType() {
+		return materialType;
 	}
 
 	/**
-	 * アルバム名を設定する
-	 * @param name アルバム名
+	 * タイプを設定する
+	 * @param materialType タイプ
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setMaterialType(Integer materialType) {
+		this.materialType = materialType;
 	}
 
 	/**
-	 * ディレクトリを取得する
-	 * @return ディレクトリ
+	 * ファイルパスを取得する
+	 * @return ファイルパス
 	 */
-	public String getDir() {
-		return dir;
+	public String getPath() {
+		return path;
 	}
 
 	/**
-	 * ディレクトリを設定する
-	 * @param dir ディレクトリ
+	 * ファイルパスを設定する
+	 * @param path ファイルパス
 	 */
-	public void setDir(String dir) {
-		this.dir = dir;
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	/**
+	 * ステータスを取得する
+	 * @return ステータス
+	 */
+	public Integer getStatus() {
+		return status;
+	}
+
+	/**
+	 * ステータスを設定する
+	 * @param status ステータス
+	 */
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
 	/**

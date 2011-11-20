@@ -1,26 +1,31 @@
 /**
- * AlbumGroupEntity
+ * ContentsEntity
  */
 
-package com.mugenunagi.amalbum.entity;
+package com.mugenunagi.amalbum.datamodel.entity;
 
 import java.util.Date;
 
-public class AlbumGroupEntity {
+public class ContentsEntity {
 	/**
-	 * アルバムグループID
+	 * コンテンツID
 	 */
-	private Integer albumGroupID;
+	private Integer contentsID;
 
 	/**
-	 * アルバムグループ名
+	 * コンテンツグループID
+	 */
+	private Integer contentsGroupID;
+
+	/**
+	 * コンテンツ名
 	 */
 	private String name;
 
 	/**
-	 * 親アルバムグループID
+	 * ディレクトリ
 	 */
-	private Integer parentID;
+	private String dir;
 
 	/**
 	 * 説明
@@ -48,51 +53,67 @@ public class AlbumGroupEntity {
 	private Date createDate;
 
 	/**
-	 * アルバムグループIDを取得する
-	 * @return アルバムグループID
+	 * コンテンツIDを取得する
+	 * @return コンテンツID
 	 */
-	public Integer getAlbumGroupID() {
-		return albumGroupID;
+	public Integer getContentsID() {
+		return contentsID;
 	}
 
 	/**
-	 * アルバムグループIDを設定する
-	 * @param albumGroupID アルバムグループID
+	 * コンテンツIDを設定する
+	 * @param contentsID コンテンツID
 	 */
-	public void setAlbumGroupID(Integer albumGroupID) {
-		this.albumGroupID = albumGroupID;
+	public void setContentsID(Integer contentsID) {
+		this.contentsID = contentsID;
 	}
 
 	/**
-	 * アルバムグループ名を取得する
-	 * @return アルバムグループ名
+	 * コンテンツグループIDを取得する
+	 * @return コンテンツグループID
+	 */
+	public Integer getContentsGroupID() {
+		return contentsGroupID;
+	}
+
+	/**
+	 * コンテンツグループIDを設定する
+	 * @param contentsGroupID コンテンツグループID
+	 */
+	public void setContentsGroupID(Integer contentsGroupID) {
+		this.contentsGroupID = contentsGroupID;
+	}
+
+	/**
+	 * コンテンツ名を取得する
+	 * @return コンテンツ名
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * アルバムグループ名を設定する
-	 * @param name アルバムグループ名
+	 * コンテンツ名を設定する
+	 * @param name コンテンツ名
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * 親アルバムグループIDを取得する
-	 * @return 親アルバムグループID
+	 * ディレクトリを取得する
+	 * @return ディレクトリ
 	 */
-	public Integer getParentID() {
-		return parentID;
+	public String getDir() {
+		return dir;
 	}
 
 	/**
-	 * 親アルバムグループIDを設定する
-	 * @param parentID 親アルバムグループID
+	 * ディレクトリを設定する
+	 * @param dir ディレクトリ
 	 */
-	public void setParentID(Integer parentID) {
-		this.parentID = parentID;
+	public void setDir(String dir) {
+		this.dir = dir;
 	}
 
 	/**

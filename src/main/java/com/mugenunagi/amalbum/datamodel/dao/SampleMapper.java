@@ -1,4 +1,4 @@
-package com.mugenunagi.amalbum.dao;
+package com.mugenunagi.amalbum.datamodel.dao;
 
 public interface SampleMapper {
     int insertDummy();
