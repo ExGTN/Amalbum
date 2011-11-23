@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.mugenunagi.amalbum.business.DataStructureBusiness;
-import com.mugenunagi.amalbum.datamodel.dto.album.AlbumCategory;
+import com.mugenunagi.amalbum.datamodel.dto.element.AlbumCategory;
 import com.mugenunagi.amalbum.datamodel.entity.ContentsGroupEntity;
 
 /**

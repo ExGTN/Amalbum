@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mugenunagi.amalbum.business.album.AlbumStructureBusiness;
-import com.mugenunagi.amalbum.datamodel.dto.album.AlbumCategory;
+import com.mugenunagi.amalbum.datamodel.dto.element.AlbumCategory;
 
 /**
  * MyPage関連のサービス

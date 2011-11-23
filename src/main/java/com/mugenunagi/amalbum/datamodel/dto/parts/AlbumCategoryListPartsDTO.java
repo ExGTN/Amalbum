@@ -1,15 +1,15 @@
-package com.mugenunagi.amalbum.datamodel.dto.view;
+package com.mugenunagi.amalbum.datamodel.dto.parts;
 
 import java.util.List;
 
-import com.mugenunagi.amalbum.datamodel.dto.album.AlbumCategory;
+import com.mugenunagi.amalbum.datamodel.dto.element.AlbumCategory;
 
 /**
- * アルバムカテゴリーの一覧表示のDTO
+ * アルバムカテゴリーの一覧表示パーツのDTO
  * @author GTN
  *
  */
-public class ViewAlbumCategoryDTO {
+public class AlbumCategoryListPartsDTO {
 	//=========================================================================
 	// 属性
 	//=========================================================================

@@ -1,4 +1,4 @@
-package com.mugenunagi.amalbum.datamodel.dto.album;
+package com.mugenunagi.amalbum.datamodel.dto.element;
 
 import com.mugenunagi.amalbum.datamodel.entity.ContentsGroupEntity;
 

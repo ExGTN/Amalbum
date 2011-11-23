@@ -7,9 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.mugenunagi.amalbum.datamodel.dao.ContentsGroupMapper;
-import com.mugenunagi.amalbum.datamodel.dto.album.AlbumCategory;
-import com.mugenunagi.amalbum.datamodel.dto.view.ViewAlbumCategoryDTO;
+import com.mugenunagi.amalbum.datamodel.dto.element.AlbumCategory;
+import com.mugenunagi.amalbum.datamodel.dto.parts.AlbumCategoryListPartsDTO;
+import com.mugenunagi.amalbum.datamodel.dto.view.ViewMyPageDTO;
 import com.mugenunagi.amalbum.service.MyPageService;
 
 /**
@@ -27,7 +27,7 @@ public class MyPageController {
 	 * @param modelMap
 	 * @return
 	 */
-    @RequestMapping("/viewAlbumCategoryList")
+    @RequestMapping("/site/viewAlbumCategoryList.do")
     public String viewAlbumCategoryList( ModelMap modelMap ) {
 
     	// -----< 参照可能なアルバムグループの一覧を取得する >-----
@@ -41,12 +41,17 @@ public class MyPageController {
     	
     	// -----< DTOに格納する >-----
     	//
-    	ViewAlbumCategoryDTO viewAlbumCategoryDTO = new ViewAlbumCategoryDTO();
-    	viewAlbumCategoryDTO.setAlbumCategoryList( albumCategoryList );
+    	// DTO の構造を作る
+    	ViewMyPageDTO viewMyPageDTO = new ViewMyPageDTO();
+    	AlbumCategoryListPartsDTO albumCategoryListPartsDTO = new AlbumCategoryListPartsDTO();
+    	viewMyPageDTO.setAlbumCategoryListPartsDTO(albumCategoryListPartsDTO);
+    	
+    	// 内容を設定する
+    	albumCategoryListPartsDTO.setAlbumCategoryList( albumCategoryList );
     	
     	// -----< VIEWに引き渡す >-----
     	//
-    	modelMap.addAttribute( "albumCategoryDTO", viewAlbumCategoryDTO );
-    	return "site/viewAlbumCategory";
+    	modelMap.addAttribute( "viewAlbumCategoryDTO", viewMyPageDTO );
+    	return "site/viewMyPage";
     }
 }
