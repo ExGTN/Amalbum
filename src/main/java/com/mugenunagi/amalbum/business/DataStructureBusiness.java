@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.mugenunagi.amalbum.datamodel.dao.ContentsGroupMapper;
+import com.mugenunagi.amalbum.datamodel.dao.ContentsMapper;
+import com.mugenunagi.amalbum.datamodel.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datamodel.entity.ContentsGroupEntity;
 
 /**
@@ -21,6 +23,8 @@ public class DataStructureBusiness {
 	@Autowired
 	ContentsGroupMapper contentsGroupMapper;
 
+	@Autowired
+	ContentsMapper contentsMapper;
 	
 	//=========================================================================
 	// メソッド
@@ -43,5 +47,26 @@ public class DataStructureBusiness {
 		// -----< 結果を返す >-----
 		//
 		return contentsGroupEntityList;
+	}
+
+
+	/**
+	 * 親IDを指定して、コンテンツの一覧を検索して返す
+	 * @param parentID
+	 * @return
+	 */
+	public List<ContentsEntity> getContentsListByParentID( int parentID ){
+		// -----< 検索する >-----
+		//
+		// 検索条件を作る
+		ContentsEntity contentsEntity = new ContentsEntity();
+		contentsEntity.setContentsGroupID(parentID);
+		
+		// 検索
+		List<ContentsEntity> contentsEntityList = contentsMapper.selectContentsByContentsGroupID( contentsEntity );
+		
+		// -----< 結果を返す >-----
+		//
+		return contentsEntityList;
 	}
 }

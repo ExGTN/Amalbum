@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import com.mugenunagi.amalbum.business.DataStructureBusiness;
 import com.mugenunagi.amalbum.datamodel.dto.element.AlbumCategory;
+import com.mugenunagi.amalbum.datamodel.dto.element.AlbumContents;
+import com.mugenunagi.amalbum.datamodel.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datamodel.entity.ContentsGroupEntity;
 
 /**
@@ -49,5 +51,31 @@ public class AlbumStructureBusiness {
 		// -----< 結果を返す >-----
 		//
 		return albumCategoryList;
+	}
+
+
+	/**
+	 * 親IDを指定して、AlbumContentsの一覧を作って返す
+	 */
+	public List<AlbumContents> getAlbumContentsListByParentID( int parentID ){
+		// -----< DataStructureから情報を取り出す >-----
+		//
+		List<ContentsEntity> contentsEntityList = dataStructureBusiness.getContentsListByParentID( parentID );
+		
+		// -----< 取り出した情報をDTOに詰め替えて返す >-----
+		//
+		List<AlbumContents> albumContentsList = new ArrayList<AlbumContents>();
+		for( ContentsEntity contentsEntity : contentsEntityList ){
+			// AlbumContentsに詰める
+			AlbumContents albumContents = new AlbumContents();
+			albumContents.setContentsEntity(contentsEntity);
+			
+			// リストに詰める
+			albumContentsList.add( albumContents );
+		}
+		
+		// -----< 結果を返す >-----
+		//
+		return albumContentsList;
 	}
 }

@@ -25,5 +25,6 @@
 	<mappers>
 		<mapper resource="com/mugenunagi/amalbum/dao/SampleMapper.xml" />
 		<mapper resource="com/mugenunagi/amalbum/dao/ContentsGroupMapper.xml" />
+		<mapper resource="com/mugenunagi/amalbum/dao/ContentsMapper.xml" />
 	</mappers>
 </configuration>
