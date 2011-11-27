@@ -30,6 +30,7 @@
 		<%
 			ViewAlbumDTO viewAlbumDTO = (ViewAlbumDTO)request.getAttribute("viewAlbumDTO");
 			request.setAttribute( "albumContentsListPartsDTO", viewAlbumDTO.getAlbumContentsListPartsDTO() );
+			request.setAttribute( "restImage", request.getContextPath()+"/site/restImage.do" );
 		%>
 		<jsp:include page="parts/AlbumContentsList.jsp">
 			<jsp:param name="divID" value="AlbumContentsListParts"/>

@@ -16,4 +16,12 @@ public interface ContentsMapper {
 	 * @return
 	 */
     List<ContentsEntity> selectContentsByContentsGroupID( ContentsEntity contentsEntity );
+   
+    
+    /**
+     * 指定したコンテンツIDを持つコンテンツを検索する
+     * @param contentsEntity
+     * @return
+     */
+    ContentsEntity getContentsByContentsID( ContentsEntity contentsEntity );
 }

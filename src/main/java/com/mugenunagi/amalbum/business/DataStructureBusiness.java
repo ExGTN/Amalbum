@@ -69,4 +69,25 @@ public class DataStructureBusiness {
 		//
 		return contentsEntityList;
 	}
+
+
+	/**
+	 * IDを指定して、コンテンツを検索して返す
+	 * @param parentID
+	 * @return
+	 */
+	public ContentsEntity getContentsByContentsID( int contentsID ){
+		// -----< 検索する >-----
+		//
+		// 検索条件を作る
+		ContentsEntity contentsEntity = new ContentsEntity();
+		contentsEntity.setContentsID(contentsID);
+		
+		// 検索
+		ContentsEntity result = contentsMapper.getContentsByContentsID( contentsEntity );
+		
+		// -----< 結果を返す >-----
+		//
+		return result;
+	}
 }

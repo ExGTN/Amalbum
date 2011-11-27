@@ -18,7 +18,7 @@
 			<tr>
 				<!-- 写真表示 -->
 				<td>
-					<img src="${albumContentsListPartsDTO.localContentsBasePath}/${albumContents.contentsEntity.dir}/${albumContents.contentsEntity.name}">
+					<img src="${restImage}/${albumContents.contentsEntity.contentsID}">
 				</td>
 			</tr>
 			<tr>

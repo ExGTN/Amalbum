@@ -10,4 +10,9 @@
 	<select id="selectContentsByContentsGroupID" parameterType="contentsEntity" resultType="contentsEntity">
 		select * from contents where contentsGroupID = #{contentsGroupID}
 	</select>
+
+	<!-- 指定IDのContentsを取得する-->
+	<select id="getContentsByContentsID" parameterType="contentsEntity" resultType="contentsEntity">
+		select * from contents where contentsID = #{contentsID}
+	</select>
 </mapper>
