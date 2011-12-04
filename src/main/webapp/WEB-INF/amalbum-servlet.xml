@@ -42,6 +42,6 @@
 	 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-		<property name="basePackage" value= "com.mugenunagi.amalbum.datamodel.dao" />
+		<property name="basePackage" value= "com.mugenunagi.amalbum.datastructure.datamodel.dao" />
 	</bean>
 </beans>

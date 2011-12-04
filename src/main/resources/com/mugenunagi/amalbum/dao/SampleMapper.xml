@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.mugenunagi.amalbum.datamodel.dao.SampleMapper">
+<mapper namespace="com.mugenunagi.amalbum.datastructure.datamodel.dao.SampleMapper">
 	<!-- テンプレ
 	<select id="（メソッド名）" parameterType="（パラメータの型）" resultType="（結果の型）">
 		select * from sample where id = #{id}

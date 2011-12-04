@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="com.mugenunagi.amalbum.datamodel.dto.parts.AlbumContentsListPartsDTO" %>
+<%@ page import="com.mugenunagi.amalbum.album.datamodel.dto.parts.AlbumContentsListPartsDTO" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%-- アルバムコンテンツの一覧表示
 	[ Required Attributes ]

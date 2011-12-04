@@ -5,7 +5,7 @@
 <!--
     ContentsMapper
 -->
-<mapper namespace="com.mugenunagi.amalbum.datamodel.dao.ContentsMapper">
+<mapper namespace="com.mugenunagi.amalbum.datastructure.datamodel.dao.ContentsMapper">
 	<!-- Contentsを検索する -->
 	<select id="selectContentsByContentsGroupID" parameterType="contentsEntity" resultType="contentsEntity">
 		select * from contents where contentsGroupID = #{contentsGroupID}

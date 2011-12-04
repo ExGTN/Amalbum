@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<%@ page import="com.mugenunagi.amalbum.datamodel.dto.view.ViewAlbumDTO" %>
+<%@ page import="com.mugenunagi.amalbum.album.datamodel.dto.view.ViewAlbumDTO" %>
 <% request.setCharacterEncoding( "UTF-8" ); %>
 
 <%-- ==========================================================================

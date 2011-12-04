@@ -5,7 +5,7 @@
 <!--
     ContentsGroupMapper
 -->
-<mapper namespace="com.mugenunagi.amalbum.datamodel.dao.ContentsGroupMapper">
+<mapper namespace="com.mugenunagi.amalbum.datastructure.datamodel.dao.ContentsGroupMapper">
 	<!-- ContentsGroupを検索する -->
 	<select id="selectContentsGroupByParentID" parameterType="contentsGroupEntity" resultType="contentsGroupEntity">
 		select * from contentsGroup where parentID = #{parentID}
