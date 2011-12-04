@@ -1,4 +1,4 @@
-package com.mugenunagi.amalbum.datastructure.business.album;
+package com.mugenunagi.amalbum.albumstructure.business;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.mugenunagi.amalbum.album.datamodel.dto.element.AlbumCategory;
-import com.mugenunagi.amalbum.album.datamodel.dto.element.AlbumContents;
+import com.mugenunagi.amalbum.albumstructure.datamodel.dto.element.AlbumCategory;
+import com.mugenunagi.amalbum.albumstructure.datamodel.dto.element.AlbumContents;
 import com.mugenunagi.amalbum.datastructure.business.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.datamodel.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.datamodel.entity.ContentsGroupEntity;

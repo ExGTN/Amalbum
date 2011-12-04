@@ -1,13 +1,13 @@
-package com.mugenunagi.amalbum.album.service;
+package com.mugenunagi.amalbum.albumstructure.service;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mugenunagi.amalbum.album.datamodel.dto.element.AlbumCategory;
-import com.mugenunagi.amalbum.album.datamodel.dto.element.AlbumContents;
-import com.mugenunagi.amalbum.datastructure.business.album.AlbumStructureBusiness;
+import com.mugenunagi.amalbum.albumstructure.business.AlbumStructureBusiness;
+import com.mugenunagi.amalbum.albumstructure.datamodel.dto.element.AlbumCategory;
+import com.mugenunagi.amalbum.albumstructure.datamodel.dto.element.AlbumContents;
 
 /**
  * MyPage関連のサービス

@@ -1,4 +1,4 @@
-package com.mugenunagi.amalbum.site.album;
+package com.mugenunagi.amalbum.album.site;
 
 import java.util.List;
 
@@ -8,13 +8,13 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.mugenunagi.amalbum.album.datamodel.dto.element.AlbumCategory;
-import com.mugenunagi.amalbum.album.datamodel.dto.element.AlbumContents;
 import com.mugenunagi.amalbum.album.datamodel.dto.parts.AlbumCategoryListPartsDTO;
 import com.mugenunagi.amalbum.album.datamodel.dto.parts.AlbumContentsListPartsDTO;
 import com.mugenunagi.amalbum.album.datamodel.dto.view.ViewAlbumDTO;
 import com.mugenunagi.amalbum.album.datamodel.dto.view.ViewAlbumSectionDTO;
-import com.mugenunagi.amalbum.album.service.AlbumService;
+import com.mugenunagi.amalbum.albumstructure.datamodel.dto.element.AlbumCategory;
+import com.mugenunagi.amalbum.albumstructure.datamodel.dto.element.AlbumContents;
+import com.mugenunagi.amalbum.albumstructure.service.AlbumService;
 
 /**
  * アルバムのコントローラ

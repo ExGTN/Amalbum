@@ -2,7 +2,7 @@ package com.mugenunagi.amalbum.album.datamodel.dto.parts;
 
 import java.util.List;
 
-import com.mugenunagi.amalbum.album.datamodel.dto.element.AlbumCategory;
+import com.mugenunagi.amalbum.albumstructure.datamodel.dto.element.AlbumCategory;
 
 /**
  * アルバムカテゴリーの一覧表示パーツのDTO
