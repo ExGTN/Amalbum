@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+	<!--テキストにログを出力するConsoleAppenderをSTDOUTとして定義 -->
+	<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender" >
+		<!-- デフォルトのログレベル -->
+		<param name="threshold" value="WARN"/>
+
+		<!-- ログの出力形式を指定 -->
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p [%t] (%F:%L) - %m%n"/>
+		</layout>
+	</appender>
+
+	<!--決められた期間でログを別ファイルに切り替えて書き込む DailyRollingFileAppenderをDAILYとして定義 -->
+	<appender name="DAILY" class="org.apache.log4j.DailyRollingFileAppender">
+		<!-- ログのファイル名 -->
+		<param name="file" value="daily-log" /> 
+
+		<!-- デフォルトのログレベル -->
+		<param name="threshold" value="INFO"/>
+
+		<!-- 日付が変わる瞬間daily-log-2002-06-23のような形式で 現在のログがリネーム -->
+		<!-- すでにログが存在する場合、ファイルにログを追加 -->
+		<param name="append" value="true" />
+
+		<!-- ログの出力形式を指定 -->
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="'%c', '%p', '%d', '%m'%n" /> 
+		</layout>
+	</appender>
+
+	<!-- パッケージ com.mugenunagi.amalbum に対してコンソールにinfo以上のログを出力 -->
+	<category name="com.mugenunagi.amalbum">
+		<priority value="info" />
+		<appender-ref ref="STDOUT"/>
+	</category>
+
+	<!-- DAILYアペンダに対してossbook.log2.MyClass2をdebugに設定 -->
+<!--
+	<category name="com.mugenunagi.amalbum">
+		<priority value="debug" />
+		<appender-ref ref="DAILY" />
+	</category> 
+	-->
+
+	<!-- ********************** root定義 ***************************** -->
+	<root>
+		<priority value="debug" />
+		<appender-ref ref="STDOUT" />
+	</root>
+</log4j:configuration>

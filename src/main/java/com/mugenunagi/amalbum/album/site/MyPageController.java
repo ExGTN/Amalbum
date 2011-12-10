@@ -2,6 +2,8 @@ package com.mugenunagi.amalbum.album.site;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,6 +23,8 @@ import com.mugenunagi.amalbum.albumstructure.service.AlbumService;
 public class MyPageController {
 	@Autowired
 	AlbumService myPageService;
+	
+	Logger log = Logger.getLogger( MyPageController.class.getName() );
 
 	/**
 	 * アルバムの一覧を参照する
@@ -29,6 +33,8 @@ public class MyPageController {
 	 */
     @RequestMapping("/viewMyPage.do")
     public String viewMyPage( ModelMap modelMap ) {
+    	System.out.println( MyPageController.class.getName() );
+    	log.fatal("viewMyPage.do called.");
 
     	// -----< 参照可能なアルバムグループの一覧を取得する >-----
     	//

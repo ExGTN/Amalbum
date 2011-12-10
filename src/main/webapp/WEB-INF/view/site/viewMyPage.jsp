@@ -15,6 +15,17 @@
 		<jsp:include page="common/HeadCommon.jsp">
 			<jsp:param name="pageName" value="MyPage" />
 		</jsp:include>
+		
+		<script language="javascript">
+		// アルバムの新規作成
+		function createNewAlbum( createAlbumForm ) {
+			if( !confirm( "新規にアルバム [ " + createAlbumForm.albumName.value + " ] を作成します。よろしいですか？" ) ){
+				// キャンセル
+				return;
+			}
+			createAlbumForm.submit();
+		}
+		</script>
 	</head>
 
 	<body>
@@ -35,5 +46,12 @@
 		<jsp:include page="parts/AlbumCategoryList.jsp">
 			<jsp:param name="divID" value="AlbumCategoryListParts"/>
 		</jsp:include>
+		
+		<%-- 新規登録系の入力フィールド
+		--%>
+		<form name="editForm" method="POST" action="http://www.google.com">
+			アルバム名：<input type="text" name="albumName" value=""/>
+			<input type="button" name="createButton" value="作成" onClick="javascript:createNewAlbum( editForm );"/>
+		</form>
 	</body>
 </html>
