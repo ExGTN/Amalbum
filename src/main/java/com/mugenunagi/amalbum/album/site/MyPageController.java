@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.mugenunagi.amalbum.album.datamodel.dto.form.CreateAlbumForm;
 import com.mugenunagi.amalbum.album.datamodel.dto.parts.AlbumCategoryListPartsDTO;
 import com.mugenunagi.amalbum.album.datamodel.dto.view.ViewMyPageDTO;
 import com.mugenunagi.amalbum.albumstructure.datamodel.dto.element.AlbumCategory;
@@ -33,8 +34,9 @@ public class MyPageController {
 	 */
     @RequestMapping("/viewMyPage.do")
     public String viewMyPage( ModelMap modelMap ) {
+    	//DOMConfigurator.configure("D:/GTNWORK/workspace/Amalbum/src/main/webapp/WEB-INF/log4j.xml");
     	System.out.println( MyPageController.class.getName() );
-    	log.fatal("viewMyPage.do called.");
+    	log.fatal("viewaaaaaaaMyPage-do called");
 
     	// -----< 参照可能なアルバムグループの一覧を取得する >-----
     	//
@@ -52,6 +54,7 @@ public class MyPageController {
     	
     	// -----< VIEWに引き渡す >-----
     	//
+    	modelMap.addAttribute("createAlbumForm", new CreateAlbumForm());
     	modelMap.addAttribute( "viewMyPageDTO", viewMyPageDTO );
     	return "site/viewMyPage";
     }

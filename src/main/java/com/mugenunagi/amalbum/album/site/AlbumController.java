@@ -2,12 +2,18 @@ package com.mugenunagi.amalbum.album.site;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.support.SessionStatus;
 
+import com.mugenunagi.amalbum.album.datamodel.dto.form.CreateAlbumForm;
 import com.mugenunagi.amalbum.album.datamodel.dto.parts.AlbumCategoryListPartsDTO;
 import com.mugenunagi.amalbum.album.datamodel.dto.parts.AlbumContentsListPartsDTO;
 import com.mugenunagi.amalbum.album.datamodel.dto.view.ViewAlbumDTO;
@@ -23,6 +29,8 @@ import com.mugenunagi.amalbum.albumstructure.service.AlbumService;
  */
 @Controller
 public class AlbumController {
+	Logger logger = Logger.getLogger( AlbumController.class );
+	
 	@Autowired
 	AlbumService albumService;
 
@@ -80,5 +88,22 @@ public class AlbumController {
     	//
     	modelMap.addAttribute( "viewAlbumDTO", viewAlbumDTO );
     	return "site/viewAlbum";
+    }
+    
+    /**
+     * アルバムを作成する
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping(value="/createAlbum.do", method=RequestMethod.POST)
+    public String createAlbum( @ModelAttribute("createAlbumForm") CreateAlbumForm createAlbumForm, ModelMap modelMap ){
+    	//
+    	String albumName = createAlbumForm.getAlbumName();
+    	String brief = createAlbumForm.getBrief();
+    	logger.debug( "AlbumName="+albumName+", Brief="+brief );
+    	
+    	albumService.createAlbum( albumName, brief );
+    	
+    	return "site/createAlbum";
     }
 }

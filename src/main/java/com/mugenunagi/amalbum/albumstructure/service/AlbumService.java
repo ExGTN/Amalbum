@@ -1,13 +1,16 @@
 package com.mugenunagi.amalbum.albumstructure.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mugenunagi.amalbum.Constants;
 import com.mugenunagi.amalbum.albumstructure.business.AlbumStructureBusiness;
 import com.mugenunagi.amalbum.albumstructure.datamodel.dto.element.AlbumCategory;
 import com.mugenunagi.amalbum.albumstructure.datamodel.dto.element.AlbumContents;
+import com.mugenunagi.amalbum.datastructure.datamodel.entity.ContentsGroupEntity;
 
 /**
  * MyPage関連のサービス
@@ -47,6 +50,29 @@ public class AlbumService {
 	public List<AlbumContents> getAlbumContentsList( int albumSectionID ) {
 		List<AlbumContents> albumContentsList = getAlbumContentsListByParentID( albumSectionID );
 		return albumContentsList;
+	}
+	
+	/**
+	 * アルバムを新規に作成する
+	 * @param albumContents
+	 */
+	public void createAlbum( String albumName, String brief ) {
+		// AlbumCategoryオブジェクトを作る
+		AlbumCategory albumCategory = new AlbumCategory();
+		albumCategory.setContentsGroupEntity( new ContentsGroupEntity() );
+		
+		ContentsGroupEntity contentsGroupEntity = albumCategory.getContentsGroupEntity();
+		contentsGroupEntity.setName( albumName );
+		contentsGroupEntity.setBrief( brief );
+		contentsGroupEntity.setParentID( Constants.rootContentsGroupID );
+		contentsGroupEntity.setDescription( null );
+		contentsGroupEntity.setCreateDate( new Date() );
+		contentsGroupEntity.setUpdateDate( new Date() );
+		contentsGroupEntity.setDeleteDate( null );
+		
+		// 新規のアルバムを作る
+		albumStructureBusiness.createAlbum( albumCategory );
+		
 	}
 
 	

@@ -78,4 +78,14 @@ public class AlbumStructureBusiness {
 		//
 		return albumContentsList;
 	}
+	
+	/**
+	 * アルバムを新規に作成する
+	 * @param albumCategory
+	 */
+	public void createAlbum( AlbumCategory albumCategory ){
+		// コンテンツグループを構築する
+		ContentsGroupEntity contentsGroupEntity = albumCategory.getContentsGroupEntity();
+		dataStructureBusiness.createContentsGroup(contentsGroupEntity);
+	}
 }

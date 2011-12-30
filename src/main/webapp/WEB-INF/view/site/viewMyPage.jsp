@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ page import="com.mugenunagi.amalbum.album.datamodel.dto.view.ViewMyPageDTO" %>
 
 <% request.setCharacterEncoding( "UTF-8" ); %>
@@ -49,9 +50,10 @@
 		
 		<%-- 新規登録系の入力フィールド
 		--%>
-		<form name="editForm" method="POST" action="http://www.google.com">
-			アルバム名：<input type="text" name="albumName" value=""/>
+		<form:form name="editForm" modelAttribute="createAlbumForm" method="POST" action="createAlbum.do">
+			アルバム名：<form:input type="text" path="albumName" /><BR>
+			説明：<form:input type="text" path="brief" /><BR>
 			<input type="button" name="createButton" value="作成" onClick="javascript:createNewAlbum( editForm );"/>
-		</form>
+		</form:form>
 	</body>
 </html>

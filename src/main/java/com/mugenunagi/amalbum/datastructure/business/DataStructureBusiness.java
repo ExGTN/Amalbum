@@ -90,4 +90,24 @@ public class DataStructureBusiness {
 		//
 		return result;
 	}
+
+	/**
+	 * コンテンツグループを作成する
+	 * @param contentsGroupEntity
+	 */
+	public void createContentsGroup( ContentsGroupEntity contentsGroupEntity ) {
+		// IDを発行する
+		int contentsGroupID = contentsGroupMapper.getNextContentsGroupID();
+		
+		// インサートする
+		contentsGroupEntity.setContentsGroupID(contentsGroupID);
+		contentsGroupMapper.insertContentsGroup(contentsGroupEntity);
+		
+		// SeqNoを更新する
+		int nextSeqNo = contentsGroupMapper.getNextSeqNo();
+		contentsGroupEntity.setSeqNo(nextSeqNo);
+		
+		// 更新する
+		contentsGroupMapper.updateContentsGroup(contentsGroupEntity);
+	}
 }

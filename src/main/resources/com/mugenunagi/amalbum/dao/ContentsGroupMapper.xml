@@ -6,8 +6,79 @@
     ContentsGroupMapper
 -->
 <mapper namespace="com.mugenunagi.amalbum.datastructure.datamodel.dao.ContentsGroupMapper">
-	<!-- ContentsGroupを検索する -->
+	<!-- ContentsGroupを、親IDで検索する -->
 	<select id="selectContentsGroupByParentID" parameterType="contentsGroupEntity" resultType="contentsGroupEntity">
-		select * from contentsGroup where parentID = #{parentID}
+		select * from contentsGroup where parentID = #{parentID} and (DeleteDate is null)
 	</select>
+	
+	<!-- ContentsGroupをIDで検索する -->
+	<select id="selectContentsGroupByContentsGroupID" parameterType="contentsGroupEntity" resultType="contentsGroupEntity">
+		select * from contentsGroup where ContentsGroupID = #{contentsGroupID}
+	</select>
+	
+	<!-- ContentsGroupIDを発番する -->
+	<select id="getNextContentsGroupID" resultType="int">
+		select nextval('ContentsGroupIDSequence')
+	</select>
+	
+	<!-- ContentsIDを発番する -->
+	<select id="getNextContentsID" resultType="int">
+		select nextval('ContentsIDSequence')
+	</select>
+	
+	<!-- MaterialIDを発番する -->
+	<select id="getNextMaterialID" resultType="int">
+		select nextval('MaterialIDSequence')
+	</select>
+
+	<!-- ContentsGroupを作成する -->
+	<insert id="insertContentsGroup" parameterType="contentsGroupEntity">
+		insert into ContentsGroup
+			(ContentsGroupID, ParentID, Name, Brief, Description, SeqNo, DeleteDate, UpdateDate, CreateDate )
+			values
+			(
+				  #{contentsGroupID}
+				, #{parentID}
+				, #{name}
+				, #{brief}
+				, #{description}
+				, 0
+				, null
+				, #{updateDate}
+				, #{createDate}
+			)
+	</insert>
+	
+	<!-- 次のSeqNoを発番する -->
+	<select id="getNextSeqNo" resultType="int">
+		select max(SeqNo)+1 from ContentsGroup
+	</select>
+
+	<!-- ContentsGroupを更新する -->
+	<update id="updateContentsGroup" parameterType="contentsGroupEntity">
+		update ContentsGroup
+			set
+				  ParentID=#{parentID}
+				, Name=#{name}
+				, Brief=#{brief}
+				, Description=#{description}
+				, SeqNo=#{seqNo}
+				, DeleteDate=#{deleteDate}
+				, UpdateDate=#{updateDate}
+				, CreateDate=#{createDate}
+			where
+				ContentsGroupID=#{contentsGroupID}
+	</update>
+	
+	<!-- ContentsGroupを論理削除する -->
+	<update id="logicalDeleteContentsGroup" parameterType="contentsGroupEntity">
+		update ContentsGroup
+			set DeleteDate=#{deleteDate}
+			where ContentsGroupID=#{contentsGroupID}
+	</update>
+	
+	<!-- ContentsGroupを物理削除する -->
+	<delete id="deleteContentsGroup" parameterType="contentsGroupEntity">
+		delete from ContentsGroup where ContentsGroupID=#{contentsGroupID}
+	</delete>
 </mapper>
