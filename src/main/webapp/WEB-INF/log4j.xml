@@ -19,7 +19,7 @@
     <param name="threshold" value="info"/>
   
     <!-- ファイル情報 -->
-    <param name="file" value="C:/logtest.txt" />
+    <param name="file" value="D:/logtest.txt" />
     
     <param name="append" value="false" />
     <param name="datePattern" value="'.'yyyy-MM-dd" />
