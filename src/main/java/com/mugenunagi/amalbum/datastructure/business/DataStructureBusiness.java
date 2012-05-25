@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.mugenunagi.amalbum.datastructure.datamodel.dao.ContentsGroupMapper;
+import com.mugenunagi.amalbum.datastructure.datamodel.dao.MaterialMapper;
 import com.mugenunagi.amalbum.datastructure.datamodel.dao.ContentsMapper;
+import com.mugenunagi.amalbum.datastructure.datamodel.entity.MaterialEntity;
 import com.mugenunagi.amalbum.datastructure.datamodel.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.datamodel.entity.ContentsGroupEntity;
 
@@ -25,6 +27,9 @@ public class DataStructureBusiness {
 
 	@Autowired
 	ContentsMapper contentsMapper;
+
+	@Autowired
+	MaterialMapper materialMapper;
 	
 	//=========================================================================
 	// メソッド
@@ -90,6 +95,28 @@ public class DataStructureBusiness {
 		//
 		return result;
 	}
+
+
+        /**
+         * IDを指定して、マテリアルを検索して返す
+         * @param parentID
+         * @return
+         */
+        public MaterialEntity getMaterialByMaterialID( int materialID ){
+                // -----< 検索する >-----
+                //
+                // 検索条件を作る
+                MaterialEntity materialEntity = new MaterialEntity();
+                materialEntity.setMaterialID(materialID);
+
+                // 検索
+                MaterialEntity result = materialMapper.getMaterialByMaterialID( materialEntity );
+
+                // -----< 結果を返す >-----
+                //
+                return result;
+        }
+
 
 	/**
 	 * コンテンツグループを作成する

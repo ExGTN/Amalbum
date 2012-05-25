@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.mugenunagi.applicationProperties;
 import com.mugenunagi.amalbum.datastructure.business.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.datamodel.entity.ContentsEntity;
+import com.mugenunagi.amalbum.datastructure.datamodel.entity.MaterialEntity;
 
 /**
  * 画像制御のWebサービスインタフェースのコントローラ
@@ -33,24 +34,25 @@ public class ImageController {
 	 * @param modelMap
 	 * @return
 	 */
-    @RequestMapping("/restImage.do/{contentsID}")
-    public String restImage( @PathVariable Integer contentsID, HttpServletResponse response ) {
-    	// -----< コンテンツを検索する >-----
+    @RequestMapping("/ads/restImage.do/{materialID}")
+    public String restImage( @PathVariable Integer materialID, HttpServletResponse response ) {
+    	// -----< マテリアルを検索する >-----
     	//
-    	ContentsEntity contentsEntity = dataStructureBusiness.getContentsByContentsID(contentsID);
-    	if( contentsEntity==null ){
+    	MaterialEntity materialEntity = dataStructureBusiness.getMaterialByMaterialID(materialID);
+    	if( materialEntity==null ){
     		return null;
     	}
     	
     	// -----< パスを作る >-----
     	//
     	String localContentsBasePath = applicationProperties.getString( "localContentsBasePath" );
-    	String filePath = localContentsBasePath + "/" + contentsEntity.getBaseDir() + "/" + contentsEntity.getName();
+    	String photoRelativePath     = applicationProperties.getString( "photoRelativePath" );
+    	String filePath = localContentsBasePath + "/" + photoRelativePath + "/" + materialEntity.getPath();
     	log.debug( "File=" + filePath );
 
     	// -----< ファイルを開いてレスポンスに送る >-----
     	//
-		ServletOutputStream outputStream = null;
+	ServletOutputStream outputStream = null;
         FileInputStream in = null;
     	try {
         	response.setContentType("image/jpg");
@@ -71,26 +73,6 @@ public class ImageController {
         } catch (IOException e) {
             System.out.println(e);
         }
-        
-        
-//        // ためし
-//        try{
-//        	//BufferedImage image = ImageUtils.createResizedImage( filePath, 320, 240);
-//        	BufferedImage image = ImageUtils.createRotateImage( filePath, Math.PI/2.0 );
-//        	String formatName = ImageUtils.getFormatName(filePath);
-//        	String mimeType = ImageUtils.getMimeType(formatName);
-//        	
-//        	response.setContentType( mimeType );
-//
-//        	outputStream = response.getOutputStream();
-//        	ImageIO.write( image, formatName, outputStream);
-//        	outputStream.flush();
-//        	outputStream.close();
-//        	
-//        	image.flush();
-//        } catch (IOException e) {
-//            System.out.println(e);
-//        }
         
     	// -----< 結果を返す >-----
     	//

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    MaterialMapper
+-->
+<mapper namespace="com.mugenunagi.amalbum.datastructure.datamodel.dao.MaterialMapper">
+	<!-- 指定IDのMaterialを取得する-->
+	<select id="getMaterialByMaterialID" parameterType="materialEntity" resultType="materialEntity">
+		select * from material where materialID = #{materialID}
+	</select>
+</mapper>
