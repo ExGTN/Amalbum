@@ -5,18 +5,18 @@
   
   <!-- ********************** 標準出力への出力 ********************** -->
   <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
-    <param name="threshold" value="warn"/>
+    <param name="threshold" value="debug"/>
   
     <!-- レイアウトの指定 -->
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern"
-             value="RUNTIME [%x%-5p] %-10.10m @ %c%n" />
+             value="%d %5p %c{1} - %m%n" />
     </layout>
   </appender>
   
   <!-- ********************** ファイルへの出力 ********************** -->
   <appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
-    <param name="threshold" value="info"/>
+    <param name="threshold" value="debug"/>
   
     <!-- ファイル情報 -->
     <param name="file" value="D:/logtest.txt" />
@@ -27,13 +27,13 @@
     <!-- レイアウトの指定 -->
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern"
-             value="DEBUG [%x%-5p] %-10.10m @ %c%n" />
+             value="%d %5p %c{1} - %m%n" />
     </layout>
   </appender>
  
   <!-- ********************** category定義 ************************* -->
   <category name="org.springframework.web.servlet.DispatcherServlet">
-    <priority value="debug" />
+    <priority value="info" />
     <appender-ref ref="FILE" />
   </category>
   <category name="com.mugenunagi.amalbum">
@@ -43,7 +43,7 @@
  
   <!-- ********************** root定義 ***************************** -->
   <root>
-    <priority value="debug" />
+    <priority value="info" />
     <appender-ref ref="STDOUT" />
   </root>
    

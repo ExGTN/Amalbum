@@ -27,7 +27,7 @@ public class ImageController {
 	@Autowired
 	DataStructureBusiness dataStructureBusiness;
 
-	Logger log = Logger.getLogger( this.getClass() );
+	Logger logger = Logger.getLogger( this.getClass() );
 	
 	/**
 	 * 画像を出力する
@@ -48,11 +48,11 @@ public class ImageController {
     	String localContentsBasePath = applicationProperties.getString( "localContentsBasePath" );
     	String photoRelativePath     = applicationProperties.getString( "photoRelativePath" );
     	String filePath = localContentsBasePath + "/" + photoRelativePath + "/" + materialEntity.getPath();
-    	log.debug( "File=" + filePath );
+    	logger.debug( "File=" + filePath );
 
     	// -----< ファイルを開いてレスポンスに送る >-----
     	//
-	ServletOutputStream outputStream = null;
+    	ServletOutputStream outputStream = null;
         FileInputStream in = null;
     	try {
         	response.setContentType("image/jpg");
@@ -71,7 +71,7 @@ public class ImageController {
             outputStream.flush();
             outputStream.close();
         } catch (IOException e) {
-            System.out.println(e);
+        	logger.error(e,e);
         }
         
     	// -----< 結果を返す >-----
