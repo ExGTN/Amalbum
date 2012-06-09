@@ -10,20 +10,19 @@
 	</settings>
 
 	<typeAliases>
-		<typeAlias alias="userRoleEntity" type="com.mugenunagi.amalbum.datastructure.datamodel.entity.UserRoleEntity"/>
-		<typeAlias alias="contentsRoleEntity" type="com.mugenunagi.amalbum.datastructure.datamodel.entity.ContentsRoleEntity"/>
-		<typeAlias alias="contentsGroupEntity" type="com.mugenunagi.amalbum.datastructure.datamodel.entity.ContentsGroupEntity"/>
-		<typeAlias alias="backupRuleEntity" type="com.mugenunagi.amalbum.datastructure.datamodel.entity.BackupRuleEntity"/>
-		<typeAlias alias="materialRoleEntity" type="com.mugenunagi.amalbum.datastructure.datamodel.entity.MaterialRoleEntity"/>
-		<typeAlias alias="materialEntity" type="com.mugenunagi.amalbum.datastructure.datamodel.entity.MaterialEntity"/>
-		<typeAlias alias="loginUserEntity" type="com.mugenunagi.amalbum.datastructure.datamodel.entity.LoginUserEntity"/>
-		<typeAlias alias="contentsEntity" type="com.mugenunagi.amalbum.datastructure.datamodel.entity.ContentsEntity"/>
-		<typeAlias alias="roleMasterEntity" type="com.mugenunagi.amalbum.datastructure.datamodel.entity.RoleMasterEntity"/>
-		<typeAlias alias="backupMasterEntity" type="com.mugenunagi.amalbum.datastructure.datamodel.entity.BackupMasterEntity"/>
+		<typeAlias alias="userRoleEntity" type="com.mugenunagi.amalbum.datastructure.entity.UserRoleEntity"/>
+		<typeAlias alias="contentsRoleEntity" type="com.mugenunagi.amalbum.datastructure.entity.ContentsRoleEntity"/>
+		<typeAlias alias="contentsGroupEntity" type="com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity"/>
+		<typeAlias alias="backupRuleEntity" type="com.mugenunagi.amalbum.datastructure.entity.BackupRuleEntity"/>
+		<typeAlias alias="materialRoleEntity" type="com.mugenunagi.amalbum.datastructure.entity.MaterialRoleEntity"/>
+		<typeAlias alias="materialEntity" type="com.mugenunagi.amalbum.datastructure.entity.MaterialEntity"/>
+		<typeAlias alias="loginUserEntity" type="com.mugenunagi.amalbum.datastructure.entity.LoginUserEntity"/>
+		<typeAlias alias="contentsEntity" type="com.mugenunagi.amalbum.datastructure.entity.ContentsEntity"/>
+		<typeAlias alias="roleMasterEntity" type="com.mugenunagi.amalbum.datastructure.entity.RoleMasterEntity"/>
+		<typeAlias alias="backupMasterEntity" type="com.mugenunagi.amalbum.datastructure.entity.BackupMasterEntity"/>
 	</typeAliases>
 
 	<mappers>
-		<mapper resource="com/mugenunagi/amalbum/dao/SampleMapper.xml" />
 		<mapper resource="com/mugenunagi/amalbum/dao/ContentsGroupMapper.xml" />
 		<mapper resource="com/mugenunagi/amalbum/dao/ContentsMapper.xml" />
 		<mapper resource="com/mugenunagi/amalbum/dao/MaterialMapper.xml" />

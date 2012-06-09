@@ -5,9 +5,14 @@
 <!--
     MaterialMapper
 -->
-<mapper namespace="com.mugenunagi.amalbum.datastructure.datamodel.dao.MaterialMapper">
+<mapper namespace="com.mugenunagi.amalbum.datastructure.dao.MaterialMapper">
+	<!-- ContentsIDを指定して、それに属する素材を検索する -->
+	<select id="selectMaterialByContentsID" parameterType="int" resultType="materialEntity">
+		select * from material where ContentsID = #{contentsID} and DeleteDate is null
+	</select>
+
 	<!-- 指定IDのMaterialを取得する-->
 	<select id="getMaterialByMaterialID" parameterType="materialEntity" resultType="materialEntity">
-		select * from material where materialID = #{materialID}
+		select * from material where materialID = #{materialID} and DeleteDate is null
 	</select>
 </mapper>

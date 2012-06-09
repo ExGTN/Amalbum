@@ -5,15 +5,15 @@
 <!--
     ContentsGroupMapper
 -->
-<mapper namespace="com.mugenunagi.amalbum.datastructure.datamodel.dao.ContentsGroupMapper">
+<mapper namespace="com.mugenunagi.amalbum.datastructure.dao.ContentsGroupMapper">
 	<!-- ContentsGroupを、親IDで検索する -->
-	<select id="selectContentsGroupByParentID" parameterType="contentsGroupEntity" resultType="contentsGroupEntity">
+	<select id="selectContentsGroupByParentID" parameterType="int" resultType="contentsGroupEntity">
 		select * from contentsGroup where parentID = #{parentID} and (DeleteDate is null)
 	</select>
 	
 	<!-- ContentsGroupをIDで検索する -->
-	<select id="selectContentsGroupByContentsGroupID" parameterType="contentsGroupEntity" resultType="contentsGroupEntity">
-		select * from contentsGroup where ContentsGroupID = #{contentsGroupID}
+	<select id="selectContentsGroupByContentsGroupID" parameterType="int" resultType="contentsGroupEntity">
+		select * from contentsGroup where ContentsGroupID = #{contentsGroupID} and (DeleteDate is null)
 	</select>
 	
 	<!-- ContentsGroupIDを発番する -->
@@ -68,6 +68,7 @@
 				, CreateDate=#{createDate}
 			where
 				ContentsGroupID=#{contentsGroupID}
+				and DeleteDate is null
 	</update>
 	
 	<!-- ContentsGroupを論理削除する -->

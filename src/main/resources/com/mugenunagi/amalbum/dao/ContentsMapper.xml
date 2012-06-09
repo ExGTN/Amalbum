@@ -5,14 +5,14 @@
 <!--
     ContentsMapper
 -->
-<mapper namespace="com.mugenunagi.amalbum.datastructure.datamodel.dao.ContentsMapper">
+<mapper namespace="com.mugenunagi.amalbum.datastructure.dao.ContentsMapper">
 	<!-- Contentsを検索する -->
-	<select id="selectContentsByContentsGroupID" parameterType="contentsEntity" resultType="contentsEntity">
-		select * from contents where contentsGroupID = #{contentsGroupID}
+	<select id="selectContentsByContentsGroupID" parameterType="int" resultType="contentsEntity">
+		select * from contents where contentsGroupID = #{contentsGroupID} and DeleteDate is null
 	</select>
 
 	<!-- 指定IDのContentsを取得する-->
 	<select id="getContentsByContentsID" parameterType="contentsEntity" resultType="contentsEntity">
-		select * from contents where contentsID = #{contentsID}
+		select * from contents where contentsID = #{contentsID} and DeleteDate is null
 	</select>
 </mapper>

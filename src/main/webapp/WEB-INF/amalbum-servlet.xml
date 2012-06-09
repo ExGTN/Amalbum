@@ -34,14 +34,8 @@
 	</bean>
  
 	<!-- Mapper定義 -->
-	<!-- 
-	<bean id="sampleMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-		<property name="mapperInterface" value="com.mugenunagi.amalbum.dao.SampleMapper" />
-		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
-	</bean>
-	 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-		<property name="basePackage" value= "com.mugenunagi.amalbum.datastructure.datamodel.dao" />
+		<property name="basePackage" value= "com.mugenunagi.amalbum.datastructure.dao" />
 	</bean>
 </beans>
