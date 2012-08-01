@@ -23,4 +23,10 @@ public interface MaterialMapper {
      * @return
      */
     MaterialEntity getMaterialByMaterialID( Integer matrialID );
+    
+    /**
+     * materialをinsertします
+     * @param materialEntity
+     */
+    void insertMaterial( MaterialEntity materialEntity );
 }

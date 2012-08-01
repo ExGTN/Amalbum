@@ -24,4 +24,10 @@ public interface ContentsMapper {
      * @return
      */
     ContentsEntity getContentsByContentsID( ContentsEntity contentsEntity );
+    
+    /**
+     * コンテンツを追加します
+     * @param contentsEntity
+     */
+    void insertContents( ContentsEntity  contentsEntity );
 }

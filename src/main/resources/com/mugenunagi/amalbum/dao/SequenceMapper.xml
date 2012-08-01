@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SequenceMapper
+-->
+<mapper namespace="com.mugenunagi.amalbum.datastructure.dao.SequenceMapper">
+	<!-- 次のMaterialIDを取得する -->
+	<select id="getNextMaterialID" resultType="int">
+		select nextval('materialIDSequence');
+	</select>
+
+	<!-- 次のContentsIDを取得する -->
+	<select id="getNextContentsID" resultType="int">
+		select nextval('contentsIDSequence');
+	</select>
+
+	<!-- 次のContentsGroupIDを取得する -->
+	<select id="getNextContentsGroupID" resultType="int">
+		select nextval('contentsGroupIDSequence');
+	</select>
+</mapper>

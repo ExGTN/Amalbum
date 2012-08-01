@@ -15,4 +15,38 @@
 	<select id="getMaterialByMaterialID" parameterType="materialEntity" resultType="materialEntity">
 		select * from material where materialID = #{materialID} and DeleteDate is null
 	</select>
+	
+	<!-- MaterialIDを発行する -->
+	<select id="getNextMaterialID" resultType="Integer">
+		select nextval("materialidsequence");
+	</select>
+	
+	<!-- Materialを新規に作成する -->
+	<insert id="insertMaterial" parameterType="materialEntity">
+		insert into Material(
+			  MaterialID
+			, ContentsID
+			, MaterialType
+			, Path
+			, Status
+			, Brief
+			, Description
+			, SeqNo
+			, DeleteDate
+			, UpdateDate
+			, CreateDate
+			) values (
+			  #{materialID}
+			, #{contentsID}
+			, #{materialType}
+			, #{path}
+			, #{status}
+			, #{brief}
+			, #{description}
+			, #{seqNo}
+			, #{deleteDate}
+			, #{updateDate}
+			, #{createDate}
+			);
+	</insert>
 </mapper>

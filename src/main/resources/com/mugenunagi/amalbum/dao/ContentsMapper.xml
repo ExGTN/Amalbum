@@ -15,4 +15,36 @@
 	<select id="getContentsByContentsID" parameterType="contentsEntity" resultType="contentsEntity">
 		select * from contents where contentsID = #{contentsID} and DeleteDate is null
 	</select>
+	
+	<!-- コンテンツIDを発行する -->
+	<select id="getNextContentsID" resultType="Integer">
+		select nextval("contentsidsequence");
+	</select>
+	
+	<!-- コンテンツを追加する -->
+	<select id="insertContents" parameterType="contentsEntity">
+		insert into contents (
+			  ContentsID
+			, ContentsGroupID
+			, Name
+			, Brief
+			, Description
+			, BaseDir
+			, SeqNo
+			, DeleteDate
+			, UpdateDate
+			, CreateDate
+			) values (
+			  #{contentsID}
+			, #{contentsGroupID}
+			, #{name}
+			, #{brief}
+			, #{description}
+			, #{baseDir}
+			, #{seqNo}
+			, #{deleteDate}
+			, #{updateDate}
+			, #{createDate}
+			);
+	</select>
 </mapper>

@@ -1,5 +1,7 @@
 package com.mugenunagi.amalbum.albumstructure;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
+import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
 
 /**
@@ -24,6 +27,9 @@ public class AlbumStructureBusiness {
 	//=========================================================================
 	@Autowired
 	DataStructureBusiness dataStructureBusiness;
+	
+	@Autowired
+	PhotoRegistrator photoRegistrator;
 
 	//=========================================================================
 	// メソッド
@@ -101,4 +107,15 @@ public class AlbumStructureBusiness {
 //		ContentsGroupEntity contentsGroupEntity = albumCategory.getContentsGroupEntity();
 //		dataStructureBusiness.createContentsGroup(contentsGroupEntity);
 //	}
+
+	/**
+	 * 指定されたcontentsIDのアルバムページに、tempFileの写真を追加します
+	 * @throws IOException 
+	 * @throws InvalidStateException 
+	 * @throws RecordNotFoundException 
+	 */
+	public String registPhoto( Integer contentsID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException {
+		fileName = photoRegistrator.registPhoto( contentsID, tempFile, fileName );
+		return fileName;
+	}
 }

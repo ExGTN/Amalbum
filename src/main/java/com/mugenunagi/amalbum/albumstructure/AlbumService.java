@@ -1,5 +1,7 @@
 package com.mugenunagi.amalbum.albumstructure;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
+import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
 
 /**
@@ -92,6 +95,18 @@ public class AlbumService {
 //		albumStructureBusiness.createAlbum( albumCategory );
 //		
 //	}
+	
+	/**
+	 * 写真を登録します。
+	 * @throws IOException 
+	 * @throws InvalidStateException 
+	 * @throws RecordNotFoundException 
+	 */
+	public String registPhoto( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException{
+		// 写真を登録する
+		fileName = albumStructureBusiness.registPhoto( contentsGroupID, tempFile, fileName );
+		return fileName;
+	}
 
 	
 	//=========================================================================

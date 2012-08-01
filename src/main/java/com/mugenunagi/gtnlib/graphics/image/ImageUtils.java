@@ -120,6 +120,39 @@ public class ImageUtils {
 		// -----< 描画結果を
 		return resizedImage;
 	}
+	
+	
+	/**
+	 * 指定したサイズを最大の大きさとして、アスペクト比を保持したサムネイル画像を構築して返します。
+	 * @param filePath
+	 * @param fittingWidth
+	 * @param fittingHeight
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public static BufferedImage createThumbnailImage( String filePath, int fittingWidth, int fittingHeight ) throws FileNotFoundException, IOException {
+		// -----< 元画像のBufferedImageを作る >-----
+		//
+		FileInputStream inputStream = new FileInputStream( filePath );
+		BufferedImage image = ImageIO.read( inputStream );
+		inputStream.close();
+		
+		// サイズを取得する
+		int sourceWidth = image.getWidth();
+		int sourceHeight = image.getHeight();
+		
+		// -----< 縮小サイズを算出する >-----
+		//
+		double fittingRatio = ImageUtils.getFittingRatio(sourceWidth, sourceHeight, fittingWidth, fittingHeight);
+		int thumbnailWidth = (int)((double)sourceWidth * fittingRatio);
+		int thumbnailHeight = (int)((double)sourceHeight * fittingRatio);
+		
+		// -----< 縮小画像を作成する >-----
+		//
+		BufferedImage thumbnail = ImageUtils.createResizedImage(filePath, thumbnailWidth, thumbnailHeight);
+		return thumbnail;
+	}
 
 	
 	/**

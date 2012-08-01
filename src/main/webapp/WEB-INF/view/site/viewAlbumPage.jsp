@@ -39,7 +39,9 @@
 					<tr>
 						<!-- 写真表示 -->
 						<td>
-							<img src="${viewAlbumPageDTO.baseURL}/ads/restImage.do/${photoDTO.materialID}">
+							<a href="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/0">
+								<img src="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/1">
+							</a>
 						</td>
 					</tr>
 					<tr>
@@ -51,5 +53,13 @@
 				</c:forEach>
 			</table>
 		</div>
+
+		<%-- アップロードのフォーム
+		--%>
+		<form name="fileUploadForm" method="POST" enctype="multipart/form-data" action="${viewAlbumPageDTO.baseURL}/aas/uploadFile.do">
+			<input type="file" name="uploadFile" />
+			<input type="hidden" name="contentsGroupID" value="${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}" />
+			<input type="submit" value="送信" />
+		</form>
 	</body>
 </html>
