@@ -1,0 +1,13 @@
+#djUnit Plugin Settings
+#Sun Aug 05 22:38:30 JST 2012
+CoverageIncludedPatterns=com.mugenunagi.amalbum.*;
+VirtualMockIgnoreLibrary=false
+CoverageExcludedPatterns=.*Test$;
+UseMarker=true
+UseVirtualMock=false
+UseCoverage=true
+BytecodeLibrary=ASM
+VirtualMockNotIgnorePatterns=
+UseNoverify=false
+CoverageWorkingDirectory=
+CoverageReportCharset=
