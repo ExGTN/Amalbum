@@ -49,4 +49,9 @@
 			, #{createDate}
 			);
 	</insert>
+	
+	<!-- Materialを物理削除する -->
+	<delete id="deleteMaterial" parameterType="int" >
+		delete from material where MaterialID=#{materialID};
+	</delete>
 </mapper>

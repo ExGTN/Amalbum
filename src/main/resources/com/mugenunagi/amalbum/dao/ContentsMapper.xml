@@ -47,4 +47,8 @@
 			, #{createDate}
 			);
 	</select>
+	
+	<delete id="deleteContents" parameterType="int">
+		delete from contents where contentsID=#{contentsID};
+	</delete>
 </mapper>

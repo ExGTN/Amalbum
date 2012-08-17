@@ -2,22 +2,18 @@ package com.mugenunagi.amalbum.album;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mugenunagi.applicationProperties;
+import com.mugenunagi.ApplicationProperties;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageDTO;
 import com.mugenunagi.amalbum.albumstructure.AlbumService;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
@@ -33,6 +29,9 @@ import com.mugenunagi.amalbum.exception.handler.AmalbumExceptionManager;
 @Controller
 public class AlbumController {
 	Logger logger = Logger.getLogger( AlbumController.class );
+	
+	@Autowired
+	private ApplicationProperties applicationProperties;
 	
 	@Autowired
 	private AlbumService albumService;

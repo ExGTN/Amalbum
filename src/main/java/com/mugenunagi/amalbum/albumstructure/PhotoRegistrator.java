@@ -1,11 +1,11 @@
 package com.mugenunagi.amalbum.albumstructure;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -13,9 +13,8 @@ import javax.imageio.ImageIO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.mugenunagi.applicationProperties;
+import com.mugenunagi.ApplicationProperties;
 import com.mugenunagi.amalbum.Constants;
-import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.dao.ContentsMapper;
 import com.mugenunagi.amalbum.datastructure.dao.MaterialMapper;
@@ -38,6 +37,9 @@ public class PhotoRegistrator {
 	//=========================================================================
 	// 属性
 	//=========================================================================
+	@Autowired
+	ApplicationProperties applicationProperties;
+	
 	@Autowired
 	DataStructureBusiness dataStructureBusiness;
 	
@@ -96,15 +98,9 @@ public class PhotoRegistrator {
 		
 		// アルバムページの情報を取得する
 		ContentsGroupEntity albumPageInfo = dataStructureBusiness.getContentsGroup(contentsGroupID);
-		if( albumPageInfo==null ){
-			throw new RecordNotFoundException( "指定されたContentsGroupIDのレコードが存在しませんでした。ContentsGroupID="+contentsGroupID );
-		}
 
 		// YYYYMMDDディレクトリを作る
 		String albumPageName = albumPageInfo.getName();
-		if( albumPageName==null ){
-			throw new InvalidStateException( "アルバムページのNameがnullです。contentsGroupID="+contentsGroupID );
-		}
 		FileUtils.prepareDirectory( photoBasePath , albumPageName );
 
 		// 画像ファイルを配置する
@@ -113,7 +109,7 @@ public class PhotoRegistrator {
 		String serverFileName = serverFile.getName();
 		fileName = serverFileName;
 		
-		String destRelativePath = photoRelativePath + "/" + albumPageName + "/" + fileName;
+//		String destRelativePath = photoRelativePath + "/" + albumPageName + "/" + fileName;
 		File destFile = new File( destFilePath );
 		tempFile.renameTo( destFile );
 		
@@ -128,7 +124,7 @@ public class PhotoRegistrator {
 		String thumbnailDirPath = albumPagePath + "/" + photoThumbnailRelativePath;
 		String thumbnailName = photoThumbnailPrefix + "." + fileName;
 		String thumbnailPath = thumbnailDirPath + "/" + thumbnailName;
-		String thumbnailRelativePath = photoRelativePath + "/" + albumPageName + "/" + photoThumbnailRelativePath + "/" + thumbnailName;
+//		String thumbnailRelativePath = photoRelativePath + "/" + albumPageName + "/" + photoThumbnailRelativePath + "/" + thumbnailName;
 		
 		// サムネイルを作る
 		int width = Integer.parseInt(photoThumbnailWidth);
@@ -220,5 +216,80 @@ public class PhotoRegistrator {
 			// DBに書き込む
 			materialMapper.insertMaterial(materialEntity);
 		}
+	}
+
+	/**
+	 * 写真を削除します。物理ファイルとＤＢの両方が削除されます。
+	 * @param photoID
+	 * @throws Throwable
+	 */
+	public void removePhoto( Integer photoID ) throws Throwable{
+		// ファイルを削除する
+		removePhotoFiles( photoID );
+		
+		// DBから削除する
+		this.removeFromDB(photoID);
+	}
+	
+	/**
+	 * 指定されたcontentsIDに関係する物理ファイルを削除します。ＤＢは削除されません。
+	 * @param contentsID
+	 * @throws Throwable
+	 */
+	public void removePhotoFiles( Integer contentsID ) throws Throwable {
+		String localContentsBasePath		= applicationProperties.getString( "LOCAL_CONTENTS_BASE_PATH" );
+
+		String photoRelativePath			= applicationProperties.getString( "PHOTO_RELATIVE_PATH" );
+		String photoBasePath				= localContentsBasePath + "/" + photoRelativePath;
+
+		String photoThumbnailRelativePath	= applicationProperties.getString("PHOTO_THUMBNAIL_RELATIVE_PATH");
+		
+		// アルバムページの情報を取得する
+		ContentsEntity contentsCondition = new ContentsEntity();
+		contentsCondition.setContentsID(contentsID);
+		ContentsEntity contentsEntity = contentsMapper.getContentsByContentsID(contentsCondition);
+		Integer contentsGroupID = contentsEntity.getContentsGroupID();
+
+		ContentsGroupEntity albumPageInfo = dataStructureBusiness.getContentsGroup(contentsGroupID);
+		String pageName = albumPageInfo.getName();
+		
+		// マテリアルの情報を得る
+		List<MaterialEntity> materialList = materialMapper.selectMaterialByContentsID(contentsID);
+		
+		// ファイルを削除する
+		for( MaterialEntity material : materialList ){
+			// 配置された写真のファイルを消す
+			String materialPath = material.getPath();
+			if( materialPath==null ){ continue; }
+			String path = photoBasePath + "/" + pageName + "/" + materialPath;
+			File placedFile = new File( path );
+			if( placedFile.exists() ){ placedFile.delete(); }
+		}
+
+		// ディレクトリが空なら削除する
+		String thumbDirPath = photoBasePath + "/" + pageName + "/" + photoThumbnailRelativePath;
+		String albumPageDirPath = photoBasePath + "/" + pageName;
+		File thumbDir = new File( thumbDirPath );
+		File albumPageDir = new File( albumPageDirPath );
+		if( thumbDir.exists() ){
+			String[] fileList = thumbDir.list();
+			if( fileList.length==0 ){
+				thumbDir.delete();
+			}
+		}
+		if( albumPageDir.exists() ){
+			String[] fileList = albumPageDir.list();
+			if( fileList.length==0 ){
+				albumPageDir.delete();
+			}
+		}
+	}
+
+	/**
+	 * 写真のIDを指定して、写真の情報をＤＢから削除します。物理ファイルは削除されません。
+	 * @param photoID
+	 */
+	public void removeFromDB( Integer photoID ){
+		dataStructureBusiness.deleteWholeContents(photoID);
 	}
 }

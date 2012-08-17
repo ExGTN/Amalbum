@@ -4,17 +4,36 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class applicationProperties {
-	private static final String BUNDLE_NAME = "application"; //$NON-NLS-1$
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, new Locale("ja","JP"));
+import com.mugenunagi.amalbum.ApplicationContextWrapper;
+import com.mugenunagi.amalbum.Constants;
 
-	private applicationProperties() {
+@Component
+public class ApplicationProperties {
+	@Autowired
+	ApplicationContextWrapper applicationContextWrapper;
+	
+	private ResourceBundle resourceBundle;
+
+	private ApplicationProperties() {
 	}
 
-	public static String getString(String key) {
+	/**
+	 * 値を取得します
+	 * @param key プロパティファイル内のキー
+	 * @return プロパティの値
+	 */
+	public String getString(String key) {
+		if( resourceBundle==null ){
+			Constants constants = applicationContextWrapper.getConstants();
+			String bundleName = constants.getApplicationPropertiesName();
+			resourceBundle = ResourceBundle.getBundle(bundleName, new Locale("ja","JP"));
+		}
+		
 		try {
-			return RESOURCE_BUNDLE.getString(key);
+			return resourceBundle.getString(key);
 		} catch (MissingResourceException e) {
 			return '!' + key + '!';
 		}

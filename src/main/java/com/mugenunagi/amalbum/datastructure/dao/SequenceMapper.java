@@ -1,9 +1,5 @@
 package com.mugenunagi.amalbum.datastructure.dao;
 
-import java.util.List;
-
-import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
-
 /**
  * Materialを取り扱うマッパー
  * @author GTN

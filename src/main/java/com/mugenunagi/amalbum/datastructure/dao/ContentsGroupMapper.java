@@ -63,5 +63,5 @@ public interface ContentsGroupMapper {
 	/**
 	 * ContentsGroupを物理削除する
 	 */
-    public void deleteContentsGroup( ContentsGroupEntity contentsGroupEntity );
+    public void deleteContentsGroup( int contentsGroupID );
 }

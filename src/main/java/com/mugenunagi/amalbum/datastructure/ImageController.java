@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.mugenunagi.applicationProperties;
+import com.mugenunagi.ApplicationProperties;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
@@ -26,6 +26,9 @@ import com.mugenunagi.gtnlib.graphics.image.ImageUtils;
  */
 @Controller
 public class ImageController {
+	@Autowired
+	ApplicationProperties applicationProperties;
+	
 	@Autowired
 	DataStructureBusiness dataStructureBusiness;
 

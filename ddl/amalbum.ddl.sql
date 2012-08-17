@@ -113,7 +113,7 @@ drop table UserRole cascade;
 create table UserRole (
   RoleID integer not null
   , UserID character varying not null
-  , Value character varying not null
+  , Value integer not null
   , constraint UserRole_PKC primary key (RoleID,UserID)
 ) ;
 

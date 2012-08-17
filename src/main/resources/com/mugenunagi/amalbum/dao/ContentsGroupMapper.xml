@@ -79,7 +79,7 @@
 	</update>
 	
 	<!-- ContentsGroupを物理削除する -->
-	<delete id="deleteContentsGroup" parameterType="contentsGroupEntity">
+	<delete id="deleteContentsGroup" parameterType="int">
 		delete from ContentsGroup where ContentsGroupID=#{contentsGroupID}
 	</delete>
 </mapper>

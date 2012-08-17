@@ -2,6 +2,9 @@ package com.mugenunagi.amalbum.datastructure.entity;
 
 import static org.junit.Assert.*;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.junit.Test;
 
 public class ContentsEntityTest {
@@ -54,64 +57,90 @@ public class ContentsEntityTest {
 		assertEquals( "testSetBrief", "SampleBrief", brief );
 	}
 
-	@Test
-	public void testGetDescription() {
-		fail("Not yet implemented");
-	}
-
+	/**
+	 * Descriptionのset/getのテスト
+	 */
 	@Test
 	public void testSetDescription() {
-		fail("Not yet implemented");
+		ContentsEntity contentsEntity = new ContentsEntity();
+		contentsEntity.setDescription("SampleDescription");
+		String description = contentsEntity.getDescription();
+
+		assertEquals( "testSetDescription", "SampleDescription", description );
 	}
 
-	@Test
-	public void testGetBaseDir() {
-		fail("Not yet implemented");
-	}
-
+	/**
+	 * BaseDirのset/getのテスト
+	 */
 	@Test
 	public void testSetBaseDir() {
-		fail("Not yet implemented");
+		ContentsEntity contentsEntity = new ContentsEntity();
+		contentsEntity.setBaseDir("SampleBaseDir");
+		String baseDir = contentsEntity.getBaseDir();
+
+		assertEquals( "testSetBaseDir", "SampleBaseDir", baseDir );
 	}
 
-	@Test
-	public void testGetSeqNo() {
-		fail("Not yet implemented");
-	}
-
+	/**
+	 * SeqNoテスト
+	 */
 	@Test
 	public void testSetSeqNo() {
-		fail("Not yet implemented");
+		ContentsEntity contentsEntity = new ContentsEntity();
+		
+		// Test for not null.
+		contentsEntity.setSeqNo( new Integer(123) );
+		Integer seqNo = contentsEntity.getSeqNo();
+		assertEquals( "testSetSeqNo( not null )" , new Integer(123) , seqNo );
+
+		// Test for null.
+		contentsEntity.setSeqNo( null );
+		seqNo = contentsEntity.getSeqNo();
+		assertEquals( "testSetSeqNo( null )" , null , seqNo );
 	}
 
+	/**
+	 * 削除日付のテスト
+	 */
 	@Test
-	public void testGetDeleteDate() {
-		fail("Not yet implemented");
-	}
+	public void testSetGetDates() {
+		ContentsEntity contentsEntity = new ContentsEntity();
+		
+		// Test for null.
+		contentsEntity.setDeleteDate(null);
+		contentsEntity.setCreateDate(null);
+		contentsEntity.setUpdateDate(null);
+		Date deleteDate = contentsEntity.getDeleteDate();
+		Date createDate = contentsEntity.getCreateDate();
+		Date updateDate = contentsEntity.getUpdateDate();
+		assertEquals( "testSetDeleteDate:DeleteDate(null)", null, deleteDate );
+		assertEquals( "testSetDeleteDate:CreateDate(null)", null, createDate );
+		assertEquals( "testSetDeleteDate:UpdateDate(null)", null, updateDate );
+		
+		// Test for not null.
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2012, 8, 12, 11, 3, 39);
+		calendar.set(Calendar.MILLISECOND,0);
 
-	@Test
-	public void testSetDeleteDate() {
-		fail("Not yet implemented");
-	}
+		Date targetDeleteDate = calendar.getTime();
+		long millsDelete = calendar.getTimeInMillis();
+		contentsEntity.setDeleteDate(targetDeleteDate);
 
-	@Test
-	public void testGetUpdateDate() {
-		fail("Not yet implemented");
-	}
+		calendar.add(Calendar.DATE, 1);
+		Date targetCreateDate = calendar.getTime();
+		long millsCreate = calendar.getTimeInMillis();
+		contentsEntity.setCreateDate(targetCreateDate);
 
-	@Test
-	public void testSetUpdateDate() {
-		fail("Not yet implemented");
-	}
+		calendar.add(Calendar.DATE, 1);
+		Date targetUpdateDate = calendar.getTime();
+		long millsUpdate = calendar.getTimeInMillis();
+		contentsEntity.setUpdateDate(targetUpdateDate);
 
-	@Test
-	public void testGetCreateDate() {
-		fail("Not yet implemented");
+		deleteDate = contentsEntity.getDeleteDate();
+		createDate = contentsEntity.getCreateDate();
+		updateDate = contentsEntity.getUpdateDate();
+		assertEquals( "testSetDeleteDate(not null):Delete", millsDelete, deleteDate.getTime());
+		assertEquals( "testSetCreateDate(not null):Create", millsCreate, createDate.getTime());
+		assertEquals( "testSetUpdateDate(not null):Update", millsUpdate, updateDate.getTime());
 	}
-
-	@Test
-	public void testSetCreateDate() {
-		fail("Not yet implemented");
-	}
-
 }

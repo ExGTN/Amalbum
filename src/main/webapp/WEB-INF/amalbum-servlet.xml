@@ -40,4 +40,9 @@
 		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
 		<property name="basePackage" value= "com.mugenunagi.amalbum.datastructure.dao" />
 	</bean>
+
+	<!-- 定数オブジェクトへのプロパティ値の注入  -->	
+	<bean id="amalbumConstants" class="com.mugenunagi.amalbum.Constants">
+		<property name="applicationPropertiesName" value="application"/>
+	</bean>
 </beans>

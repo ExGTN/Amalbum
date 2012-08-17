@@ -1,11 +1,12 @@
-/**
- * ContentsEntity
- */
-
 package com.mugenunagi.amalbum.datastructure.entity;
 
 import java.util.Date;
 
+/**
+ * ContentsEntity
+ * @author gtn
+ *
+ */
 public class ContentsEntity {
 	/**
 	 * コンテンツID

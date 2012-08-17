@@ -30,4 +30,10 @@ public interface ContentsMapper {
      * @param contentsEntity
      */
     void insertContents( ContentsEntity  contentsEntity );
+    
+    /**
+     * コンテンツを削除します
+     * @param contentsID
+     */
+    void deleteContents( Integer contentsID );
 }

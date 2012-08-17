@@ -29,4 +29,10 @@ public interface MaterialMapper {
      * @param materialEntity
      */
     void insertMaterial( MaterialEntity materialEntity );
+    
+    /**
+     * materialを物理削除します
+     * @param materialID
+     */
+    void deleteMaterial( Integer materialID );
 }

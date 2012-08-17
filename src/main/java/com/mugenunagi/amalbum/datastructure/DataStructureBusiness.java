@@ -155,4 +155,44 @@ public class DataStructureBusiness {
 		List<MaterialEntity> materialList = materialMapper.selectMaterialByContentsID(contentsID);
 		return materialList;
 	}
+	
+	/**
+	 * 指定されたコンテンツグループ、およびそれに紐付くコンテンツ、マテリアルをすべて削除します。
+	 * @param contentsGroupID
+	 */
+	public void deleteWholeContentsGroup( Integer contentsGroupID ){
+		// コンテンツの一覧を取得する
+		List<ContentsEntity> contentsList = contentsMapper.selectContentsByContentsGroupID(contentsGroupID);
+		
+		// コンテンツに含まれるマテリアルを順次削除する
+		for( ContentsEntity contents : contentsList ){
+			if( contents==null ){ continue; }
+			Integer contentsID = contents.getContentsID();
+			deleteWholeContents( contentsID );
+		}
+		
+		// ContentsGroupを消す
+		contentsGroupMapper.deleteContentsGroup(contentsGroupID);
+	}
+
+	/**
+	 * 指定されたコンテンツ、およびそれに紐付くマテリアルをすべて削除します。
+	 * @param contentsID
+	 */
+	public void deleteWholeContents( Integer contentsID ){
+		// マテリアルの一覧を取得する
+		List<MaterialEntity> materialList = materialMapper.selectMaterialByContentsID(contentsID);
+		
+		// マテリアルを順次削除する
+		for( MaterialEntity material : materialList ){
+			if( material==null ){ continue; }
+			
+			// データベース上のレコードを物理削除する
+			Integer materialID = material.getMaterialID();
+			materialMapper.deleteMaterial( materialID );
+		}
+		
+		// Contentsを削除する
+		contentsMapper.deleteContents( contentsID );
+	}
 }
