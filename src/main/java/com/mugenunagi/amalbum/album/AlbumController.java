@@ -2,6 +2,7 @@ package com.mugenunagi.amalbum.album;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mugenunagi.ApplicationProperties;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageDTO;
+import com.mugenunagi.amalbum.album.dto.ViewAlbumPageListDTO;
 import com.mugenunagi.amalbum.albumstructure.AlbumService;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
+import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageListDTO;
+import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 import com.mugenunagi.amalbum.exception.InvalidParameterException;
 import com.mugenunagi.amalbum.exception.InvalidStateException;
+import com.mugenunagi.amalbum.exception.RecordNotFoundException;
 import com.mugenunagi.amalbum.exception.handler.AmalbumExceptionManager;
 
 /**
@@ -39,33 +44,70 @@ public class AlbumController {
 	@Autowired
 	private AmalbumExceptionManager exceptionManager;
 
-//	/**
-//	 * アルバムセクションの一覧を参照する
-//	 * @param modelMap
-//	 * @return
-//	 */
-//    @RequestMapping("/viewAlbumSection.do/{albumBookID}")
-//    public String viewAlbumSection( @PathVariable Integer albumBookID, ModelMap modelMap ) {
-//
-//    	// -----< 参照可能なアルバムセクションの一覧を取得する >-----
-//    	//
-//    	List<AlbumCategory> albumSectionList = albumService.getAlbumSectionList( albumBookID );
-//
-//    	// -----< DTOに格納する >-----
-//    	//
-//    	// DTO の構造を作る
-//    	ViewAlbumSectionDTO viewAlbumSectionDTO = new ViewAlbumSectionDTO();
-//    	AlbumCategoryListPartsDTO albumCategoryListPartsDTO = new AlbumCategoryListPartsDTO();
-//    	viewAlbumSectionDTO.setAlbumCategoryListPartsDTO(albumCategoryListPartsDTO);
-//    	
-//    	// 内容を設定する
-//    	albumCategoryListPartsDTO.setAlbumCategoryList( albumSectionList );
-//    	
-//    	// -----< VIEWに引き渡す >-----
-//    	//
-//    	modelMap.addAttribute( "viewAlbumSectionDTO", viewAlbumSectionDTO );
-//    	return "site/viewAlbumSection";
-//    }
+	/**
+	 * アルバムページの一覧を参照する。アルバムのIDとして、デフォルトの値を用いる
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping("/viewAlbumPageList")
+	public String viewAlbumPageListSimple( ModelMap modelMap ) {
+		// デフォルトのIDを使ってブリッジする
+		Integer defaultAlbumID = 0;
+		
+		return this.viewAlbumPageList(defaultAlbumID, modelMap);
+	}
+
+	/**
+	 * アルバムページの一覧を参照する。アルバムIDは指定されるものとする。
+	 * @param modelMap
+	 * @return
+	 * @throws RecordNotFoundException 
+	 */
+	@RequestMapping("/viewAlbumPageList/{albumID}")
+	public String viewAlbumPageList( @PathVariable Integer albumID, ModelMap modelMap ) {
+		try{
+        	String baseURL = applicationProperties.getString( "BASE_URL" );
+
+        	//-----< 参照可能なアルバムページの一覧を取得する >-----
+			//
+			AlbumPageListDTO albumPageListDTO = albumService.getAlbumPageList(albumID);
+	
+		  	// -----< DTOに格納する >-----
+		  	//
+		  	// DTO の構造を作る
+		  	ViewAlbumPageListDTO viewAlbumPageListDTO = new ViewAlbumPageListDTO();
+	  	
+		  	// 内容を設定する
+		  	viewAlbumPageListDTO.setAlbumPageListDTO(albumPageListDTO);
+		  	viewAlbumPageListDTO.setBaseURL(baseURL);
+
+		  	// -----< VIEWに引き渡す >-----
+		  	//
+		  	modelMap.addAttribute( "viewAlbumPageListDTO", viewAlbumPageListDTO );
+		  	return "site/viewAlbumPageList";
+		} catch (Exception e) {
+    		exceptionManager.handle(e);
+    		return null;
+		}
+	}
+	
+   
+//   /**
+//    * アルバムを作成する
+//    * @param modelMap
+//    * @return
+//    */
+//   @RequestMapping(value="/createAlbum.do", method=RequestMethod.POST)
+//   public String createAlbum( @ModelAttribute("createAlbumForm") CreateAlbumForm createAlbumForm, ModelMap modelMap ){
+//   	//
+//   	String albumName = createAlbumForm.getAlbumName();
+//   	String brief = createAlbumForm.getBrief();
+//   	logger.debug( "AlbumName="+albumName+", Brief="+brief );
+//   	
+//   	albumService.createAlbum( albumName, brief );
+//   	
+//   	return "site/createAlbum";
+//   }
 	
 	/**
 	 * アルバムページを参照する
@@ -97,24 +139,14 @@ public class AlbumController {
     		return null;
     	}
     }
-    
-//    /**
-//     * アルバムを作成する
-//     * @param modelMap
-//     * @return
-//     */
-//    @RequestMapping(value="/createAlbum.do", method=RequestMethod.POST)
-//    public String createAlbum( @ModelAttribute("createAlbumForm") CreateAlbumForm createAlbumForm, ModelMap modelMap ){
-//    	//
-//    	String albumName = createAlbumForm.getAlbumName();
-//    	String brief = createAlbumForm.getBrief();
-//    	logger.debug( "AlbumName="+albumName+", Brief="+brief );
-//    	
-//    	albumService.createAlbum( albumName, brief );
-//    	
-//    	return "site/createAlbum";
-//    }
-    
+
+    /**
+     * ファイルをアップロードする
+     * @param contentsGroupID
+     * @param uploadFile
+     * @param map
+     * @return
+     */
     @RequestMapping(value="/aas/uploadFile.do", method=RequestMethod.POST)
     public String uploadFile( @RequestParam("contentsGroupID") Integer contentsGroupID, @RequestParam("uploadFile") MultipartFile uploadFile, ModelMap map ){
     	try {

@@ -25,7 +25,7 @@
 			<jsp:param name="pageName" value="アルバム名" />
 		</jsp:include>
 	
-		<%-- アルバム種別の一覧
+		<%-- コンテンツの一覧
 		--%>
 		<%
 			ViewAlbumPageDTO viewAlbumPageDTO = (ViewAlbumPageDTO)request.getAttribute("viewAlbumPageDTO");

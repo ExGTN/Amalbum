@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
+import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
 import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
@@ -34,30 +35,18 @@ public class AlbumStructureBusiness {
 	//=========================================================================
 	// メソッド
 	//=========================================================================
-//	/**
-//	 * 親IDを指定して、AlbumCategoryの一覧を作って返す
-//	 */
-//	public List<AlbumCategory> getAlbumCategoryListByParentID( int parentID ){
-//		// -----< DataStructureから情報を取り出す >-----
-//		//
-//		List<ContentsGroupEntity> contentsGroupEntityList = dataStructureBusiness.getContentsGroupListByParentID( parentID );
-//		
-//		// -----< 取り出した情報をDTOに詰め替えて返す >-----
-//		//
-//		List<AlbumCategory> albumCategoryList = new ArrayList<AlbumCategory>();
-//		for( ContentsGroupEntity contentsGroupEntity : contentsGroupEntityList ){
-//			// AlbumCategoryに詰める
-//			AlbumCategory albumCategory = new AlbumCategory();
-//			albumCategory.setContentsGroupEntity(contentsGroupEntity);
-//			
-//			// リストに詰める
-//			albumCategoryList.add( albumCategory );
-//		}
-//		
-//		// -----< 結果を返す >-----
-//		//
-//		return albumCategoryList;
-//	}
+	/**
+	 * 親IDを指定して、AlbumPageの一覧を作って返す
+	 */
+	public List<ContentsGroupEntity> getAlbumPageList( int parentID ){
+		// -----< DataStructureから情報を取り出す >-----
+		//
+		List<ContentsGroupEntity> contentsGroupEntityList = dataStructureBusiness.getContentsGroupListByParentID( parentID );
+		
+		// -----< 結果を返す >-----
+		//
+		return contentsGroupEntityList;
+	}
 
 
 	/**

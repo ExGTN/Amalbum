@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
+import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageListDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
@@ -33,6 +34,29 @@ public class AlbumService {
 	//=========================================================================
 	// メソッド
 	//=========================================================================
+	/**
+	 * 指定されたalbumPageIDについての、アルバムページの情報を構築し、DTOに格納して返す
+	 * @throws RecordNotFoundException 
+	 */
+	public AlbumPageListDTO getAlbumPageList( int albumID ) throws RecordNotFoundException {
+		// 指定されたアルバム属するアルバムページを取得する
+		List<ContentsGroupEntity> albumPageList = albumStructureBusiness.getAlbumPageList( albumID );
+
+		// 指定されたアルバムの情報を取得する
+		ContentsGroupEntity albumInfo = dataStructureBusiness.getContentsGroup( albumID );
+		
+		// DTOを構築して返す
+		AlbumPageListDTO albumPageListDTO = new AlbumPageListDTO();
+		albumPageListDTO.setAlbumPageList(albumPageList);
+		albumPageListDTO.setAlbumInfo(albumInfo);
+		
+		// 結果を返す
+		return albumPageListDTO;
+	}
+	
+	/**
+	 * 指定されたalbumPageIDについての、アルバムページの情報を構築し、DTOに格納して返す
+	 */
 	public AlbumPageDTO getAlbumPage( int albumPageID ) throws RecordNotFoundException {
 		// 指定されたアルバムページに属する写真を取得する
 		List<PhotoDTO> photoDTOList = albumStructureBusiness.getPhotoList(albumPageID);
@@ -129,12 +153,12 @@ public class AlbumService {
 //	}
 	
 
-	/**
-	 * 指定したアルバムセクションIDを親に持つアルバムのコンテンツを返す。<BR>
-	 * 
-	 * @param parentID アルバムセクションのID
-	 * @return アルバムのコンテンツを格納したリスト
-	 */
+//	/**
+//	 * 指定したアルバムセクションIDを親に持つアルバムのコンテンツを返す。<BR>
+//	 * 
+//	 * @param parentID アルバムセクションのID
+//	 * @return アルバムのコンテンツを格納したリスト
+//	 */
 //	private List<AlbumContents> getAlbumContentsListByParentID( int parentID ){
 //		// -----< アルバムコンテンツを取得して返す >-----
 //		//
