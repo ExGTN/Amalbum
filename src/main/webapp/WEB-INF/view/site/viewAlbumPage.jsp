@@ -59,7 +59,8 @@
 		<form name="fileUploadForm" method="POST" enctype="multipart/form-data" action="${viewAlbumPageDTO.baseURL}/aas/uploadFile.do">
 			<input type="file" name="uploadFile" />
 			<input type="hidden" name="contentsGroupID" value="${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}" />
-			<input type="submit" value="送信" />
+			<input type="hidden" name="returnPath" value="${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}" />
+			<input type="submit" value="アップロード" />
 		</form>
 	</body>
 </html>

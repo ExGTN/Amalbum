@@ -20,6 +20,12 @@ public class ViewAlbumPageListDTO {
 	 * ベースURL
 	 */
 	private String baseURL;
+
+	/**
+	 * デフォルトのページ名
+	 */
+	private String defaultAlbumPageName;
+
 	
 	//=========================================================================
 	// アクセサ
@@ -50,6 +56,20 @@ public class ViewAlbumPageListDTO {
 	 */
 	public String getBaseURL() {
 		return baseURL;
+	}
+
+	/**
+	 * @return the defaultAlbumPageName
+	 */
+	public String getDefaultAlbumPageName() {
+		return defaultAlbumPageName;
+	}
+
+	/**
+	 * @param defaultAlbumPageName the defaultAlbumPageName to set
+	 */
+	public void setDefaultAlbumPageName(String defaultAlbumPageName) {
+		this.defaultAlbumPageName = defaultAlbumPageName;
 	}
 
 }

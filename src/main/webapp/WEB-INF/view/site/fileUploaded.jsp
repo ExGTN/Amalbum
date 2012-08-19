@@ -25,5 +25,9 @@
 		</jsp:include>
 	
 		アップロード完了
+		
+		<c:if test="${returnPath!=null}" >
+			<a href="${returnPath}">戻る</a>
+		</c:if>
 	</body>
 </html>

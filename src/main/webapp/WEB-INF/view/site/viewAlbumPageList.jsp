@@ -4,6 +4,11 @@
 
 <%@ page import="com.mugenunagi.amalbum.album.dto.ViewAlbumPageListDTO" %>
 <% request.setCharacterEncoding( "UTF-8" ); %>
+<%-- アルバムページの一覧のDTO
+--%>
+<%
+	ViewAlbumPageListDTO viewAlbumPageListDTO = (ViewAlbumPageListDTO)request.getAttribute("viewAlbumPageListDTO");
+%>
 
 <%-- ==========================================================================
   マイページ
@@ -13,23 +18,17 @@
 		<%-- HEADの共通部分
 		--%>
 		<jsp:include page="common/HeadCommon.jsp">
-			<jsp:param name="pageName" value="アルバムページ一覧" />
+			<jsp:param name="pageName" value="${viewAlbumPageListDTO.albumPageListDTO.albumInfo.name} - ${viewAlbumPageListDTO.albumPageListDTO.albumInfo.brief}" />
 		</jsp:include>
 	</head>
 
 	<body>
-		<%-- ページの見出し
+		<%-- ページの見出し（アルバム名と簡易説明を表示する）
 		--%>
 		<jsp:include page="common/PageHeader.jsp">
 			<jsp:param name="divID" value="PageHeader" />
-			<jsp:param name="pageName" value="アルバム名" />
+			<jsp:param name="pageName" value="${viewAlbumPageListDTO.albumPageListDTO.albumInfo.name} - ${viewAlbumPageListDTO.albumPageListDTO.albumInfo.brief}" />
 		</jsp:include>
-	
-		<%-- アルバムページの一覧
-		--%>
-		<%
-			ViewAlbumPageListDTO viewAlbumPageListDTO = (ViewAlbumPageListDTO)request.getAttribute("viewAlbumPageListDTO");
-		%>
 
 		<%-- 一覧を出力する
 		--%>
@@ -51,5 +50,20 @@
 				</c:forEach>
 			</table>
 		</div>
+
+		<!-- フォーム部分 -->
+		<HR>
+		<form name="fileUploadForm" method="POST" enctype="multipart/form-data" action="${viewAlbumPageListDTO.baseURL}/aas/uploadFileToDefaultAlbumPage.do">
+			<input type="file" name="uploadFile" size="30"/>
+			<input type="hidden" name="albumID" value="${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
+			<input type="hidden" name="defaultAlbumPageName" value="${viewAlbumPageListDTO.defaultAlbumPageName}" />
+			<input type="hidden" name="returnPath" value="${viewAlbumPageListDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
+			<input type="submit" value="アップロード" />
+		</form>
+		<form action="${viewAlbumPageListDTO.baseURL}/aas/createAlbumPage.do" method="POST">
+			ページ名：<input type="text" name="name" value="" /><BR>
+			簡易説明：<input type="text" name="brief" value="" /><BR>
+			<input type="submit" value="アルバムページを作る" />
+		</form>
 	</body>
 </html>

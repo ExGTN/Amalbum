@@ -2,6 +2,9 @@ package com.mugenunagi.amalbum.album;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -49,7 +52,7 @@ public class AlbumController {
 	 * @param modelMap
 	 * @return
 	 */
-	@RequestMapping("/viewAlbumPageList")
+	@RequestMapping("/viewAlbumPageList.do")
 	public String viewAlbumPageListSimple( ModelMap modelMap ) {
 		// デフォルトのIDを使ってブリッジする
 		Integer defaultAlbumID = 0;
@@ -63,7 +66,7 @@ public class AlbumController {
 	 * @return
 	 * @throws RecordNotFoundException 
 	 */
-	@RequestMapping("/viewAlbumPageList/{albumID}")
+	@RequestMapping("/viewAlbumPageList.do/{albumID}")
 	public String viewAlbumPageList( @PathVariable Integer albumID, ModelMap modelMap ) {
 		try{
         	String baseURL = applicationProperties.getString( "BASE_URL" );
@@ -76,10 +79,16 @@ public class AlbumController {
 		  	//
 		  	// DTO の構造を作る
 		  	ViewAlbumPageListDTO viewAlbumPageListDTO = new ViewAlbumPageListDTO();
-	  	
+
+		  	// デフォルトのアルバムページ名を作る
+		  	Date date = new Date();
+		  	SimpleDateFormat sf = new SimpleDateFormat("yyMMdd");
+		  	String defaultAlbumPageName = sf.format( date );
+		  	
 		  	// 内容を設定する
 		  	viewAlbumPageListDTO.setAlbumPageListDTO(albumPageListDTO);
 		  	viewAlbumPageListDTO.setBaseURL(baseURL);
+		  	viewAlbumPageListDTO.setDefaultAlbumPageName(defaultAlbumPageName);
 
 		  	// -----< VIEWに引き渡す >-----
 		  	//
@@ -141,6 +150,26 @@ public class AlbumController {
     }
 
     /**
+     * デフォルトのアルバムページにファイルをアップロードする
+     * @param contentsGroupID
+     * @param uploadFile
+     * @param map
+     * @return
+     */
+    @RequestMapping(value="/aas/uploadFileToDefaultAlbumPage.do", method=RequestMethod.POST)
+    public String uploadFileToDefaultAlbumPage( @RequestParam("defaultAlbumPageName") String defaultAlbumPageName, @RequestParam("albumID") Integer albumID, @RequestParam("uploadFile") MultipartFile uploadFile, @RequestParam("returnPath") String returnPath, ModelMap map ){
+    	// デフォルトのアルバムページ名について、コンテンツIDを取得する
+    	Integer albumPageID = albumService.getAlbumPageID( albumID, defaultAlbumPageName );
+    	if( albumPageID==null ){
+    		albumPageID = albumService.createAlbumPage( albumID, defaultAlbumPageName );
+    	}
+    	
+    	// コンテンツIDを指定して、登録処理を実行する
+    	String result = uploadFile( albumPageID, uploadFile, returnPath, map );
+    	return result;
+    }
+
+    /**
      * ファイルをアップロードする
      * @param contentsGroupID
      * @param uploadFile
@@ -148,7 +177,7 @@ public class AlbumController {
      * @return
      */
     @RequestMapping(value="/aas/uploadFile.do", method=RequestMethod.POST)
-    public String uploadFile( @RequestParam("contentsGroupID") Integer contentsGroupID, @RequestParam("uploadFile") MultipartFile uploadFile, ModelMap map ){
+    public String uploadFile( @RequestParam("contentsGroupID") Integer contentsGroupID, @RequestParam("uploadFile") MultipartFile uploadFile, @RequestParam("returnPath") String returnPath, ModelMap map ){
     	try {
 	    	// 一時ファイルの配置先ディレクトリを用意する
 	    	String tempDirPath = applicationProperties.getString( "LOCAL_CONTENTS_BASE_PATH" )
@@ -180,6 +209,9 @@ public class AlbumController {
 			
 			// 処理が終わったら一時ファイルを破棄する
 			destinationFile.delete();
+			
+			// 戻り先を設定する
+			map.put("returnPath", returnPath);
 		} catch (Exception e) {
 			exceptionManager.handle(e);
 		}

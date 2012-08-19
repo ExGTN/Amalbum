@@ -2,6 +2,8 @@ package com.mugenunagi.amalbum.albumstructure;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,53 +75,19 @@ public class AlbumService {
 		return albumPageDTO;
 	}
 	
-//	/**
-//	 * アルバムブックリストを取得する
-//	 */
-//	public List<AlbumCategory> getAlbumBookList() {
-//		List<AlbumCategory> albumCategoryList = getAlbumCategoryListByParentID( 0 );
-//		return albumCategoryList;
-//	}
+	/**
+	 * 指定したアルバムのなかで、指定したアルバムページ名を持つアルバムページIDを返す
+	 * @param albumPageName
+	 * @return
+	 */
+	public Integer getAlbumPageID( Integer albumID, String albumPageName ){
+		// 検索する
+		Integer albumPageID = dataStructureBusiness.getContentsGroupID( albumID, albumPageName );
 
-//	/**
-//	 * アルバムセクションリストを取得する
-//	 */
-//	public List<AlbumCategory> getAlbumSectionList( int parentID ) {
-//		List<AlbumCategory> albumCategoryList = getAlbumCategoryListByParentID( parentID );
-//		return albumCategoryList;
-//	}
+		// 結果を返す
+		return albumPageID;
+	}
 
-//	/**
-//	 * アルバムのコンテンツリストを取得する
-//	 */
-//	public List<AlbumContents> getAlbumContentsList( int albumSectionID ) {
-//		List<AlbumContents> albumContentsList = getAlbumContentsListByParentID( albumSectionID );
-//		return albumContentsList;
-//	}
-	
-//	/**
-//	 * アルバムを新規に作成する
-//	 * @param albumContents
-//	 */
-//	public void createAlbum( String albumName, String brief ) {
-//		// AlbumCategoryオブジェクトを作る
-//		AlbumCategory albumCategory = new AlbumCategory();
-//		albumCategory.setContentsGroupEntity( new ContentsGroupEntity() );
-//		
-//		ContentsGroupEntity contentsGroupEntity = albumCategory.getContentsGroupEntity();
-//		contentsGroupEntity.setName( albumName );
-//		contentsGroupEntity.setBrief( brief );
-//		contentsGroupEntity.setParentID( Constants.rootContentsGroupID );
-//		contentsGroupEntity.setDescription( null );
-//		contentsGroupEntity.setCreateDate( new Date() );
-//		contentsGroupEntity.setUpdateDate( new Date() );
-//		contentsGroupEntity.setDeleteDate( null );
-//		
-//		// 新規のアルバムを作る
-//		albumStructureBusiness.createAlbum( albumCategory );
-//		
-//	}
-	
 	/**
 	 * 写真を登録します。
 	 * @throws IOException 
@@ -130,6 +98,20 @@ public class AlbumService {
 		// 写真を登録する
 		fileName = albumStructureBusiness.registPhoto( contentsGroupID, tempFile, fileName );
 		return fileName;
+	}
+
+	/**
+	 * 指定したアルバムIDについて、指定したアルバムページ名でアルバムページを作成します
+	 * @param albumPageID
+	 * @param defaultAlbumPageName
+	 * @return
+	 */
+	public Integer createAlbumPage(Integer albumID, String defaultAlbumPageName) {
+		// 作る
+		Integer albumPageID = albumStructureBusiness.createAlbumPage(albumID, defaultAlbumPageName);
+
+		// 構築したページのIDを返す
+		return albumPageID;
 	}
 
 	

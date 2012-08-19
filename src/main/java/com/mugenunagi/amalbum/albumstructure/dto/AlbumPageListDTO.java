@@ -12,6 +12,7 @@ import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 public class AlbumPageListDTO {
 	private ContentsGroupEntity albumInfo;
 	private List<ContentsGroupEntity> albumPageList;
+
 	/**
 	 * @return the albumInfo
 	 */
@@ -36,5 +37,4 @@ public class AlbumPageListDTO {
 	public void setAlbumPageList(List<ContentsGroupEntity> albumPageList) {
 		this.albumPageList = albumPageList;
 	}
-
 }

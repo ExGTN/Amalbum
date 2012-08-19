@@ -1,5 +1,6 @@
 package com.mugenunagi.amalbum.datastructure;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,7 +140,10 @@ public class DataStructureBusiness {
 		contentsGroupMapper.insertContentsGroup(contentsGroupEntity);
 		
 		// SeqNoを更新する
-		int nextSeqNo = contentsGroupMapper.getNextSeqNo();
+		Integer nextSeqNo = contentsGroupMapper.getNextSeqNo( contentsGroupID );
+		if( nextSeqNo==null ){
+			nextSeqNo = 1;
+		}
 		contentsGroupEntity.setSeqNo(nextSeqNo);
 		
 		// 更新する
@@ -194,5 +198,46 @@ public class DataStructureBusiness {
 		
 		// Contentsを削除する
 		contentsMapper.deleteContents( contentsID );
+	}
+
+	/**
+	 * 指定された親を持つコンテンツグループで、子のコンテンツグループ名が指定された名称であるものを選択して返す
+	 * @param albumID
+	 * @param albumPageName
+	 * @return
+	 */
+	public Integer getContentsGroupID(Integer parentID, String name) {
+		ContentsGroupEntity entity = new ContentsGroupEntity();
+		entity.setParentID(parentID);
+		entity.setName(name);
+		Integer id = contentsGroupMapper.getContentsGroupID( entity );
+		return id;
+	}
+
+	/**
+	 * 指定されたContentsGroupの子として、ContentsGroupを登録する。
+	 * @param albumID
+	 * @param albumPageName
+	 */
+	public void createContentsGroup(Integer parentID, String contentsGroupName) {
+		// 発番する
+		Integer contentsGroupID = contentsGroupMapper.getNextContentsGroupID();
+		Integer seqNo = contentsGroupMapper.getNextSeqNo( parentID );
+		if( seqNo==null ){ seqNo = 1; }
+		Date date = new Date();
+		
+		ContentsGroupEntity entity = new ContentsGroupEntity();
+
+		entity.setContentsGroupID( contentsGroupID );	// コンテンツグループID
+		entity.setParentID( parentID );	// 親コンテンツグループID
+		entity.setName( contentsGroupName );	// コンテンツグループ名
+		entity.setBrief( null );	// 説明
+		entity.setDescription( null );	// 詳細説明
+		entity.setSeqNo(seqNo);	// 表示順
+		entity.setDeleteDate( null );	// 削除日付
+		entity.setUpdateDate( date );	// 更新日付
+		entity.setCreateDate( date );	// 作成日付
+
+		contentsGroupMapper.insertContentsGroup(entity);
 	}
 }

@@ -16,6 +16,11 @@
 		select * from contentsGroup where ContentsGroupID = #{contentsGroupID} and (DeleteDate is null)
 	</select>
 	
+	<!--  ContentsGroupIDを、名称から検索する -->
+	<select id="getContentsGroupID" parameterType="contentsGroupEntity" resultType="Integer">
+		select contentsGroupID from contentsGroup where parentID=#{parentID} and name=#{name} and (DeleteDate is null)
+	</select>
+
 	<!-- ContentsGroupIDを発番する -->
 	<select id="getNextContentsGroupID" resultType="int">
 		select nextval('ContentsGroupIDSequence')
@@ -50,8 +55,8 @@
 	</insert>
 	
 	<!-- 次のSeqNoを発番する -->
-	<select id="getNextSeqNo" resultType="int">
-		select max(SeqNo)+1 from ContentsGroup
+	<select id="getNextSeqNo" parameterType="int" resultType="Integer">
+		select max(SeqNo)+1 from ContentsGroup where parentID=#{parentID}
 	</select>
 
 	<!-- ContentsGroupを更新する -->

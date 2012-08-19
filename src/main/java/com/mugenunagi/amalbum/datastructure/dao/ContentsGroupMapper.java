@@ -23,6 +23,13 @@ public interface ContentsGroupMapper {
      * @return
      */
     public ContentsGroupEntity selectContentsGroupByContentsGroupID( Integer contentsGroupID );
+    
+    /**
+     * 名称が name で、親がparentIDのレコードについて、そのコンテンツグループIDを返す
+     * @param condition
+     * @return
+     */
+	public Integer getContentsGroupID( ContentsGroupEntity condition );
 
     /**
      * ContentsGroupIDを発番する
@@ -48,7 +55,7 @@ public interface ContentsGroupMapper {
      * 次のSeqNoを発番する
      * @return
      */
-    public int getNextSeqNo();
+    public Integer getNextSeqNo( Integer parentID );
 
 	/**
 	 * ContentsGroup

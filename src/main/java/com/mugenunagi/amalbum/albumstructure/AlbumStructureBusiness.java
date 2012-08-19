@@ -86,6 +86,18 @@ public class AlbumStructureBusiness {
 		//
 		return photoDTOList;
 	}
+
+	/**
+	 * 指定されたcontentsIDのアルバムページに、tempFileの写真を追加します
+	 * @throws IOException 
+	 * @throws InvalidStateException 
+	 * @throws RecordNotFoundException 
+	 */
+	public String registPhoto( Integer contentsID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException {
+		fileName = photoRegistrator.registPhoto( contentsID, tempFile, fileName );
+		return fileName;
+	}
+
 	
 //	/**
 //	 * アルバムを新規に作成する
@@ -98,13 +110,20 @@ public class AlbumStructureBusiness {
 //	}
 
 	/**
-	 * 指定されたcontentsIDのアルバムページに、tempFileの写真を追加します
-	 * @throws IOException 
-	 * @throws InvalidStateException 
-	 * @throws RecordNotFoundException 
+	 * アルバムページを新規に作成する
 	 */
-	public String registPhoto( Integer contentsID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException {
-		fileName = photoRegistrator.registPhoto( contentsID, tempFile, fileName );
-		return fileName;
+	public Integer createAlbumPage(Integer albumID, String albumPageName) {
+		// ためしにIDを取得し、既存ならそのIDを返す
+		Integer albumPageID = dataStructureBusiness.getContentsGroupID( albumID, albumPageName );
+		if( albumPageID!=null ){ return albumPageID; }
+
+		// コンテンツグループを追加する
+		dataStructureBusiness.createContentsGroup(albumID, albumPageName);
+		
+		// 追加したグループについて、IDを取得する
+		albumPageID = dataStructureBusiness.getContentsGroupID( albumID, albumPageName );
+
+		// 結果を返す
+		return albumPageID;
 	}
 }
