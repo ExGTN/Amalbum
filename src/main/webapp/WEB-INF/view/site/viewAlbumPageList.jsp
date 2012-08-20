@@ -11,7 +11,7 @@
 %>
 
 <%-- ==========================================================================
-  マイページ
+  アルバムページ一覧の画面
 ========================================================================== --%>
 <html>
 	<head>
@@ -61,8 +61,9 @@
 			<input type="submit" value="アップロード" />
 		</form>
 		<form action="${viewAlbumPageListDTO.baseURL}/aas/createAlbumPage.do" method="POST">
-			ページ名：<input type="text" name="name" value="" /><BR>
-			簡易説明：<input type="text" name="brief" value="" /><BR>
+			ページ名：<input type="text" name="name" value="" />
+			<input type="hidden" name="albumID" value="${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
+			<input type="hidden" name="returnPath" value="${viewAlbumPageListDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
 			<input type="submit" value="アルバムページを作る" />
 		</form>
 	</body>

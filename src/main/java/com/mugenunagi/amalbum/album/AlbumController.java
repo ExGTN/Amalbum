@@ -217,4 +217,23 @@ public class AlbumController {
 		}
 		return "site/fileUploaded";
    	}
+
+    /**
+     * アルバムページを追加する
+     * @param contentsGroupID
+     * @param uploadFile
+     * @param map
+     * @return
+     */
+    @RequestMapping(value="/aas/createAlbumPage.do", method=RequestMethod.POST)
+    public String createAlbumPage( @RequestParam("name") String name, @RequestParam("albumID") Integer albumID, @RequestParam("returnPath") String returnPath, ModelMap map ){
+    	// アルバムページを作る
+    	Integer albumPageID = albumService.createAlbumPage(albumID, name);
+    	
+    	// ModelMapに設定
+    	map.put("returnPath", returnPath);
+
+    	// リンク先のJSPへ
+    	return "site/albumPageCreated";
+    }
 }

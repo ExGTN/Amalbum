@@ -4,6 +4,12 @@
 
 <%@ page import="com.mugenunagi.amalbum.album.dto.ViewAlbumPageDTO" %>
 <% request.setCharacterEncoding( "UTF-8" ); %>
+<%-- コンテンツの一覧
+--%>
+
+<%
+	ViewAlbumPageDTO viewAlbumPageDTO = (ViewAlbumPageDTO)request.getAttribute("viewAlbumPageDTO");
+%>
 
 <%-- ==========================================================================
  アルバムのコンテンツ表示
@@ -13,7 +19,7 @@
 		<%-- HEADの共通部分
 		--%>
 		<jsp:include page="common/HeadCommon.jsp">
-			<jsp:param name="pageName" value="アルバムページ参照" />
+			<jsp:param name="pageName" value="${viewAlbumPageDTO.albumPageDTO.albumPageInfo.name}" />
 		</jsp:include>
 	</head>
 
@@ -22,15 +28,9 @@
 		--%>
 		<jsp:include page="common/PageHeader.jsp">
 			<jsp:param name="divID" value="PageHeader" />
-			<jsp:param name="pageName" value="アルバム名" />
+			<jsp:param name="pageName" value="${viewAlbumPageDTO.albumPageDTO.albumPageInfo.name}" />
 		</jsp:include>
 	
-		<%-- コンテンツの一覧
-		--%>
-		<%
-			ViewAlbumPageDTO viewAlbumPageDTO = (ViewAlbumPageDTO)request.getAttribute("viewAlbumPageDTO");
-		%>
-
 		<%-- 一覧を出力する
 		--%>
 		<div id="ContentsList">
