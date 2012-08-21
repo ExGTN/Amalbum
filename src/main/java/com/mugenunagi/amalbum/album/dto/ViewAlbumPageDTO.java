@@ -21,6 +21,10 @@ public class ViewAlbumPageDTO {
 	 */
 	private String baseURL;
 
+	/**
+	 * 編集モードか否か
+	 */
+	private boolean editMode = false;
 	
 	//=========================================================================
 	// アクセサ
@@ -51,6 +55,22 @@ public class ViewAlbumPageDTO {
 	 */
 	public void setBaseURL(String baseURL) {
 		this.baseURL = baseURL;
+	}
+
+	/**
+	 * 編集モードか否かを設定する
+	 * @param editMode
+	 */
+	public void setEditMode(boolean editMode) {
+		this.editMode = editMode;
+	}
+
+	/**
+	 * 編集モードか否かを取得する
+	 * @param editMode
+	 */
+	public boolean isEditMode() {
+		return editMode;
 	}
 
 }
