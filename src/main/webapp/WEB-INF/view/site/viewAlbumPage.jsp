@@ -91,6 +91,15 @@
 			<HR>
 		</c:forEach>
 
+		<%-- エディットモードへ
+		--%>
+		<c:if test="${viewAlbumPageDTO.editMode==false}">
+			<form name='toEditMode' action='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}' method='GET'>
+			<input type='hidden' name='editMode' value='true'>
+			<div align='right'><input type='submit' value='エディットモードへ'></div>
+			</form>
+		</c:if>
+
 		<%-- アップロードのフォーム
 		--%>
 		<form name="fileUploadForm" method="POST" enctype="multipart/form-data" action="${viewAlbumPageDTO.baseURL}/aas/uploadFile.do">
