@@ -55,7 +55,7 @@
 
 				<%-- 回転指示ボタン --%>
 				<c:if test="${viewAlbumPageDTO.editMode}">
-					<form action='${viewAlbumPageDTO.baseURL}/aas/rotateImage.do' method='POST'>s
+					<form action='${viewAlbumPageDTO.baseURL}/aas/rotateImage.do' method='POST'>
 						<input type='hidden' name='returnPath' value='${viewAlbumPageDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.parentID}'>
 						<input type='hidden' name='editMode' value='true'>
 						<input type='submit' name='rotate' value='画像を左回転'></input>&nbsp;
@@ -66,27 +66,27 @@
 				<!-- 説明表示 -->
 				<div class="APVPhotoComment">
 					${photoDTO.description}
-
-					<c:if test="${viewAlbumPageDTO.editMode}">
-						<%-- コメント編集ボタン --%>
-						<form action='${viewAlbumPageDTO.baseURL}/aas/editPhotoComment.do' method='POST'>
-							<input type='hidden' name='returnPath' value='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
-							<input type='hidden' name='editMode' value='true'>
-							<div align='right'>
-								<input type='submit' value='コメント編集'/>
-							</div>
-						</form>
-
-						<%-- ファイル削除ボタン --%>
-						<form name='deleteFileForm${varStatus.count}' action='${viewAlbumPageDTO.baseURL}/aas/deletePhoto.do' method='POST'>
-							<input type='hidden' name='returnPath' value='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
-							<input type='hidden' name='editMode' value='true'>
-							<div align='right'>
-								<input type='button' value='ファイル削除' onClick='javascript:onDeleteFile( document.deleteFileForm${varStatus.count} )' />
-							</div>
-						</form>
-					</c:if>
 				</div>
+
+				<c:if test="${viewAlbumPageDTO.editMode}">
+					<%-- コメント編集ボタン --%>
+					<form action='${viewAlbumPageDTO.baseURL}/aas/editPhotoComment.do' method='POST'>
+						<input type='hidden' name='returnPath' value='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
+						<input type='hidden' name='editMode' value='true'>
+						<div align='right'>
+							<input type='submit' value='コメント編集'/>
+						</div>
+					</form>
+
+					<%-- ファイル削除ボタン --%>
+					<form name='deleteFileForm${varStatus.count}' action='${viewAlbumPageDTO.baseURL}/aas/deletePhoto.do' method='POST'>
+						<input type='hidden' name='returnPath' value='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
+						<input type='hidden' name='editMode' value='true'>
+						<div align='right'>
+							<input type='button' value='ファイル削除' onClick='javascript:onDeleteFile( document.deleteFileForm${varStatus.count} )' />
+						</div>
+					</form>
+				</c:if>
 			</div>
 			<HR>
 		</c:forEach>
@@ -97,6 +97,12 @@
 			<form name='toEditMode' action='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}' method='GET'>
 			<input type='hidden' name='editMode' value='true'>
 			<div align='right'><input type='submit' value='エディットモードへ'></div>
+			</form>
+		</c:if>
+		<c:if test="${viewAlbumPageDTO.editMode==true}">
+			<form name='toReferMode' action='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}' method='GET'>
+			<input type='hidden' name='editMode' value='false'>
+			<div align='right'><input type='submit' value='参照モードへ'></div>
 			</form>
 		</c:if>
 

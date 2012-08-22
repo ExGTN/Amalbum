@@ -124,7 +124,12 @@ public class AlbumController {
 	 * @return
 	 */
     @RequestMapping("/viewAlbumPage.do/{albumPageID}")
-    public String viewAlbumPage( @PathVariable Integer albumPageID, ModelMap modelMap ) {
+    public String viewAlbumPage( @PathVariable Integer albumPageID, @RequestParam(value="editMode", required=false) String editModeString, ModelMap modelMap ) {
+    	// editMode判定
+    	boolean editMode = false;
+    	if( (editModeString!=null)&&(editModeString.equals("true")) ){
+    		editMode = true;
+    	}
 
     	try{
 	    	// -----< アルバムページの情報を取得する  >-----
@@ -138,6 +143,7 @@ public class AlbumController {
 	    	ViewAlbumPageDTO viewAlbumPageDTO = new ViewAlbumPageDTO();
 	    	viewAlbumPageDTO.setBaseURL(baseURL);
 	    	viewAlbumPageDTO.setAlbumPageDTO(albumPageDTO);
+	    	viewAlbumPageDTO.setEditMode(editMode);
 	    	
 	    	// -----< VIEWに引き渡す >-----
 	    	//
