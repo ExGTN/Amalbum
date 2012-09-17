@@ -12,7 +12,7 @@ import com.mugenunagi.amalbum.exception.InvalidStateException;
  * @author gtn
  *
  */
-public class FileUtils {
+public class FilePathUtil {
 	/**
 	 * 日付とベースパスを指定して実行すると、ベースパス以下にYYYYMMDDの名前のディレクトリを作成します。
 	 * ディレクトリが既存の場合は、何もせずに返ります。
@@ -39,24 +39,52 @@ public class FileUtils {
 	public static void prepareDirectory( String basePath, String newDirName ) throws InvalidStateException, IOException {
 		// ディレクトリのフルパスを作る
     	String dirPath = basePath + "/" + newDirName;
-    	File newDir = new File( dirPath );
+    	FilePathUtil.prepareDirectory(dirPath);
+    	
+		// 正常終了
+	}
 
-    	// 既存確認
-    	if( newDir.exists() ){
-	    	if( newDir.isDirectory() ){
-	    		// ディレクトリが既存なら何もしない
-	    		return;
-	    	} else {
-	    		// ファイルシステム上既存だがディレクトリでない場合は例外
-	    		throw new InvalidStateException( "同名のファイルが存在しています。Path="+newDir.getAbsolutePath() );
+	/**
+	 * 指定したベースパス内に、指定した名称のディレクトリを作成します。
+	 * ディレクトリが既存だった場合は、何もせずに返ります。
+	 * @param basePath
+	 * @param newDirName
+	 * @throws InvalidStateException
+	 * @throws IOException
+	 */
+	public static void prepareDirectory( String path ) throws InvalidStateException, IOException {
+		String[] elements = path.split("/");
+		if( elements.length==0 ){ return; }
+		
+		StringBuilder dirPath = new StringBuilder();
+		if( path.startsWith("/") ){
+			dirPath.append("/");
+		}
+
+		for( int i=0;i<elements.length;i++ ){
+			if( i!=0 ){ dirPath.append("/"); }
+			dirPath.append( elements[i] );
+			
+			// ディレクトリのフルパスを作る
+	    	File newDir = new File( dirPath.toString() );
+	
+	    	// 既存確認
+	    	if( newDir.exists() ){
+		    	if( newDir.isDirectory() ){
+		    		// ディレクトリが既存なら何もしない
+		    		continue;
+		    	} else {
+		    		// ファイルシステム上既存だがディレクトリでない場合は例外
+		    		throw new InvalidStateException( "同名のファイルが存在しています。Path="+newDir.getAbsolutePath() );
+		    	}
 	    	}
-    	}
-
-    	// 作成する
-   		boolean result = newDir.mkdir();
-		if( !result ){
-			// 一時ファイルの配置先を用意できなかった
-			throw new IOException( "ディレクトリを生成できませんでした。Dir="+newDir.getAbsolutePath() );
+	
+	    	// 作成する
+	   		boolean result = newDir.mkdir();
+			if( !result ){
+				// 一時ファイルの配置先を用意できなかった
+				throw new IOException( "ディレクトリを生成できませんでした。Dir="+newDir.getAbsolutePath() );
+			}
 		}
 		
 		// 正常終了

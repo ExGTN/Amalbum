@@ -186,7 +186,7 @@ public class ImageUtils {
 		AffineTransform af = new AffineTransform();
 		af.setToIdentity();
 		af.translate(dHeight/2.0, dWidth/2.0);
-		af.rotate( angle );
+		af.rotate( -(angle/180.0)*Math.PI );
 		af.translate(-dWidth/2.0, -dHeight/2.0);
 		
 		graphics2D.drawImage(image, af, null);

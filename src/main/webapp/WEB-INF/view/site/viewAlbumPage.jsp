@@ -58,8 +58,10 @@
 					<form action='${viewAlbumPageDTO.baseURL}/aas/rotateImage.do' method='POST'>
 						<input type='hidden' name='returnPath' value='${viewAlbumPageDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.parentID}'>
 						<input type='hidden' name='editMode' value='true'>
-						<input type='submit' name='rotate' value='画像を左回転'></input>&nbsp;
-						<input type='submit' name='rotate' value='画像を右回転'></input>
+						<input type='hidden' name='contentsID' value='${photoDTO.contentsID}'>
+						<input type='hidden' name='rotate' value=''>
+						<input type='button' name='rotateLeftButton'  value='画像を左回転' onclick='javascript:rotate.value="left";submit();'></input>&nbsp;
+						<input type='button' name='rotateRightButton' value='画像を右回転' onclick='javascript:rotate.value="right";submit();'></input>
 					</form>
 				</c:if>
 

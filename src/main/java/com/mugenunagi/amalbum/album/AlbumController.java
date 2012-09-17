@@ -1,5 +1,6 @@
 package com.mugenunagi.amalbum.album;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -7,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,8 @@ import com.mugenunagi.ApplicationProperties;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageDTO;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageListDTO;
 import com.mugenunagi.amalbum.albumstructure.AlbumService;
+import com.mugenunagi.amalbum.albumstructure.PhotoFileUtil;
+import com.mugenunagi.amalbum.albumstructure.PhotoRegistrator;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageListDTO;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
@@ -28,6 +32,7 @@ import com.mugenunagi.amalbum.exception.InvalidParameterException;
 import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
 import com.mugenunagi.amalbum.exception.handler.AmalbumExceptionManager;
+import com.mugenunagi.gtnlib.graphics.image.ImageUtils;
 
 /**
  * アルバムのコントローラ
@@ -46,6 +51,12 @@ public class AlbumController {
 	
 	@Autowired
 	private AmalbumExceptionManager exceptionManager;
+	
+	@Autowired
+	private PhotoRegistrator photoRegistrator;
+	
+	@Autowired
+	private PhotoFileUtil photoFileUtil;
 
 	/**
 	 * アルバムページの一覧を参照する。アルバムのIDとして、デフォルトの値を用いる
@@ -186,8 +197,7 @@ public class AlbumController {
     public String uploadFile( @RequestParam("contentsGroupID") Integer contentsGroupID, @RequestParam("uploadFile") MultipartFile uploadFile, @RequestParam("returnPath") String returnPath, ModelMap map ){
     	try {
 	    	// 一時ファイルの配置先ディレクトリを用意する
-	    	String tempDirPath = applicationProperties.getString( "LOCAL_CONTENTS_BASE_PATH" )
-	    						+ "/" + applicationProperties.getString( "PHOTO_TEMP_RELATIVE_PATH" );
+	    	String tempDirPath = photoFileUtil.getTempPath();
 	    	File tempDir = new File( tempDirPath );
 	    	if( !tempDir.exists() ){
 	    		boolean result = tempDir.mkdir();
@@ -241,5 +251,41 @@ public class AlbumController {
 
     	// リンク先のJSPへ
     	return "site/albumPageCreated";
+    }
+    
+    /**
+     * 画像を回転させる
+     * @param rotate
+     * @param returnPath
+     * @param editMode
+     * @param contentsID
+     * @param map
+     * @return
+     */
+    @RequestMapping(value="/aas/rotateImage.do", method=RequestMethod.POST)
+    public String rotateImage( @RequestParam("rotate") String rotate, @RequestParam("returnPath") String returnPath, @RequestParam("editMode") String editMode, @RequestParam("contentsID") Integer contentsID, ModelMap map ){
+    	try{
+	    	// 確認
+	    	if( rotate==null ){
+	    		throw new InvalidParameterException( "rotateがnullです" );
+	    	}
+	    	if( (!rotate.equals("left"))&&(!rotate.equals("right")) ){
+	    		throw new InvalidParameterException( "rotateがが不正です。rotate="+rotate );
+	    	}
+	    	
+	    	// 判定して回転させる
+	    	PhotoRegistrator.RotateDirection direction = PhotoRegistrator.RotateDirection.RIGHT;
+	    	if( rotate.equals("left") ){
+	    		direction = PhotoRegistrator.RotateDirection.LEFT;
+	    	}
+    		photoRegistrator.rotateImage( direction, contentsID );
+	    	
+	    	// 結果を返す
+	    	map.put("returnPath", returnPath);
+	    	return "site/imageRotated";
+    	} catch (Exception e){
+    		exceptionManager.handle(e);
+    		return null;
+    	}
     }
 }

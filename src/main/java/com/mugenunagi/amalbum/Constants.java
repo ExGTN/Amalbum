@@ -8,6 +8,7 @@ package com.mugenunagi.amalbum;
 public class Constants {
 	// -----< 定義 >-----
 	//
+	public static final int undefined = -1;
 	public static final int rootContentsGroupID = 0;
 
 	// -----< enum定義 >-----
