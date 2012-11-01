@@ -22,7 +22,7 @@
 	</select>
 	
 	<!-- コンテンツを追加する -->
-	<select id="insertContents" parameterType="contentsEntity">
+	<insert id="insertContents" parameterType="contentsEntity">
 		insert into contents (
 			  ContentsID
 			, ContentsGroupID
@@ -46,7 +46,23 @@
 			, #{updateDate}
 			, #{createDate}
 			);
-	</select>
+	</insert>
+	
+	<!-- コンテンツを更新する -->
+	<update id="updateContents" parameterType="contentsEntity">
+		update contents set
+			  ContentsGroupID = #{contentsGroupID}
+			, Name = #{name}
+			, Brief = #{brief}
+			, Description = #{description}
+			, BaseDir = #{baseDir}
+			, SeqNo = #{seqNo}
+			, DeleteDate = #{deleteDate}
+			, UpdateDate = #{updateDate}
+			, CreateDate = #{createDate}
+			where
+			  ContentsID = #{contentsID};
+	</update>
 	
 	<delete id="deleteContents" parameterType="int">
 		delete from contents where contentsID=#{contentsID};

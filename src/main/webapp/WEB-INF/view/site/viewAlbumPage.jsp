@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
@@ -31,7 +30,7 @@
 
 		<%-- ページ全体のコメント入力へのリンク --%>
 		<c:if test="${viewAlbumPageDTO.editMode}">
-			<form action='${viewAlbumPageDTO.baseURL}/aas/editAlbumPageComment.do' method='POST'>
+			<form action='${viewAlbumPageDTO.baseURL}/aas/editAlbumPageProperty.do' method='POST'>
 				<input type='hidden' name='returnPath' value='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
 				<input type='hidden' name='editMode' value='true'>
 				<div align='right'><input type='submit' value='コメント編集'></input></div>
@@ -50,7 +49,7 @@
 						<img src="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/1">
 					</a>
 					<BR>
-					ファイル名（DTO未実装）
+					${photoDTO.path}
 				</div>
 
 				<%-- 回転指示ボタン --%>
@@ -72,9 +71,12 @@
 
 				<c:if test="${viewAlbumPageDTO.editMode}">
 					<%-- コメント編集ボタン --%>
-					<form action='${viewAlbumPageDTO.baseURL}/aas/editPhotoComment.do' method='POST'>
+					<form action='${viewAlbumPageDTO.baseURL}/editPhotoProperty.do' method='POST'>
 						<input type='hidden' name='returnPath' value='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
 						<input type='hidden' name='editMode' value='true'>
+						<input type='hidden' name='contentsID' value='${photoDTO.contentsID}'>
+						<input type='hidden' name='description' value='${photoDTO.description}'>
+						<input type='hidden' name='baseURL' value='${viewAlbumPageDTO.baseURL}'>
 						<div align='right'>
 							<input type='submit' value='コメント編集'/>
 						</div>

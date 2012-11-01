@@ -240,4 +240,12 @@ public class DataStructureBusiness {
 
 		contentsGroupMapper.insertContentsGroup(entity);
 	}
+	
+	/**
+	 * コンテンツの内容を更新する
+	 * @param contentsEntity
+	 */
+	public void updateContents( ContentsEntity contentsEntity ){
+		contentsMapper.updateContents(contentsEntity);
+	}
 }

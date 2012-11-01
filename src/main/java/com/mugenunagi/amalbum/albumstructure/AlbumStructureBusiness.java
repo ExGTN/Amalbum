@@ -77,6 +77,7 @@ public class AlbumStructureBusiness {
 			photoDTO.setContentsID( contentsID );
 			photoDTO.setDescription( description );
 			photoDTO.setMaterialID( materialID );
+			photoDTO.setPath( materialList.get(0).getPath() );
 			
 			// リストに詰める
 			photoDTOList.add( photoDTO );
@@ -85,6 +86,41 @@ public class AlbumStructureBusiness {
 		// -----< 結果を返す >-----
 		//
 		return photoDTOList;
+	}
+
+	/**
+	 * 写真IDを指定して、１枚の写真に関するPhotoDTOを作って返す
+	 * @param photoID
+	 * @return
+	 * @throws RecordNotFoundException 
+	 */
+	public PhotoDTO getPhoto( int photoID ) throws RecordNotFoundException {
+		// -----< DataStructureから情報を取り出す >-----
+		//
+		ContentsEntity contentsEntity = dataStructureBusiness.getContentsByContentsID( photoID );
+		
+		// -----< 取り出した情報をDTOに詰め替えて返す >-----
+		//
+		Integer contentsID = contentsEntity.getContentsID();
+		String description = contentsEntity.getDescription();
+
+		// ContentsIDに対応するMaterialを得る
+		List<MaterialEntity> materialList = dataStructureBusiness.getMaterialListByContentsID( contentsID );
+		if( materialList.size()==0 ){
+			throw new RecordNotFoundException( "コンテンツID（写真ID）に対応するマテリアルID（素材ID）が見つかりませんでした。ContentsID="+contentsID );
+		}
+		Integer materialID = materialList.get(0).getMaterialID();
+		
+		// AlbumContentsに詰める
+		PhotoDTO photoDTO = new PhotoDTO();
+		photoDTO.setContentsID( contentsID );
+		photoDTO.setDescription( description );
+		photoDTO.setMaterialID( materialID );
+		photoDTO.setPath( materialList.get(0).getPath() );
+		
+		// -----< 結果を返す >-----
+		//
+		return photoDTO;
 	}
 
 	/**

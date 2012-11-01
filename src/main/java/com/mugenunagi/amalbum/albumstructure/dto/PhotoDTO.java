@@ -9,6 +9,7 @@ public class PhotoDTO {
 	private int contentsID;
 	private int materialID;
 	private String description;
+	private String path;
 
 	/**
 	 * @return the contentsID
@@ -45,5 +46,17 @@ public class PhotoDTO {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	/**
+	 * @return the path
+	 */
+	public String getPath() {
+		return path;
+	}
+	/**
+	 * @param path the path to set
+	 */
+	public void setPath(String path) {
+		this.path = path;
 	}
 }

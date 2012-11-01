@@ -23,10 +23,14 @@ import com.mugenunagi.ApplicationProperties;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageDTO;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageListDTO;
 import com.mugenunagi.amalbum.albumstructure.AlbumService;
+import com.mugenunagi.amalbum.albumstructure.AlbumStructureBusiness;
 import com.mugenunagi.amalbum.albumstructure.PhotoFileUtil;
 import com.mugenunagi.amalbum.albumstructure.PhotoRegistrator;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageListDTO;
+import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
+import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
+import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 import com.mugenunagi.amalbum.exception.InvalidParameterException;
 import com.mugenunagi.amalbum.exception.InvalidStateException;
@@ -48,6 +52,12 @@ public class AlbumController {
 	
 	@Autowired
 	private AlbumService albumService;
+	
+	@Autowired
+	private AlbumStructureBusiness albumStructureBusiness;
+	
+	@Autowired
+	private DataStructureBusiness dataStructureBusiness;
 	
 	@Autowired
 	private AmalbumExceptionManager exceptionManager;
@@ -283,6 +293,88 @@ public class AlbumController {
 	    	// 結果を返す
 	    	map.put("returnPath", returnPath);
 	    	return "site/imageRotated";
+    	} catch (Exception e){
+    		exceptionManager.handle(e);
+    		return null;
+    	}
+    }
+    
+    /**
+     * 写真の属性を編集する
+     * @param rotate
+     * @param returnPath
+     * @param editMode
+     * @param contentsID
+     * @param map
+     * @return
+     */
+    @RequestMapping(value="/editPhotoProperty.do", method=RequestMethod.POST)
+    public String editPhotoProperty( @RequestParam("contentsID") Integer contentsID
+    								, @RequestParam("description") String description
+    								, @RequestParam("baseURL") String baseURL
+    								, @RequestParam("returnPath") String returnPath
+    								, @RequestParam("editMode") String editMode
+    								, ModelMap map ){
+    	try{
+	    	// 確認
+	    	if( contentsID==null ){
+	    		throw new InvalidParameterException( "contentsIDがnullです" );
+	    	}
+	    	
+	    	// 検索してphotoDTOを得る
+	    	PhotoDTO photoDTO = albumStructureBusiness.getPhoto( contentsID );
+
+	    	// 結果を返す
+	    	map.put("editMode", editMode );
+	    	map.put("returnPath", returnPath);
+	    	map.put("photoDTO", photoDTO);
+	    	map.put("baseURL", baseURL);
+	    	return "site/editPhotoProperty";
+    	} catch (Exception e){
+    		exceptionManager.handle(e);
+    		return null;
+    	}
+    }
+
+    /**
+     * 写真の属性を更新する
+     * @param rotate
+     * @param returnPath
+     * @param editMode
+     * @param contentsID
+     * @param map
+     * @return
+     */
+    @RequestMapping(value="/updatePhotoProperty.do", method=RequestMethod.POST)
+    public String updatePhotoProperty( @RequestParam("contentsID") Integer contentsID
+    								, @RequestParam("description") String description
+    								, @RequestParam("baseURL") String baseURL
+    								, @RequestParam("returnPath") String returnPath
+    								, @RequestParam("editMode") String editMode
+    								, ModelMap map ){
+    	try{
+	    	// 確認
+	    	if( contentsID==null ){
+	    		throw new InvalidParameterException( "contentsIDがnullです" );
+	    	}
+	    	
+	    	// 検索してphotoDTOを得る
+	    	PhotoDTO photoDTO = albumStructureBusiness.getPhoto( contentsID );
+	    	photoDTO.setDescription(description);
+	    	
+	    	// photoDTOについて更新する
+	    	ContentsEntity contentsEntity = dataStructureBusiness.getContentsByContentsID(photoDTO.getContentsID());
+	    	contentsEntity.setUpdateDate( new Date() );
+	    	contentsEntity.setDescription( photoDTO.getDescription() );
+	    	dataStructureBusiness.updateContents( contentsEntity );
+    	
+	    	// albumPageIDを逆引き
+	    	Integer albumPageID = contentsEntity.getContentsGroupID();
+
+	    	// 写真の一覧に戻る
+	    	map.put("albumPageID", albumPageID);
+	    	map.put("editMode", editMode);
+	    	return "site/viewAlbumPage";
     	} catch (Exception e){
     		exceptionManager.handle(e);
     		return null;
