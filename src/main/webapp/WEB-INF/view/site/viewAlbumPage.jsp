@@ -25,14 +25,16 @@
 		--%>
 		<jsp:include page="common/PageHeader.jsp">
 			<jsp:param name="divID" value="PageHeader" />
-			<jsp:param name="pageName" value="${viewAlbumPageDTO.albumPageDTO.albumPageInfo.name}" />
+			<jsp:param name="pageName" value="${viewAlbumPageDTO.albumPageDTO.albumPageInfo.name} - ${viewAlbumPageDTO.albumPageDTO.albumPageInfo.brief}" />
 		</jsp:include>
 
+		<%-- ページ全体のコメント --%>
+		${viewAlbumPageDTO.albumPageDTO.albumPageInfo.description}<BR>
+		
 		<%-- ページ全体のコメント入力へのリンク --%>
 		<c:if test="${viewAlbumPageDTO.editMode}">
 			<form action='${viewAlbumPageDTO.baseURL}/aas/editAlbumPageProperty.do' method='POST'>
-				<input type='hidden' name='returnPath' value='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
-				<input type='hidden' name='editMode' value='true'>
+				<input type='hidden' name='contentsGroupID' value='${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
 				<div align='right'><input type='submit' value='コメント編集'></input></div>
 			</form>
 		</c:if>

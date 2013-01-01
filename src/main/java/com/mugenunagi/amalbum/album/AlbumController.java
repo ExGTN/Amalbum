@@ -37,6 +37,7 @@ import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
 import com.mugenunagi.amalbum.exception.handler.AmalbumExceptionManager;
 import com.mugenunagi.gtnlib.graphics.image.ImageUtils;
+import com.mugenunagi.gtnlib.html.HTMLUtil;
 
 /**
  * アルバムのコントローラ
@@ -323,6 +324,11 @@ public class AlbumController {
 	    	
 	    	// 検索してphotoDTOを得る
 	    	PhotoDTO photoDTO = albumStructureBusiness.getPhoto( contentsID );
+	    	
+	    	// 変換
+	    	description = photoDTO.getDescription();
+	    	description = HTMLUtil.decodeHtmlSpecialChars(description);
+	    	photoDTO.setDescription(description);
 
 	    	// 結果を返す
 	    	map.put("editMode", editMode );
@@ -330,6 +336,38 @@ public class AlbumController {
 	    	map.put("photoDTO", photoDTO);
 	    	map.put("baseURL", baseURL);
 	    	return "site/editPhotoProperty";
+    	} catch (Exception e){
+    		exceptionManager.handle(e);
+    		return null;
+    	}
+    }
+    
+    /**
+     * アルバムページの属性を編集する
+     */
+    @RequestMapping(value="/aas/editAlbumPageProperty.do", method=RequestMethod.POST)
+    public String editAlbumPageProperty( @RequestParam("contentsGroupID") Integer contentsGroupID
+    								, ModelMap map ){
+    	try{
+        	String baseURL = applicationProperties.getString( "BASE_URL" );
+
+        	// 確認
+	    	if( contentsGroupID==null ){
+	    		throw new InvalidParameterException( "contentsGroupIDがnullです" );
+	    	}
+	    	
+	    	// 検索してalbumPageDTOを得る
+	    	AlbumPageDTO albumPageDTO = albumService.getAlbumPage(contentsGroupID);
+	    	
+	    	// 変換
+	    	String description = albumPageDTO.getAlbumPageInfo().getDescription();
+	    	description = HTMLUtil.decodeHtmlSpecialChars(description);
+	    	albumPageDTO.getAlbumPageInfo().setDescription(description);
+
+	    	// 結果を返す
+	    	map.put("albumPageDTO", albumPageDTO);
+	    	map.put("baseURL", baseURL);
+	    	return "site/editAlbumPageProperty";
     	} catch (Exception e){
     		exceptionManager.handle(e);
     		return null;
@@ -358,6 +396,9 @@ public class AlbumController {
 	    		throw new InvalidParameterException( "contentsIDがnullです" );
 	    	}
 	    	
+	    	// 変換
+	    	description = HTMLUtil.htmlspecialchars( description );
+	    	
 	    	// 検索してphotoDTOを得る
 	    	PhotoDTO photoDTO = albumStructureBusiness.getPhoto( contentsID );
 	    	photoDTO.setDescription(description);
@@ -372,9 +413,38 @@ public class AlbumController {
 	    	Integer albumPageID = contentsEntity.getContentsGroupID();
 
 	    	// 写真の一覧に戻る
-	    	map.put("albumPageID", albumPageID);
-	    	map.put("editMode", editMode);
-	    	return "site/viewAlbumPage";
+	    	return "redirect:/site/viewAlbumPage.do/"+albumPageID+"?editMode=true";
+    	} catch (Exception e){
+    		exceptionManager.handle(e);
+    		return null;
+    	}
+    }
+
+    @RequestMapping(value="/updateAlbumPageProperty.do", method=RequestMethod.POST)
+    public String updateAlbumPageProperty(
+    								  @RequestParam("contentsGroupID") Integer contentsGroupID
+      								, @RequestParam("brief") String brief
+    								, @RequestParam("description") String description
+    								, ModelMap map ){
+    	try{
+	    	// 確認
+	    	if( contentsGroupID==null ){
+	    		throw new InvalidParameterException( "contentsGroupIDがnullです" );
+	    	}
+	    	
+	    	// 変換
+	    	brief = HTMLUtil.htmlspecialchars( brief );
+	    	description = HTMLUtil.htmlspecialchars( description );
+	    	
+	    	// albumPageDTOについて更新する
+	    	ContentsGroupEntity contentsGroupEntity = dataStructureBusiness.getContentsGroup(contentsGroupID);
+	    	contentsGroupEntity.setUpdateDate( new Date() );
+	    	contentsGroupEntity.setBrief( brief );
+	    	contentsGroupEntity.setDescription( description );
+	    	dataStructureBusiness.updateContentsGroup(contentsGroupEntity);
+    	
+	    	// 写真の一覧に戻る
+	    	return "redirect:/site/viewAlbumPage.do/"+contentsGroupID+"?editMode=true";
     	} catch (Exception e){
     		exceptionManager.handle(e);
     		return null;
