@@ -8,7 +8,7 @@
 <mapper namespace="com.mugenunagi.amalbum.datastructure.dao.ContentsGroupMapper">
 	<!-- ContentsGroupを、親IDで検索する -->
 	<select id="selectContentsGroupByParentID" parameterType="int" resultType="contentsGroupEntity">
-		select * from contentsGroup where parentID = #{parentID} and (DeleteDate is null)
+		select * from contentsGroup where parentID = #{parentID} and (DeleteDate is null) order by SeqNo
 	</select>
 	
 	<!-- ContentsGroupをIDで検索する -->

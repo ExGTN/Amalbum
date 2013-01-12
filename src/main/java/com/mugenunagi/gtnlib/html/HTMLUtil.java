@@ -33,6 +33,7 @@ public class HTMLUtil {
 	 * @return
 	 */
 	public static String decodeHtmlSpecialChars(String str) {
+		if( str==null ){ return null; }
 		String ret_val = new String(str);
 		
 		for( int i=0;i<replace.length;i++ ){

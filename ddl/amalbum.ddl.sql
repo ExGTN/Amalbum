@@ -96,6 +96,7 @@ drop table Contents cascade;
 create table Contents (
   ContentsID integer not null
   , ContentsGroupID integer not null
+  , ContentsType integer not null
   , Name character varying not null
   , Brief character varying
   , Description character varying

@@ -6,11 +6,24 @@ package com.mugenunagi.amalbum.albumstructure.dto;
  *
  */
 public class PhotoDTO {
+	private int contentsType;
 	private int contentsID;
 	private int materialID;
 	private String description;
 	private String path;
 
+	/**
+	 * @return the contentsType
+	 */
+	public int getContentsType() {
+		return contentsType;
+	}
+	/**
+	 * @param contentsType the contentsType to set
+	 */
+	public void setContentsType(int contentsType) {
+		this.contentsType = contentsType;
+	}
 	/**
 	 * @return the contentsID
 	 */

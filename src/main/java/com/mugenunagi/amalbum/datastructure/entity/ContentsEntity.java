@@ -17,6 +17,11 @@ public class ContentsEntity {
 	 * コンテンツグループID
 	 */
 	private Integer contentsGroupID;
+	
+	/**
+	 * コンテンツタイプ
+	 */
+	private Integer contentsType;
 
 	/**
 	 * コンテンツ名
@@ -88,6 +93,20 @@ public class ContentsEntity {
 	 */
 	public void setContentsGroupID(Integer contentsGroupID) {
 		this.contentsGroupID = contentsGroupID;
+	}
+
+	/**
+	 * @return the contentsType
+	 */
+	public Integer getContentsType() {
+		return contentsType;
+	}
+
+	/**
+	 * @param contentsType the contentsType to set
+	 */
+	public void setContentsType(Integer contentsType) {
+		this.contentsType = contentsType;
 	}
 
 	/**

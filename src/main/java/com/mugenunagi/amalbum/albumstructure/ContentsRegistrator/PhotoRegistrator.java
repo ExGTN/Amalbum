@@ -1,4 +1,4 @@
-package com.mugenunagi.amalbum.albumstructure;
+package com.mugenunagi.amalbum.albumstructure.ContentsRegistrator;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import com.mugenunagi.ApplicationProperties;
 import com.mugenunagi.amalbum.Constants;
-import com.mugenunagi.amalbum.datastructure.DataFileUtil;
+import com.mugenunagi.amalbum.Constants.ContentsType;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.dao.ContentsMapper;
 import com.mugenunagi.amalbum.datastructure.dao.MaterialMapper;
@@ -25,6 +25,7 @@ import com.mugenunagi.amalbum.datastructure.dao.SequenceMapper;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
+import com.mugenunagi.amalbum.exception.InvalidParameterException;
 import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
 import com.mugenunagi.gtnlib.graphics.image.ImageUtils;
@@ -36,7 +37,7 @@ import com.mugenunagi.gtnlib.io.FilePathUtil;
  *
  */
 @Component
-public class PhotoRegistrator {
+public class PhotoRegistrator extends AbstractContentsRegistrator {
 	//=========================================================================
 	// static属性
 	//=========================================================================
@@ -64,10 +65,7 @@ public class PhotoRegistrator {
 	private MaterialMapper materialMapper;
 	
 	@Autowired
-	private PhotoFileUtil photoFileUtil;
-	
-	@Autowired
-	private DataFileUtil dataFileUtil;
+	private ContentsFileUtil photoFileUtil;
 
 	
 	//=========================================================================
@@ -78,8 +76,9 @@ public class PhotoRegistrator {
 	 * @throws RecordNotFoundException 
 	 * @throws IOException 
 	 * @throws InvalidStateException 
+	 * @throws InvalidParameterException 
 	 */
-	public String registPhoto( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException {
+	public String regist( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
 		// 写真ファイルを配置する
 		Map<String,String> filePathMap = this.locatePhotoFiles(contentsGroupID, tempFile, fileName);
 		fileName = filePathMap.get( "ServerFileName" );
@@ -102,11 +101,12 @@ public class PhotoRegistrator {
 	 * @throws RecordNotFoundException
 	 * @throws InvalidStateException
 	 * @throws IOException
+	 * @throws InvalidParameterException 
 	 */
-	public Map<String,String> locatePhotoFiles( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException {
+	public Map<String,String> locatePhotoFiles( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
 		
 		// アルバムページの情報を取得する
-		String contentsGroupBasePath = dataFileUtil.getContentsGroupBasePath(contentsGroupID);
+		String contentsGroupBasePath = contentsFileUtil.getContentsGroupBasePath(contentsGroupID, ContentsType.Photo);
 
 		// YYYYMMDDディレクトリを作る
 		FilePathUtil.prepareDirectory( contentsGroupBasePath );
@@ -147,10 +147,11 @@ public class PhotoRegistrator {
 	 * @throws IOException 
 	 * @throws InvalidStateException 
 	 * @throws FileNotFoundException 
+	 * @throws InvalidParameterException 
 	 */
-	public String locateThumbnail( Integer contentsID ) throws RecordNotFoundException, FileNotFoundException, InvalidStateException, IOException{
+	public String locateThumbnail( Integer contentsID ) throws RecordNotFoundException, FileNotFoundException, InvalidStateException, IOException, InvalidParameterException{
 		
-		String contentsBasePath = dataFileUtil.getContentsBasePath(contentsID);
+		String contentsBasePath = contentsFileUtil.getContentsBasePath(contentsID);
 		String photoFilePath = photoFileUtil.getPhotoFilePath(contentsID);
 		File photo = new File( photoFilePath );
 		String photoFileName = photo.getName();
@@ -210,6 +211,7 @@ public class PhotoRegistrator {
 			ContentsEntity contentsEntity = new ContentsEntity();
 			contentsEntity.setContentsID(contentsID);
 			contentsEntity.setContentsGroupID(contentsGroupID);
+			contentsEntity.setContentsType( ContentsType.Photo.getValue() );
 			contentsEntity.setName(fileName);
 			contentsEntity.setBrief(null);
 			contentsEntity.setDescription(null);
@@ -268,66 +270,6 @@ public class PhotoRegistrator {
 		}
 	}
 
-	/**
-	 * 写真を削除します。物理ファイルとＤＢの両方が削除されます。
-	 * @param photoID
-	 * @throws Throwable
-	 */
-	public void removePhoto( Integer photoID ) throws Throwable{
-		// ファイルを削除する
-		removePhotoFiles( photoID );
-		
-		// DBから削除する
-		this.removeFromDB(photoID);
-	}
-	
-	/**
-	 * 指定されたcontentsIDに関係する物理ファイルを削除します。ＤＢは削除されません。
-	 * @param contentsID
-	 * @throws Throwable
-	 */
-	public void removePhotoFiles( Integer contentsID ) throws Throwable {
-		// マテリアルの情報を得る
-		List<MaterialEntity> materialList = materialMapper.selectMaterialByContentsID(contentsID);
-		
-		// ファイルを削除する
-		for( MaterialEntity material : materialList ){
-			// 配置された写真のファイルを消す
-			Integer materialID = material.getMaterialID();
-			String materialPath = dataFileUtil.getMaterialPath(materialID);
-			if( materialPath==null ){ continue; }
-			File placedFile = new File( materialPath );
-			if( placedFile.exists() ){ placedFile.delete(); }
-		}
-
-		// ディレクトリが空なら削除する
-		ContentsEntity contentsEntity = dataStructureBusiness.getContentsByContentsID(contentsID);
-		Integer contentsGroupID = contentsEntity.getContentsGroupID();
-		String albumPageDirPath	= dataFileUtil.getContentsGroupBasePath(contentsGroupID);
-		String thumbDirPath		= photoFileUtil.getContentsGroupThumbnailPath(contentsGroupID);
-		File thumbDir = new File( thumbDirPath );
-		File albumPageDir = new File( albumPageDirPath );
-		if( thumbDir.exists() ){
-			String[] fileList = thumbDir.list();
-			if( fileList.length==0 ){
-				thumbDir.delete();
-			}
-		}
-		if( albumPageDir.exists() ){
-			String[] fileList = albumPageDir.list();
-			if( fileList.length==0 ){
-				albumPageDir.delete();
-			}
-		}
-	}
-
-	/**
-	 * 写真のIDを指定して、写真の情報をＤＢから削除します。物理ファイルは削除されません。
-	 * @param photoID
-	 */
-	public void removeFromDB( Integer photoID ){
-		dataStructureBusiness.deleteWholeContents(photoID);
-	}
 	
 	/**
 	 * 指定されたコンテンツIDの写真を回転させます
@@ -336,11 +278,12 @@ public class PhotoRegistrator {
 	 * @throws RecordNotFoundException 
 	 * @throws IOException 
 	 * @throws InvalidStateException 
+	 * @throws InvalidParameterException 
 	 */
-	public void rotateImage( PhotoRegistrator.RotateDirection direction, Integer contentsID ) throws RecordNotFoundException, IOException, InvalidStateException{
+	public void rotateImage( PhotoRegistrator.RotateDirection direction, Integer contentsID ) throws RecordNotFoundException, IOException, InvalidStateException, InvalidParameterException{
     	// 回転もとファイルを一時ディレクトリに複製する
     	String photoPath = photoFileUtil.getPhotoFilePath( contentsID );
-    	String thumbPath = photoFileUtil.getThumbnailFilePath( contentsID );
+    	String thumbPath = contentsFileUtil.getThumbnailFilePath( contentsID );
     	String tempDirPath = photoFileUtil.getTempPath();
     	
     	File photoFile = new File( photoPath );
@@ -370,4 +313,6 @@ public class PhotoRegistrator {
     	// サムネイルを作りなおす
     	locateThumbnail( contentsID );
 	}
+
+	
 }

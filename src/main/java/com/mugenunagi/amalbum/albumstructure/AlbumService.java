@@ -9,11 +9,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mugenunagi.amalbum.Constants.ContentsType;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageListDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
+import com.mugenunagi.amalbum.exception.InvalidParameterException;
 import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
 
@@ -89,14 +91,30 @@ public class AlbumService {
 	}
 
 	/**
-	 * 写真を登録します。
+	 * 写真/動画を登録します。
 	 * @throws IOException 
 	 * @throws InvalidStateException 
 	 * @throws RecordNotFoundException 
+	 * @throws InvalidParameterException 
 	 */
-	public String registPhoto( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException{
-		// 写真を登録する
-		fileName = albumStructureBusiness.registPhoto( contentsGroupID, tempFile, fileName );
+	public String registContents( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException{
+		ContentsType contentsType = albumStructureBusiness.getContentsTypeFromFilename( fileName );
+		if( contentsType==null ){
+			throw new InvalidParameterException( "指定されたファイルが画像でも動画でもないか、対応していないフォーマットです。File="+fileName );
+		}
+		
+		// 種類ごとに処理を分ける
+		switch( contentsType ){
+		case Photo:
+			// 写真を登録する
+			fileName = albumStructureBusiness.registPhoto(contentsGroupID, tempFile, fileName);
+			break;
+			
+		case Movie:
+			// 動画を登録する
+			fileName = albumStructureBusiness.registMovie(contentsGroupID, tempFile, fileName);
+			break;
+		}
 		return fileName;
 	}
 

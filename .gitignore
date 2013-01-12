@@ -2,3 +2,5 @@ target
 test.txt
 work
 data/photo/*
+data/movie/*
+data/temp/*

@@ -8,7 +8,7 @@
 <mapper namespace="com.mugenunagi.amalbum.datastructure.dao.ContentsMapper">
 	<!-- Contentsを検索する -->
 	<select id="selectContentsByContentsGroupID" parameterType="int" resultType="contentsEntity">
-		select * from contents where contentsGroupID = #{contentsGroupID} and DeleteDate is null
+		select * from contents where contentsGroupID = #{contentsGroupID} and DeleteDate is null order by SeqNo
 	</select>
 
 	<!-- 指定IDのContentsを取得する-->
@@ -26,6 +26,7 @@
 		insert into contents (
 			  ContentsID
 			, ContentsGroupID
+			, ContentsType
 			, Name
 			, Brief
 			, Description
@@ -37,6 +38,7 @@
 			) values (
 			  #{contentsID}
 			, #{contentsGroupID}
+			, #{contentsType}
 			, #{name}
 			, #{brief}
 			, #{description}
@@ -52,6 +54,7 @@
 	<update id="updateContents" parameterType="contentsEntity">
 		update contents set
 			  ContentsGroupID = #{contentsGroupID}
+			, ContentsType = #{contentsType}
 			, Name = #{name}
 			, Brief = #{brief}
 			, Description = #{description}

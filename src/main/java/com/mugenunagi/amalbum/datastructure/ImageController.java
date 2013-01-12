@@ -1,5 +1,6 @@
 package com.mugenunagi.amalbum.datastructure;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -13,10 +14,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.mugenunagi.amalbum.albumstructure.PhotoFileUtil;
+import com.mugenunagi.amalbum.Constants.ContentsType;
+import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.ContentsFileUtil;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
+import com.mugenunagi.amalbum.exception.InvalidParameterException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
 import com.mugenunagi.gtnlib.graphics.image.ImageUtils;
 
@@ -31,7 +34,7 @@ public class ImageController {
 	DataStructureBusiness dataStructureBusiness;
 	
 	@Autowired
-	DataFileUtil dataFileUtil;
+	ContentsFileUtil contentsFileUtil;
 
 	Logger logger = Logger.getLogger( this.getClass() );
 	
@@ -40,12 +43,13 @@ public class ImageController {
 	 * @param modelMap
 	 * @return
 	 * @throws RecordNotFoundException 
+	 * @throws InvalidParameterException 
 	 */
     @RequestMapping("/ads/restImage.do/{materialID}")
-    public String restImage( @PathVariable Integer materialID, HttpServletResponse response ) throws RecordNotFoundException {
+    public String restImage( @PathVariable Integer materialID, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
     	// -----< パスを作る >-----
     	//
-    	String filePath = dataFileUtil.getMaterialPath(materialID);
+    	String filePath = contentsFileUtil.getMaterialPath(materialID);
     	logger.debug( "File=" + filePath );
 
     	// -----< ファイルを開いてレスポンスに送る >-----
@@ -53,8 +57,11 @@ public class ImageController {
     	ServletOutputStream outputStream = null;
         FileInputStream in = null;
     	try {
+    		File file = new File( filePath );
+    		String fileName = file.getName();
     		String mime = ImageUtils.getMimeTypeFromFilePath(filePath);
         	response.setContentType(mime);
+        	response.setHeader("Content-Disposition", "filename=\"" + fileName + "\"");
 
         	outputStream = response.getOutputStream();
             in = new FileInputStream( filePath );
@@ -83,12 +90,13 @@ public class ImageController {
 	 * @param modelMap
 	 * @return
 	 * @throws RecordNotFoundException 
+	 * @throws InvalidParameterException 
 	 */
     @RequestMapping("/ads/restPhoto.do/{photoID}/{materialType}")
-    public String restPhoto( @PathVariable Integer photoID, @PathVariable Integer materialType, HttpServletResponse response ) throws RecordNotFoundException {
+    public String restPhoto( @PathVariable Integer photoID, @PathVariable Integer materialType, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
     	// -----< コンテンツ（写真）を検索する >-----
     	//
-    	String filePath = dataFileUtil.getMaterialPathSingle(photoID, materialType);
+    	String filePath = contentsFileUtil.getMaterialPathSingle(photoID, materialType);
     	logger.debug( "File=" + filePath );
 
     	// -----< ファイルを開いてレスポンスに送る >-----
@@ -96,8 +104,11 @@ public class ImageController {
     	ServletOutputStream outputStream = null;
         FileInputStream in = null;
     	try {
+    		File file = new File( filePath );
+    		String fileName = file.getName();
     		String mime = ImageUtils.getMimeTypeFromFilePath(filePath);
         	response.setContentType(mime);
+        	response.setHeader("Content-Disposition", "filename=\"" + fileName + "\"");
 
         	outputStream = response.getOutputStream();
             in = new FileInputStream( filePath );

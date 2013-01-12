@@ -1,6 +1,7 @@
 package com.mugenunagi.amalbum.albumstructure;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,13 +9,19 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.mugenunagi.amalbum.Constants;
+import com.mugenunagi.amalbum.Constants.ContentsType;
+import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.MovieRegistrator;
+import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.PhotoRegistrator;
 import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
+import com.mugenunagi.amalbum.exception.InvalidParameterException;
 import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
+import com.mugenunagi.gtnlib.graphics.image.ImageUtils;
 
 /**
  * アルバムのデータ構造を取り扱うビジネスクラス
@@ -31,6 +38,9 @@ public class AlbumStructureBusiness {
 	
 	@Autowired
 	PhotoRegistrator photoRegistrator;
+	
+	@Autowired
+	MovieRegistrator movieRegistrator;
 
 	//=========================================================================
 	// メソッド
@@ -62,6 +72,7 @@ public class AlbumStructureBusiness {
 		//
 		List<PhotoDTO> photoDTOList = new ArrayList<PhotoDTO>();
 		for( ContentsEntity contentsEntity : contentsEntityList ){
+			Integer contentsType = contentsEntity.getContentsType();
 			Integer contentsID = contentsEntity.getContentsID();
 			String description = contentsEntity.getDescription();
 
@@ -74,6 +85,7 @@ public class AlbumStructureBusiness {
 			
 			// AlbumContentsに詰める
 			PhotoDTO photoDTO = new PhotoDTO();
+			photoDTO.setContentsType( contentsType );
 			photoDTO.setContentsID( contentsID );
 			photoDTO.setDescription( description );
 			photoDTO.setMaterialID( materialID );
@@ -124,13 +136,26 @@ public class AlbumStructureBusiness {
 	}
 
 	/**
-	 * 指定されたcontentsIDのアルバムページに、tempFileの写真を追加します
+	 * 指定されたcontentsGroupIDのアルバムページに、tempFileの写真を追加します
 	 * @throws IOException 
 	 * @throws InvalidStateException 
 	 * @throws RecordNotFoundException 
+	 * @throws InvalidParameterException 
 	 */
-	public String registPhoto( Integer contentsID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException {
-		fileName = photoRegistrator.registPhoto( contentsID, tempFile, fileName );
+	public String registPhoto( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
+		fileName = photoRegistrator.regist( contentsGroupID, tempFile, fileName );
+		return fileName;
+	}
+
+	/**
+	 * 指定されたcontentsGroupIDのアルバムページに、tempFileの動画を追加します
+	 * @throws IOException 
+	 * @throws InvalidStateException 
+	 * @throws RecordNotFoundException 
+	 * @throws InvalidParameterException 
+	 */
+	public String registMovie( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
+		fileName = movieRegistrator.regist( contentsGroupID, tempFile, fileName );
 		return fileName;
 	}
 
@@ -161,5 +186,26 @@ public class AlbumStructureBusiness {
 
 		// 結果を返す
 		return albumPageID;
+	}
+
+	/**
+	 * 指定されたファイル名について、コンテンツの種類を判別して、結果をContentsType型で返します
+	 * @param fileName
+	 * @return
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
+	 */
+	public ContentsType getContentsTypeFromFilename(String fileName) throws FileNotFoundException, IOException {
+		ContentsType contentsType = null;
+
+		String mimeType = ImageUtils.getMimeTypeFromFilePath(fileName);
+		if( mimeType.startsWith("image") ){
+			contentsType = ContentsType.Photo;
+		} else if ( mimeType.startsWith("video") ){
+			contentsType = ContentsType.Movie;
+		}
+		
+		// 結果を返す
+		return contentsType;
 	}
 }

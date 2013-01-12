@@ -16,6 +16,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.mugenunagi.ApplicationProperties;
+import com.mugenunagi.amalbum.Constants.ContentsType;
+import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.PhotoRegistrator;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.dao.ContentsGroupMapper;
 import com.mugenunagi.amalbum.datastructure.dao.ContentsMapper;
@@ -48,10 +50,10 @@ public class PhotoRegistratorTest {
 		String testDataDir = applicationProperties.getString("TESTDATA_LOCATION");
 		String basePath = applicationProperties.getString("LOCAL_CONTENTS_BASE_PATH");
 		String fileName = applicationProperties.getString("TESTDATA_PHOTO_1");
-		String tempName = applicationProperties.getString("PHOTO_TEMP_RELATIVE_PATH");
+		String tempName = applicationProperties.getString("CONTENTS_TEMP_RELATIVE_PATH");
 		String photoDirName = applicationProperties.getString("PHOTO_RELATIVE_PATH");
-		String thumbDirName = applicationProperties.getString("PHOTO_THUMBNAIL_RELATIVE_PATH");
-		String thumbPrefix = applicationProperties.getString("PHOTO_THUMBNAIL_PREFIX");
+		String thumbDirName = applicationProperties.getString("CONTENTS_THUMBNAIL_RELATIVE_PATH");
+		String thumbPrefix = applicationProperties.getString("CONTENTS_THUMBNAIL_PREFIX");
 		String pageName = "Test";
 
 		String filePath = testDataDir + "/" + fileName;
@@ -94,7 +96,7 @@ public class PhotoRegistratorTest {
 	
 			// -----< 登録したContentsGroupにContentsを登録 >-----
 			//
-			photoRegistrator.registPhoto(contentsGroupID, destFile, fileName);
+			photoRegistrator.regist(contentsGroupID, destFile, fileName);
 	
 			// -----< 確認 >-----
 			//
@@ -134,7 +136,7 @@ public class PhotoRegistratorTest {
 				for( ContentsEntity contents : contentsList ){
 					if( contents==null ){ continue; }
 					Integer contentsID = contents.getContentsID();
-					photoRegistrator.removePhoto(contentsID);
+					photoRegistrator.removeContents(contentsID);
 				}
 			}
 			

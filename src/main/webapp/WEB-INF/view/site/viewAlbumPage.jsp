@@ -45,14 +45,32 @@
 		--%>
 		<c:forEach var="photoDTO" items="${viewAlbumPageDTO.albumPageDTO.photoDTOList}" varStatus="varStatus">
 			<div class="APVPhotoFrame">
-				<!-- 写真表示 -->
-				<div class="APVPhoto">
-					<a href="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/0" target="_blank">
-						<img src="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/1">
-					</a>
-					<BR>
-					${photoDTO.path}
-				</div>
+				<c:choose>
+					<c:when test="${photoDTO.contentsType==0}">
+						<!-- 写真表示 -->
+						<div class="APVPhoto">
+							<a href="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/0" target="_blank">
+								<img src="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/1">
+							</a>
+							<BR>
+							${photoDTO.path}
+						</div>
+					</c:when>
+					<c:when test="${photoDTO.contentsType==1}">
+						<!-- 動画表示 -->
+						<div class="APVPhoto">
+							<a href="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/2" target="_blank">
+								<img src="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/3">
+							</a>
+							<BR>
+							${photoDTO.path}
+						</div>
+					</c:when>
+					<c:otherwise>
+						${photoDTO.path}<BR>
+						不明なコンテンツタイプ(Type=${photoDTO.contentsType})<BR>
+					</c:otherwise>
+				</c:choose>
 
 				<%-- 回転指示ボタン --%>
 				<c:if test="${viewAlbumPageDTO.editMode}">

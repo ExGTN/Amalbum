@@ -24,8 +24,8 @@ import com.mugenunagi.amalbum.album.dto.ViewAlbumPageDTO;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageListDTO;
 import com.mugenunagi.amalbum.albumstructure.AlbumService;
 import com.mugenunagi.amalbum.albumstructure.AlbumStructureBusiness;
-import com.mugenunagi.amalbum.albumstructure.PhotoFileUtil;
-import com.mugenunagi.amalbum.albumstructure.PhotoRegistrator;
+import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.ContentsFileUtil;
+import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.PhotoRegistrator;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageListDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
@@ -67,7 +67,7 @@ public class AlbumController {
 	private PhotoRegistrator photoRegistrator;
 	
 	@Autowired
-	private PhotoFileUtil photoFileUtil;
+	private ContentsFileUtil photoFileUtil;
 
 	/**
 	 * アルバムページの一覧を参照する。アルバムのIDとして、デフォルトの値を用いる
@@ -232,7 +232,7 @@ public class AlbumController {
 
 			// 取り込んだファイルについて処理する
 			String fileName = uploadFile.getOriginalFilename();
-			fileName = albumService.registPhoto( contentsGroupID, destinationFile, fileName );
+			fileName = albumService.registContents( contentsGroupID, destinationFile, fileName );
 			
 			// 処理が終わったら一時ファイルを破棄する
 			destinationFile.delete();

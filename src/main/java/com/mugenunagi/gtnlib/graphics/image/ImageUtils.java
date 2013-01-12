@@ -15,6 +15,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.FileImageInputStream;
 
+import com.mugenunagi.gtnlib.io.FilePathUtil;
+
 public class ImageUtils {
 	//=========================================================================
 	// static属性
@@ -28,25 +30,40 @@ public class ImageUtils {
 	//=========================================================================
 	static {
 		mimeTypeMap = new HashMap<String,String>();
-		mimeTypeMap.put( "BMP"	, "image/bmp" );
+
+		// 画像
 		mimeTypeMap.put( "bmp"	, "image/bmp" );
-
 		mimeTypeMap.put( "jpg"	, "image/jpeg" );
-		mimeTypeMap.put( "JPG"	, "image/jpeg" );
 		mimeTypeMap.put( "jpeg"	, "image/jpeg" );
-		mimeTypeMap.put( "JPEG"	, "image/jpeg" );
-
 		mimeTypeMap.put( "png"	, "image/png" );
-		mimeTypeMap.put( "PNG"	, "image/png" );
-
 		mimeTypeMap.put( "wbmp"	, "image/vnd.wap.wbmp" );
-		mimeTypeMap.put( "WBMP"	, "image/vnd.wap.wbmp" );
-
-		mimeTypeMap.put( "GIF"	, "image/gif" );
 		mimeTypeMap.put( "gif"	, "image/gif" );
+
+		// 動画
+		mimeTypeMap.put( "3gp", "video/3gpp" );
+		mimeTypeMap.put( "3g2", "video/3gpp2" );
+		mimeTypeMap.put( "asf", "video/x-ms-asf" );
+		mimeTypeMap.put( "asx", "video/x-ms-asf" );
+		mimeTypeMap.put( "wmv", "video/x-ms-wmv" );
+		mimeTypeMap.put( "wvx", "video/x-ms-wvx" );
+		mimeTypeMap.put( "wm", "video/x-ms-wm" );
+		mimeTypeMap.put( "wmx", "video/x-ms-wmx" );
+		mimeTypeMap.put( "mts", "video/avchd" );
+
+		// 音声
+		mimeTypeMap.put( "wma", "audio/x-ms-wma" );
+		mimeTypeMap.put( "wax", "audio/x-ms-wax" );
+
+		// アプリケーション
+		//mimeTypeMap.put( "mts", "application/metastream" );
+		mimeTypeMap.put( "mmf", "application/x-smaf" );
+		mimeTypeMap.put( "mld", "application/x-mld" );
+		mimeTypeMap.put( "amc", "application/x-mpeg" );
+		mimeTypeMap.put( "wmz", "application/x-ms-wmz" );
+		mimeTypeMap.put( "wmd", "application/x-ms-wmd" );
 	}
 
-	
+
 	//=========================================================================
 	// 演算系
 	//=========================================================================
@@ -210,15 +227,24 @@ public class ImageUtils {
 	 * @throws IOException
 	 */
 	public static String getFormatName( String filePath ) throws FileNotFoundException, IOException {
-		// -----< ImageReader を取得する >-----
+		// -----< ひとまず拡張子として評価する >-----
+		//
+    	String formatName = FilePathUtil.getExtension( filePath );;
+
+    	// -----< ImageReader を取得する >-----
 		//
     	File imageFile = new File( filePath );
-    	FileImageInputStream fileImageInputStream = new FileImageInputStream( imageFile );
+    	FileImageInputStream fileImageInputStream = null;
+    	try{
+    		fileImageInputStream = new FileImageInputStream( imageFile );
+    	} catch (FileNotFoundException e){
+    		// ファイルが無かった場合は拡張子を返す
+    		return formatName;
+    	}
     	Iterator<ImageReader> iterator = ImageIO.getImageReaders( fileImageInputStream );
     	
     	// -----< ImageReader からフォーマット名を取得する >-----
     	//
-    	String formatName = null;
     	while( iterator.hasNext() ){
         	ImageReader imageReader = iterator.next();
         	if( imageReader==null ){ continue; }
@@ -251,6 +277,7 @@ public class ImageUtils {
 
 		// -----< フォーマットのタイプを取得する >-----
 		//
+		File file = new File( filePath );
 		String formatName = ImageUtils.getFormatName( filePath );
 		
 		// -----< MIMEタイプを得る >-----
@@ -267,7 +294,7 @@ public class ImageUtils {
 	 * @return
 	 */
 	public static String getMimeType( String formatName ){
-		String mimeType = ImageUtils.mimeTypeMap.get( formatName );
+		String mimeType = ImageUtils.mimeTypeMap.get( formatName.toLowerCase() );
 		return mimeType;
 	}
 }
