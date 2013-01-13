@@ -20,11 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mugenunagi.ApplicationProperties;
+import com.mugenunagi.amalbum.Constants.ContentsType;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageDTO;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageListDTO;
 import com.mugenunagi.amalbum.albumstructure.AlbumService;
 import com.mugenunagi.amalbum.albumstructure.AlbumStructureBusiness;
 import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.ContentsFileUtil;
+import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.MovieRegistrator;
 import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.PhotoRegistrator;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageListDTO;
@@ -65,6 +67,9 @@ public class AlbumController {
 	
 	@Autowired
 	private PhotoRegistrator photoRegistrator;
+	
+	@Autowired
+	private MovieRegistrator movieRegistrator;
 	
 	@Autowired
 	private ContentsFileUtil photoFileUtil;
@@ -450,4 +455,41 @@ public class AlbumController {
     		return null;
     	}
     }
+    
+
+    @RequestMapping(value="/aas/deletePhoto.do", method=RequestMethod.POST)
+    public String deletePhoto(
+    								  @RequestParam("contentsGroupID") Integer contentsGroupID
+      								, @RequestParam("contentsID") Integer contentsID
+    								, ModelMap map ) throws Throwable{
+    	try{
+	    	// 確認
+	    	if( contentsGroupID==null ){
+	    		throw new InvalidParameterException( "contentsGroupIDがnullです" );
+	    	}
+	    	if( contentsID==null ){
+	    		throw new InvalidParameterException( "contentsIDがnullです" );
+	    	}
+
+	    	// 写真を削除する
+	    	ContentsType contentsType = albumStructureBusiness.getContentsTypeFromContentsID(contentsID);
+	    	switch(contentsType){
+	    	case Photo:
+	    		photoRegistrator.removeContents(contentsID);
+	    		break;
+	    	case Movie:
+	    		movieRegistrator.removeContents(contentsID);
+	    		break;
+	    	default:
+	    		throw new InvalidStateException( "コンテンツタイプが不正です。ContentsType="+contentsType.getValue() );
+	    	}
+
+	    	// 写真の一覧に戻る
+	    	return "redirect:/site/viewAlbumPage.do/"+contentsGroupID+"?editMode=true";
+    	} catch (Exception e){
+    		exceptionManager.handle(e);
+    		return null;
+    	}
+    }
+
 }

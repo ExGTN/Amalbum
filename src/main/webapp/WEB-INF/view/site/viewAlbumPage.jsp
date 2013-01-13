@@ -17,7 +17,7 @@
 		<jsp:include page="common/HeadCommon.jsp">
 			<jsp:param name="pageName" value="${viewAlbumPageDTO.albumPageDTO.albumPageInfo.name}" />
 		</jsp:include>
-		<script src="viewAlbumPage.js"></script>
+		<script src="<%=request.getContextPath()%>/viewAlbumPage.js"></script>
 	</head>
 
 	<body class='APVBody'>
@@ -104,8 +104,8 @@
 
 					<%-- ファイル削除ボタン --%>
 					<form name='deleteFileForm${varStatus.count}' action='${viewAlbumPageDTO.baseURL}/aas/deletePhoto.do' method='POST'>
-						<input type='hidden' name='returnPath' value='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
-						<input type='hidden' name='editMode' value='true'>
+						<input type='hidden' name='contentsGroupID' value='${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
+						<input type='hidden' name='contentsID' value='${photoDTO.contentsID}'>
 						<div align='right'>
 							<input type='button' value='ファイル削除' onClick='javascript:onDeleteFile( document.deleteFileForm${varStatus.count} )' />
 						</div>
@@ -142,6 +142,11 @@
 		<%-- 戻るリンク
 		--%>
 		<A href="${viewAlbumPageDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.parentID}">戻る</A>
+
+		<div align="right"><font size="-2">
+			このページでは、一部<a target="_vp" href="http://www.visualpharm.com/">VisualPharm</a>で公開されている素材を利用させていただいております。
+			<a target="_cc" href="http://creativecommons.org/licenses/by-nd/3.0/"><img src="<%=request.getContextPath()%>/images/88x31.png"></a>
+		</font></div>
 
 	</body>
 </html>

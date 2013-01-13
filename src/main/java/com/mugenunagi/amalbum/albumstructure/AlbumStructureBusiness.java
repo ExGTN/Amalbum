@@ -208,4 +208,18 @@ public class AlbumStructureBusiness {
 		// 結果を返す
 		return contentsType;
 	}
+
+	/**
+	 * 指定されたコンテンツIDについて、コンテンツの種類を判別して、結果をContentsType型で返します
+	 * @param contentsID
+	 * @return
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
+	 */
+	public ContentsType getContentsTypeFromContentsID(Integer contentsID) throws FileNotFoundException, IOException {
+		ContentsEntity contentsEntity = dataStructureBusiness.getContentsByContentsID(contentsID);
+		Integer contentsTypeValue = contentsEntity.getContentsType();
+		ContentsType contentsType = Constants.ContentsTypeMap.get(contentsTypeValue);
+		return contentsType;
+	}
 }
