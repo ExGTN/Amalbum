@@ -128,6 +128,11 @@
 			<input type='hidden' name='editMode' value='false'>
 			<div align='right'><input type='submit' value='参照モードへ'></div>
 			</form>
+			
+			<form name='deleteDirForm' action='${viewAlbumPageDTO.baseURL}/aas/deleteAlbumPage.do' method='POST'>
+				<input type='hidden' name='contentsGroupID' value='${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
+				<div align='right'><input type='button' value='このディレクトリを削除' onClick='javascript:onDeleteDir();'></div>
+			</form>
 		</c:if>
 
 		<%-- アップロードのフォーム

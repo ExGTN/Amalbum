@@ -2,8 +2,6 @@ package com.mugenunagi.amalbum.albumstructure;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,6 +128,38 @@ public class AlbumService {
 
 		// 構築したページのIDを返す
 		return albumPageID;
+	}
+	
+	/**
+	 * 指定したアルバムページが所属するアルバムのアルバムIDを検索して返します
+	 * @param albumPageID
+	 * @return
+	 * @throws RecordNotFoundException
+	 */
+	public Integer getAlbumIDFromAlbumPageID(Integer albumPageID) throws RecordNotFoundException{
+		ContentsGroupEntity contentsGroupEntity = dataStructureBusiness.getContentsGroup(albumPageID);
+		Integer albumID = contentsGroupEntity.getParentID();
+		return albumID;
+	}
+	
+	
+	/**
+	 * 指定されたアルバムページを削除します
+	 * @param albumPageID
+	 * @throws Throwable 
+	 */
+	public void removeAlbumPage( Integer albumPageID ) throws Throwable{
+		// アルバムに含まれるコンテンツを取得する
+		AlbumPageDTO albumPageDTO = this.getAlbumPage(albumPageID);
+		
+		// アルバムに含まれるコンテンツごとの情報を削除する
+		List<PhotoDTO> photoDTOList = albumPageDTO.getPhotoDTOList();
+		for( PhotoDTO photoDTO : photoDTOList ){
+			albumStructureBusiness.removeContents(photoDTO);
+		}
+		
+		// アルバムページを削除する
+		dataStructureBusiness.deleteWholeContentsGroup(albumPageID);
 	}
 
 	

@@ -160,6 +160,42 @@ public class AlbumStructureBusiness {
 	}
 
 	
+	/**
+	 * PhotoDTOで示されるコンテンツを削除します
+	 * @param photoDTO
+	 * @throws Throwable 
+	 */
+	public void removeContents( PhotoDTO photoDTO ) throws Throwable{
+		// コンテンツの種類を取得する
+		Integer contentsTypeValue = photoDTO.getContentsType();
+		ContentsType contentsType = Constants.ContentsTypeMap.get(contentsTypeValue);
+		Integer contentsID = photoDTO.getContentsID();
+		
+		// コンテンツの種類ごとに処理を切り分けて削除する
+		switch(contentsType){
+		case Photo:
+			photoRegistrator.removeContents(contentsID);
+			break;
+		case Movie:
+			movieRegistrator.removeContents(contentsID);
+			break;
+		default:
+			throw new InvalidParameterException( "不正なContentsTypeです。ContentsType="+contentsTypeValue );
+		}
+	}
+	
+
+	/**
+	 * 指定されたContentsIDのコンテンツを削除します
+	 * @param contentsID
+	 * @throws Throwable
+	 */
+	public void removeContents(Integer contentsID) throws Throwable{
+		PhotoDTO photoDTO = this.getPhoto(contentsID);
+		removeContents( photoDTO );
+	}
+
+	
 //	/**
 //	 * アルバムを新規に作成する
 //	 * @param albumCategory

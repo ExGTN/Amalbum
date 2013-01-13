@@ -30,7 +30,7 @@ public class ContentsFileUtil {
 	 * @throws RecordNotFoundException 
 	 * @throws InvalidParameterException 
 	 */
-	protected String getContentsGroupBasePath( Integer contentsGroupID, ContentsType contentsType ) throws RecordNotFoundException, InvalidParameterException{
+	public String getContentsGroupBasePath( Integer contentsGroupID, ContentsType contentsType ) throws RecordNotFoundException, InvalidParameterException{
 		// キーの選択
 		String relativePathKey = null;
 		switch( contentsType ){

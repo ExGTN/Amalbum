@@ -472,17 +472,7 @@ public class AlbumController {
 	    	}
 
 	    	// 写真を削除する
-	    	ContentsType contentsType = albumStructureBusiness.getContentsTypeFromContentsID(contentsID);
-	    	switch(contentsType){
-	    	case Photo:
-	    		photoRegistrator.removeContents(contentsID);
-	    		break;
-	    	case Movie:
-	    		movieRegistrator.removeContents(contentsID);
-	    		break;
-	    	default:
-	    		throw new InvalidStateException( "コンテンツタイプが不正です。ContentsType="+contentsType.getValue() );
-	    	}
+	    	albumStructureBusiness.removeContents( contentsID );
 
 	    	// 写真の一覧に戻る
 	    	return "redirect:/site/viewAlbumPage.do/"+contentsGroupID+"?editMode=true";
@@ -492,4 +482,28 @@ public class AlbumController {
     	}
     }
 
+
+    @RequestMapping(value="/aas/deleteAlbumPage.do", method=RequestMethod.POST)
+    public String deleteAlbumPage(
+    								  @RequestParam("contentsGroupID") Integer contentsGroupID
+    								, ModelMap map ) throws Throwable{
+    	try{
+	    	// 確認
+	    	if( contentsGroupID==null ){
+	    		throw new InvalidParameterException( "contentsGroupIDがnullです" );
+	    	}
+	    	
+	    	// アルバムIDを取得する
+	    	Integer albumPageID = albumService.getAlbumIDFromAlbumPageID(contentsGroupID);
+
+	    	// アルバムページを削除する
+	    	albumService.removeAlbumPage(contentsGroupID);
+
+	    	// 写真の一覧に戻る
+	    	return "redirect:/site/viewAlbumPageList.do/"+albumPageID;
+    	} catch (Exception e){
+    		exceptionManager.handle(e);
+    		return null;
+    	}
+    }
 }
