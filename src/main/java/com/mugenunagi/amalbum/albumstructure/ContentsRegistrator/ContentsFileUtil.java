@@ -1,5 +1,10 @@
 package com.mugenunagi.amalbum.albumstructure.ContentsRegistrator;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +18,10 @@ import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
 import com.mugenunagi.amalbum.exception.InvalidParameterException;
+import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
+import com.mugenunagi.gtnlib.html.HTMLUtil;
+import com.mugenunagi.gtnlib.io.FilePathUtil;
 
 @Component
 public class ContentsFileUtil {
@@ -253,6 +261,84 @@ public class ContentsFileUtil {
 							+ applicationProperties.getString( "PHOTO_RELATIVE_PATH" );
 		return tempDirPath;
 	}
+	
+
+	/**
+	 * アルバムページに関するコメントファイルのフルパスを返す
+	 * @param albumPageID
+	 * @return
+	 * @throws RecordNotFoundException
+	 */
+	public String getAlbumPageCommentPath( Integer albumPageID ) throws RecordNotFoundException{
+		String contentsBasePath = applicationProperties.getString( "LOCAL_CONTENTS_BASE_PATH" );
+		String commentRelativePath = applicationProperties.getString( "COMMENT_RELATIVE_PATH" );
+		
+		// アルバムページに関する ContentsGroup を得る
+		ContentsGroupEntity albumPageEntity = dataStructureBusiness.getContentsGroup(albumPageID);
+		
+		// アルバムに関するContentsGroupを得る
+		Integer albumID = albumPageEntity.getParentID();
+		ContentsGroupEntity albumEntity = dataStructureBusiness.getContentsGroup(albumID);
+		
+		// フルパスを作って返す
+		String fullPath = contentsBasePath
+						+ "/" + commentRelativePath
+						+ "/" + albumEntity.getName()
+						+ "/" + albumPageEntity.getName()
+						+ "/" + "comment.txt";
+		return fullPath;
+	}
+	
+
+	/**
+	 * 写真や動画に関するコメントファイルのフルパスを返す
+	 * @param contentsID
+	 * @return
+	 * @throws RecordNotFoundException 
+	 */
+	public String getContentsCommentPath( Integer contentsID ) throws RecordNotFoundException{
+		String contentsBasePath = applicationProperties.getString( "LOCAL_CONTENTS_BASE_PATH" );
+		String commentRelativePath = applicationProperties.getString( "COMMENT_RELATIVE_PATH" );
+		
+		// 写真や動画に関する ContentsEntity を得る
+		ContentsEntity contentsEntity = dataStructureBusiness.getContentsByContentsID(contentsID);
+		Integer albumPageID = contentsEntity.getContentsGroupID();
+		
+		// 主たるマテリアルのMaterialEntityを得る
+		ContentsType contentsType = Constants.ContentsTypeMap.get( contentsEntity.getContentsType() );
+		MaterialEntity materialEntity = null;
+		List<MaterialEntity> materialEntityList = dataStructureBusiness.getMaterialListByContentsID(contentsID);
+		for( MaterialEntity entity : materialEntityList ){
+			Integer materialType = entity.getMaterialType();
+			if(   (materialType.intValue()==Constants.MaterialType.Photo.getValue().intValue())
+				||(materialType.intValue()==Constants.MaterialType.Movie.getValue().intValue())
+			){
+				materialEntity = entity;
+				break;
+			}
+		}
+
+		// アルバムページに関する ContentsGroup を得る
+		ContentsGroupEntity albumPageEntity = dataStructureBusiness.getContentsGroup(albumPageID);
+		
+		// アルバムに関するContentsGroupを得る
+		Integer albumID = albumPageEntity.getParentID();
+		ContentsGroupEntity albumEntity = dataStructureBusiness.getContentsGroup(albumID);
+
+		// フルパスを作って返す
+		String contentsBaseDir = contentsEntity.getBaseDir();
+		if( contentsBaseDir.length()>0 ){
+			contentsBaseDir = "/" + contentsBaseDir;
+		}
+		String fullPath = contentsBasePath
+						+ "/" + commentRelativePath
+						+ "/" + albumEntity.getName()
+						+ "/" + albumPageEntity.getName()
+						+ contentsBaseDir
+						+ "/" + materialEntity.getPath()
+						+ ".comment";
+		return fullPath;
+	}
 
 
 	/**
@@ -313,5 +399,124 @@ public class ContentsFileUtil {
 	public int getThumbnailHeight() {
 		String value = applicationProperties.getString("CONTENTS_THUMBNAIL_HEIGHT");
 		return Integer.parseInt(value);
+	}
+
+	/**
+	 * 指定されたコンテンツIDのコメントファイルを出力します
+	 * @param contentsID
+	 * @throws IOException 
+	 * @throws InvalidStateException 
+	 * @throws RecordNotFoundException 
+	 * @throws InvalidParameterException 
+	 */
+	public void writeContentsComment(Integer contentsID) throws InvalidStateException, IOException, RecordNotFoundException, InvalidParameterException {
+		// コンテンツの内容を取得する
+		ContentsEntity contentsEntity = this.dataStructureBusiness.getContentsByContentsID(contentsID);
+		String comment = contentsEntity.getDescription();
+		comment = HTMLUtil.decodeHtmlSpecialChars(comment);
+		String commentFilePath = this.getContentsCommentPath(contentsID);
+		
+		// 内容が空なら削除
+		if( comment.length()==0 ){
+			this.deleteFileWithRemoveDir( commentFilePath );
+			return;
+		}
+		
+		// 既存なら一旦消す
+		File commentFile = new File( commentFilePath );
+		if( commentFile.exists() ){
+			commentFile.delete();
+		}
+		
+		// ファイルを作成
+		String dir = commentFile.getParent();
+		FilePathUtil.prepareDirectory(dir);
+		PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(commentFile)));
+		pw.println( comment );
+		pw.close();
+	}
+
+	/**
+	 * 指定されたアルバムページに関するコメントファイルを出力します
+	 * @param contentsGroupID
+	 * @throws RecordNotFoundException
+	 * @throws InvalidParameterException
+	 * @throws InvalidStateException
+	 * @throws IOException
+	 */
+	public void writeAlbumPageComment(Integer contentsGroupID) throws RecordNotFoundException, InvalidParameterException, InvalidStateException, IOException {
+		// コンテンツグループの内容を取得する
+		ContentsGroupEntity contentsGroupEntity = this.dataStructureBusiness.getContentsGroup(contentsGroupID);
+		String comment = contentsGroupEntity.getDescription();
+		comment = HTMLUtil.decodeHtmlSpecialChars(comment);
+		String commentFilePath = this.getAlbumPageCommentPath(contentsGroupID);
+		
+		// 内容が空なら削除
+		if( comment.length()==0 ){
+			this.deleteFileWithRemoveDir( commentFilePath );
+			return;
+		}
+		
+		// 既存なら一旦消す
+		File commentFile = new File( commentFilePath );
+		if( commentFile.exists() ){
+			commentFile.delete();
+		}
+		
+		// ファイルを作成
+		String dir = commentFile.getParent();
+		FilePathUtil.prepareDirectory(dir);
+		PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(commentFile)));
+		pw.println( comment );
+		pw.close();
+	}
+
+	/**
+	 * 指定したファイルを削除します。当該のディレクトリに含まれるファイルが無くなった場合は
+	 * LOCAL_CONTENTS_BASE_PATHを限界に、親ディレクトリを辿ってディレクトリも削除します。
+	 * @param commentFilePath
+	 * @throws InvalidParameterException 
+	 */
+	public void deleteFileWithRemoveDir(String targetPath) throws InvalidParameterException {
+		// 限界のパスを取得する
+		String limitPath = applicationProperties.getString("LOCAL_CONTENTS_BASE_PATH");
+		File limitFile = new File( limitPath );
+		limitPath = limitFile.getAbsolutePath();
+		
+		// limitPathから始まってなければ不正
+		File targetFile = new File( targetPath );
+		targetPath = targetFile.getAbsolutePath();
+		if( !targetPath.startsWith(limitPath) ){
+			throw new InvalidParameterException( "指定されたパス（"+targetPath+"）が、LOCAL_CONTENTS_BASE_PATH（"+limitPath+"）から始まっていません。" );
+		}
+		
+		// 順次消していく
+		while( !targetFile.getAbsolutePath().equals(limitFile.getAbsolutePath()) ){
+			// ターゲットが不在ならここまで
+			if( !targetFile.exists() ){
+				break;
+			}
+			
+			// ディレクトリに他のファイルが含まれるならここまで
+			if( targetFile.isDirectory() ){
+				String[] fileList = targetFile.list();
+				if( fileList.length>0 ){
+					break;
+				}
+			}
+			
+			// 削除
+			targetFile.delete();
+			
+			// ひとつ上の階層へ
+			String prevPath = targetFile.getAbsolutePath();
+			targetFile = targetFile.getParentFile();
+			if( prevPath.equals(targetFile.getAbsolutePath()) ){
+				// 親ディレクトリを辿ってもパスがかわらない＝ルートディレクトリなら、ここで抜け
+				break;
+			}
+		}
+		
+		// 消しおわり
 	}
 }

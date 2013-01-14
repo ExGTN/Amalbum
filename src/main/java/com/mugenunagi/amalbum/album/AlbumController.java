@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mugenunagi.ApplicationProperties;
+import com.mugenunagi.amalbum.Constants;
 import com.mugenunagi.amalbum.Constants.ContentsType;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageDTO;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageListDTO;
@@ -72,7 +73,7 @@ public class AlbumController {
 	private MovieRegistrator movieRegistrator;
 	
 	@Autowired
-	private ContentsFileUtil photoFileUtil;
+	private ContentsFileUtil contentsFileUtil;
 
 	/**
 	 * アルバムページの一覧を参照する。アルバムのIDとして、デフォルトの値を用いる
@@ -213,7 +214,7 @@ public class AlbumController {
     public String uploadFile( @RequestParam("contentsGroupID") Integer contentsGroupID, @RequestParam("uploadFile") MultipartFile uploadFile, @RequestParam("returnPath") String returnPath, ModelMap map ){
     	try {
 	    	// 一時ファイルの配置先ディレクトリを用意する
-	    	String tempDirPath = photoFileUtil.getTempPath();
+	    	String tempDirPath = contentsFileUtil.getTempPath();
 	    	File tempDir = new File( tempDirPath );
 	    	if( !tempDir.exists() ){
 	    		boolean result = tempDir.mkdir();
@@ -416,6 +417,9 @@ public class AlbumController {
     	
 	    	// albumPageIDを逆引き
 	    	Integer albumPageID = contentsEntity.getContentsGroupID();
+	    	
+	    	// コメントを処理する
+	    	contentsFileUtil.writeContentsComment( contentsID );
 
 	    	// 写真の一覧に戻る
 	    	return "redirect:/site/viewAlbumPage.do/"+albumPageID+"?editMode=true";
@@ -447,6 +451,9 @@ public class AlbumController {
 	    	contentsGroupEntity.setBrief( brief );
 	    	contentsGroupEntity.setDescription( description );
 	    	dataStructureBusiness.updateContentsGroup(contentsGroupEntity);
+
+	    	// コメントを処理する
+	    	contentsFileUtil.writeAlbumPageComment( contentsGroupID );
     	
 	    	// 写真の一覧に戻る
 	    	return "redirect:/site/viewAlbumPage.do/"+contentsGroupID+"?editMode=true";

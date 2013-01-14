@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.mugenunagi.amalbum.Constants;
 import com.mugenunagi.amalbum.Constants.ContentsType;
+import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.ContentsFileUtil;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageListDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
@@ -34,6 +35,9 @@ public class AlbumService {
 	
 	@Autowired
 	private DataStructureBusiness dataStructureBusiness;
+	
+	@Autowired
+	private ContentsFileUtil contentsFileUtil;
 
 	//=========================================================================
 	// メソッド
@@ -155,6 +159,10 @@ public class AlbumService {
 	 * @throws Throwable 
 	 */
 	public void removeAlbumPage( Integer albumPageID ) throws Throwable{
+		// アルバムページのコメントを削除する
+		String albumPageCommentPath = contentsFileUtil.getAlbumPageCommentPath(albumPageID);
+		contentsFileUtil.deleteFileWithRemoveDir( albumPageCommentPath );
+		
 		// アルバムに含まれるコンテンツを取得する
 		AlbumPageDTO albumPageDTO = this.getAlbumPage(albumPageID);
 		

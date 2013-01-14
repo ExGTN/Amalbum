@@ -115,6 +115,10 @@ public abstract class AbstractContentsRegistrator {
 			File placedFile = new File( materialPath );
 			if( placedFile.exists() ){ placedFile.delete(); }
 		}
+		
+		// コメントファイルを削除する
+		String contentsCommentPath = contentsFileUtil.getContentsCommentPath(contentsID);
+		contentsFileUtil.deleteFileWithRemoveDir( contentsCommentPath );
 
 		// ディレクトリが空なら削除する
 		ContentsEntity contentsEntity = dataStructureBusiness.getContentsByContentsID(contentsID);

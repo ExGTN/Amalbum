@@ -3,4 +3,6 @@ test.txt
 work
 data/photo/*
 data/movie/*
+data/movie/*
+data/comment/*
 data/temp/*
