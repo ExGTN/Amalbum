@@ -314,5 +314,44 @@ public class PhotoRegistrator extends AbstractContentsRegistrator {
     	locateThumbnail( contentsID );
 	}
 
-	
+
+	/**
+	 * 指定されたコンテンツIDのサムネイルを削除します
+	 * @throws InvalidParameterException 
+	 * @throws RecordNotFoundException 
+	 */
+	@Override
+	public void removeThumbnail(Integer contentsID)
+			throws RecordNotFoundException, InvalidParameterException {
+
+
+		// ContentsEntityを取得する
+		ContentsEntity contentsEntity = new ContentsEntity();
+		contentsEntity.setContentsID( contentsID );
+		contentsEntity = contentsMapper.getContentsByContentsID( contentsEntity );
+		Integer contentsGroupID = contentsEntity.getContentsGroupID();
+		
+		// サムネイルのマテリアルを取得する
+		List<MaterialEntity> materialEntityList = dataStructureBusiness.getMaterialListByContentsID(contentsID);
+		
+		// パスを構築して削除
+		String contentsGroupBasePath = contentsFileUtil.getContentsGroupBasePath(contentsGroupID, ContentsType.Photo);
+		for( MaterialEntity materialEntity : materialEntityList ){
+			// サムネイルでなければ無視
+			Integer typeValue = Constants.MaterialType.Thumbnail.getValue();
+			if( materialEntity.getMaterialType().intValue()!=typeValue.intValue()){
+				continue;
+			}
+			
+			// サムネイルのパスを作る
+			String relativePath = materialEntity.getPath();
+			String thumbnailPath = contentsGroupBasePath + "/" + relativePath;
+			
+			// 削除
+			File file = new File( thumbnailPath );
+			if( file.exists() ){
+				file.delete();
+			}
+		}
+	}
 }

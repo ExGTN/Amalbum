@@ -124,14 +124,22 @@
 			</form>
 		</c:if>
 		<c:if test="${viewAlbumPageDTO.editMode==true}">
+			<!-- 参照モードに遷移するボタン -->
 			<form name='toReferMode' action='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}' method='GET'>
 			<input type='hidden' name='editMode' value='false'>
 			<div align='right'><input type='submit' value='参照モードへ'></div>
 			</form>
 			
+			<!-- ページ削除 -->
 			<form name='deleteDirForm' action='${viewAlbumPageDTO.baseURL}/aas/deleteAlbumPage.do' method='POST'>
 				<input type='hidden' name='contentsGroupID' value='${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
 				<div align='right'><input type='button' value='このディレクトリを削除' onClick='javascript:onDeleteDir();'></div>
+			</form>
+			
+			<!-- サムネイル再作成 -->
+			<form name='remakeThumbsForm' action='${viewAlbumPageDTO.baseURL}/aas/remakeThumbs.do' method='POST'>
+				<input type='hidden' name='contentsGroupID' value='${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
+				<div align='right'><input type='button' value='サムネイル再作成' onClick='javascript:onRemakeThumbs();'></div>
 			</form>
 		</c:if>
 

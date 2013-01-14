@@ -258,4 +258,39 @@ public class AlbumStructureBusiness {
 		ContentsType contentsType = Constants.ContentsTypeMap.get(contentsTypeValue);
 		return contentsType;
 	}
+
+
+	/**
+	 * 指定されたコンテンツIDについて、サムネイルを再作成します
+	 * @param contentsID
+	 * @throws IOException 
+	 * @throws InvalidParameterException 
+	 * @throws InvalidStateException 
+	 * @throws FileNotFoundException 
+	 * @throws RecordNotFoundException 
+	 */
+	public void remakePhotoThumbnail(Integer contentsID) throws RecordNotFoundException, FileNotFoundException, InvalidStateException, InvalidParameterException, IOException {
+		// サムネイルを削除する
+		photoRegistrator.removeThumbnail(contentsID);
+
+		// サムネイルを作って配置する
+		photoRegistrator.locateThumbnail(contentsID);
+	}
+
+	/**
+	 * 指定されたコンテンツIDについて、サムネイルを再作成します
+	 * @param contentsID
+	 * @throws IOException 
+	 * @throws InvalidParameterException 
+	 * @throws InvalidStateException 
+	 * @throws FileNotFoundException 
+	 * @throws RecordNotFoundException 
+	 */
+	public void remakeMovieThumbnail(Integer contentsID) throws RecordNotFoundException, FileNotFoundException, InvalidStateException, InvalidParameterException, IOException {
+		// サムネイルを削除する
+		movieRegistrator.removeThumbnail(contentsID);
+		
+		// サムネイルを作って配置する
+		movieRegistrator.locateThumbnail(contentsID);
+	}
 }

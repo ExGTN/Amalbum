@@ -1,6 +1,7 @@
 package com.mugenunagi.amalbum.albumstructure.ContentsRegistrator;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,40 @@ public abstract class AbstractContentsRegistrator {
 	 * @throws InvalidParameterException 
 	 */
 	abstract public String regist( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException;
+
+	/**
+	 * 指定したコンテンツIDの写真について、サムネイルを生成して配置します。<BR>
+	 * このメソッドは、ContentsがすでにDB上に登録されている必要があります。Thumbnailを再作成するときに利用します。<BR>
+	 * すでにファイルが存在する場合は上書きします。
+	 * @param contentsID
+	 * @throws RecordNotFoundException 
+	 * @throws IOException 
+	 * @throws InvalidStateException 
+	 * @throws FileNotFoundException 
+	 * @throws InvalidParameterException 
+	 */
+	abstract public String locateThumbnail( Integer contentsID ) throws RecordNotFoundException, FileNotFoundException, InvalidStateException, IOException, InvalidParameterException;
+
+	/**
+	 * サムネイルを配置します。<BR>
+	 * このメソッドは、ContentsIDがまだ存在しない写真のファイルについて、Thumbnailを配置するときに利用します。
+	 * @param contentsGroupBasePath
+	 * @param fileName
+	 * @return
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
+	 * @throws InvalidStateException 
+	 */
+	abstract public String locateThumbnail( String contentsGroupBasePath, String fileName ) throws FileNotFoundException, IOException, InvalidStateException;
+
+	/**
+	 * 指定したコンテンツについてのサムネイルを削除します。
+	 * @param contentsID
+	 * @throws InvalidParameterException 
+	 * @throws RecordNotFoundException 
+	 */
+	abstract public void removeThumbnail( Integer contentsID ) throws RecordNotFoundException, InvalidParameterException;
+
 
 	//=========================================================================
 	// メソッド

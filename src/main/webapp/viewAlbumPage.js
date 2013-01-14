@@ -1,7 +1,7 @@
-function onDeleteThumbs(){
-	result = confirm( "サムネイルの再作成のため、既存サムネイルを削除します。\n本当に削除しますか？" );
+function onRemakeThumbs(){
+	result = confirm( "サムネイルの再作成します。\nよろしいですか？" );
 	if( result==true ){
-		document.deleteThumbsForm.submit();
+		document.remakeThumbsForm.submit();
 	}
 }
 

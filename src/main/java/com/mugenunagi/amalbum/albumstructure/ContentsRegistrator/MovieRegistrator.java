@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 import com.mugenunagi.ApplicationProperties;
 import com.mugenunagi.amalbum.Constants;
 import com.mugenunagi.amalbum.Constants.ContentsType;
+import com.mugenunagi.amalbum.albumstructure.AlbumService;
+import com.mugenunagi.amalbum.albumstructure.AlbumStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.dao.ContentsMapper;
 import com.mugenunagi.amalbum.datastructure.dao.MaterialMapper;
@@ -46,6 +48,12 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 	
 	@Autowired
 	DataStructureBusiness dataStructureBusiness;
+	
+	@Autowired
+	AlbumStructureBusiness albumStructureBusiness;
+	
+	@Autowired
+	AlbumService albumService;
 	
 	@Autowired
 	private SequenceMapper sequenceMapper;
@@ -188,6 +196,45 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 		ImageIO.write(bi, imageType, thumbnailFile);
 
 		return thumbnailPath;
+	}
+
+
+	/**
+	 * 指定されたコンテンツIDのサムネイルを削除します
+	 * @throws InvalidParameterException 
+	 * @throws RecordNotFoundException 
+	 */
+	@Override
+	public void removeThumbnail(Integer contentsID) throws RecordNotFoundException, InvalidParameterException {
+
+		// ContentsEntityを取得する
+		ContentsEntity contentsEntity = new ContentsEntity();
+		contentsEntity.setContentsID( contentsID );
+		contentsEntity = contentsMapper.getContentsByContentsID( contentsEntity );
+		Integer contentsGroupID = contentsEntity.getContentsGroupID();
+		
+		// サムネイルのマテリアルを取得する
+		List<MaterialEntity> materialEntityList = dataStructureBusiness.getMaterialListByContentsID(contentsID);
+		
+		// パスを構築して削除
+		String contentsGroupBasePath = contentsFileUtil.getContentsGroupBasePath(contentsGroupID, ContentsType.Movie);
+		for( MaterialEntity materialEntity : materialEntityList ){
+			// サムネイルでなければ無視
+			Integer typeValue = Constants.MaterialType.MovieThumbnail.getValue();
+			if( materialEntity.getMaterialType().intValue()!=typeValue.intValue()){
+				continue;
+			}
+			
+			// サムネイルのパスを作る
+			String relativePath = materialEntity.getPath();
+			String thumbnailPath = contentsGroupBasePath + "/" + relativePath;
+			
+			// 削除
+			File file = new File( thumbnailPath );
+			if( file.exists() ){
+				file.delete();
+			}
+		}
 	}
 	
 

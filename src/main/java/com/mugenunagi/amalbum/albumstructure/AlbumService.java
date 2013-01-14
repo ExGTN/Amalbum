@@ -1,12 +1,14 @@
 package com.mugenunagi.amalbum.albumstructure;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mugenunagi.amalbum.Constants;
 import com.mugenunagi.amalbum.Constants.ContentsType;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageListDTO;
@@ -112,6 +114,10 @@ public class AlbumService {
 			// 動画を登録する
 			fileName = albumStructureBusiness.registMovie(contentsGroupID, tempFile, fileName);
 			break;
+			
+		default:
+			// 不正ないコンテンツタイプ
+			throw new InvalidParameterException( "不正なコンテンツタイプです。ContentsType="+contentsType.getValue() );
 		}
 		return fileName;
 	}
@@ -160,6 +166,44 @@ public class AlbumService {
 		
 		// アルバムページを削除する
 		dataStructureBusiness.deleteWholeContentsGroup(albumPageID);
+	}
+	
+
+	/**
+	 * 指定されたアルバムページに関するサムネイルを再構築します
+	 * @param albumPageID
+	 * @throws RecordNotFoundException 
+	 * @throws InvalidParameterException 
+	 * @throws IOException 
+	 * @throws InvalidStateException 
+	 * @throws FileNotFoundException 
+	 */
+	public void remakeThumbnail( Integer albumPageID ) throws RecordNotFoundException, InvalidParameterException, FileNotFoundException, InvalidStateException, IOException{
+		// アルバムに含まれるコンテンツを取得する
+		AlbumPageDTO albumPageDTO = this.getAlbumPage(albumPageID);
+		
+		// アルバムに含まれるコンテンツごとにサムネイルを作作成する
+		List<PhotoDTO> photoDTOList = albumPageDTO.getPhotoDTOList();
+		for( PhotoDTO photoDTO : photoDTOList ){
+			Integer contentsTypeValue = photoDTO.getContentsType();
+			ContentsType contentsType = Constants.ContentsTypeMap.get(contentsTypeValue);
+			Integer contentsID = photoDTO.getContentsID();
+			switch( contentsType ){
+			case Photo:
+				// 写真のサムネイルを再作成する
+				albumStructureBusiness.remakePhotoThumbnail(contentsID);
+				break;
+
+			case Movie:
+				// ムービーのサムネイルを再作成する
+				albumStructureBusiness.remakeMovieThumbnail(contentsID);
+				break;
+
+			default:
+				// 不正ないコンテンツタイプ
+				throw new InvalidParameterException( "不正なコンテンツタイプです。ContentsType="+contentsType.getValue() );
+			}
+		}
 	}
 
 	

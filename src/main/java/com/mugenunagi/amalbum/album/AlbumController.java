@@ -499,8 +499,29 @@ public class AlbumController {
 	    	// アルバムページを削除する
 	    	albumService.removeAlbumPage(contentsGroupID);
 
-	    	// 写真の一覧に戻る
+	    	// アルバムページの一覧に戻る
 	    	return "redirect:/site/viewAlbumPageList.do/"+albumPageID;
+    	} catch (Exception e){
+    		exceptionManager.handle(e);
+    		return null;
+    	}
+    }
+
+    @RequestMapping(value="/aas/remakeThumbs.do", method=RequestMethod.POST)
+    public String remakeThumbnail(
+    								  @RequestParam("contentsGroupID") Integer contentsGroupID
+    								, ModelMap map ) throws Throwable{
+    	try{
+	    	// 確認
+	    	if( contentsGroupID==null ){
+	    		throw new InvalidParameterException( "contentsGroupIDがnullです" );
+	    	}
+
+	    	// アルバムページを削除する
+	    	albumService.remakeThumbnail(contentsGroupID);
+
+	    	// 写真の一覧に戻る
+	    	return "redirect:/site/viewAlbumPage.do/"+contentsGroupID+"?editMode=true";
     	} catch (Exception e){
     		exceptionManager.handle(e);
     		return null;
