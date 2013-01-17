@@ -238,7 +238,7 @@ public class AlbumController {
 
 			// 取り込んだファイルについて処理する
 			String fileName = uploadFile.getOriginalFilename();
-			fileName = albumService.registContents( contentsGroupID, destinationFile, fileName );
+			Integer contentsID = albumService.registContents( contentsGroupID, destinationFile, fileName );
 			
 			// 処理が終わったら一時ファイルを破棄する
 			destinationFile.delete();

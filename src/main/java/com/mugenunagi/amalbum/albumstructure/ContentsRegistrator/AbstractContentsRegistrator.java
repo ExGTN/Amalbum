@@ -45,7 +45,7 @@ public abstract class AbstractContentsRegistrator {
 	 * コンテンツを登録します
 	 * @throws InvalidParameterException 
 	 */
-	abstract public String regist( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException;
+	abstract public Integer regist( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException;
 
 	/**
 	 * 指定したコンテンツIDの写真について、サムネイルを生成して配置します。<BR>

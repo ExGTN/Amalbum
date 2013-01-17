@@ -55,7 +55,7 @@ public class FilePathUtil {
 	public static void prepareDirectory( String path ) throws InvalidStateException, IOException {
 		String separator = File.separator.toString();
 		separator = separator.replaceAll( "\\\\", "\\\\\\\\" );
-		String[] elements = path.split( separator );
+		String[] elements = path.split( "\\\\|/" );
 		if( elements.length==0 ){ return; }
 		
 		StringBuilder dirPath = new StringBuilder();

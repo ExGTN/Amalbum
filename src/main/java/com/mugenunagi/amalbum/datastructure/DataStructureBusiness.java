@@ -219,7 +219,7 @@ public class DataStructureBusiness {
 	 * @param albumID
 	 * @param albumPageName
 	 */
-	public void createContentsGroup(Integer parentID, String contentsGroupName) {
+	public Integer createContentsGroup(Integer parentID, String contentsGroupName) {
 		// 発番する
 		Integer contentsGroupID = contentsGroupMapper.getNextContentsGroupID();
 		Integer seqNo = contentsGroupMapper.getNextSeqNo( parentID );
@@ -239,6 +239,8 @@ public class DataStructureBusiness {
 		entity.setCreateDate( date );	// 作成日付
 
 		contentsGroupMapper.insertContentsGroup(entity);
+		
+		return contentsGroupID;
 	}
 	
 	/**

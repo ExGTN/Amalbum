@@ -78,16 +78,16 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 	 * @throws InvalidStateException 
 	 * @throws InvalidParameterException 
 	 */
-	public String regist( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
+	public Integer regist( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
 		// 動画ファイルを配置する
 		Map<String,String> filePathMap = this.locateMovieFiles(contentsGroupID, tempFile, fileName);
 		fileName = filePathMap.get( "ServerFileName" );
 		
 		// DBに登録する
-		registToDB( contentsGroupID, filePathMap, fileName );
+		Integer contentsID = registToDB( contentsGroupID, filePathMap, fileName );
 		
 		// 実際に登録されたファイル名を返す
-		return fileName;
+		return contentsID;
 	}
 
 
@@ -244,13 +244,15 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 	 * @param filePathMap
 	 * @param fileName
 	 */
-	private void registToDB( Integer contentsGroupID, Map<String,String> filePathMap, String fileName ) {
+	private Integer registToDB( Integer contentsGroupID, Map<String,String> filePathMap, String fileName ) {
 		Date currentDate = new Date();
 		
 		// 動画のDTO（Contents）を作る
 		Integer contentsID = null;
 		{
 			contentsID = sequenceMapper.getNextContentsID();
+			Integer seqNo = sequenceMapper.getNextContentsSeqNo(contentsGroupID);
+			if( seqNo==null ){ seqNo = 1; }
 			
 			ContentsEntity contentsEntity = new ContentsEntity();
 			contentsEntity.setContentsID(contentsID);
@@ -260,7 +262,7 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 			contentsEntity.setBrief(null);
 			contentsEntity.setDescription(null);
 			contentsEntity.setBaseDir( filePathMap.get( "ContentsBasePath" ) );
-			contentsEntity.setSeqNo(0);
+			contentsEntity.setSeqNo(seqNo);
 			contentsEntity.setDeleteDate(null);
 			contentsEntity.setUpdateDate(currentDate);
 			contentsEntity.setCreateDate(currentDate);
@@ -273,6 +275,8 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 		{
 			Integer materialID = null;
 			materialID = sequenceMapper.getNextMaterialID();
+			Integer seqNo = sequenceMapper.getNextMaterialSeqNo(contentsID);
+			if( seqNo==null ){ seqNo = 1; }
 
 			MaterialEntity materialEntity = new MaterialEntity();
 			materialEntity.setMaterialID(materialID);
@@ -282,7 +286,7 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 			materialEntity.setStatus( Constants.StatusCode.Normal.getValue() );
 			materialEntity.setBrief(null);
 			materialEntity.setDescription(null);
-			materialEntity.setSeqNo(0);
+			materialEntity.setSeqNo(seqNo);
 			materialEntity.setDeleteDate(null);
 			materialEntity.setUpdateDate(currentDate);
 			materialEntity.setCreateDate(currentDate);
@@ -295,6 +299,8 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 		{
 			Integer materialID = null;
 			materialID = sequenceMapper.getNextMaterialID();
+			Integer seqNo = sequenceMapper.getNextMaterialSeqNo(contentsID);
+			if( seqNo==null ){ seqNo = 1; }
 
 			MaterialEntity materialEntity = new MaterialEntity();
 			materialEntity.setMaterialID(materialID);
@@ -304,7 +310,7 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 			materialEntity.setStatus( Constants.StatusCode.Normal.getValue() );
 			materialEntity.setBrief(null);
 			materialEntity.setDescription(null);
-			materialEntity.setSeqNo(0);
+			materialEntity.setSeqNo(seqNo);
 			materialEntity.setDeleteDate(null);
 			materialEntity.setUpdateDate(currentDate);
 			materialEntity.setCreateDate(currentDate);
@@ -312,5 +318,7 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 			// DBに書き込む
 			materialMapper.insertMaterial(materialEntity);
 		}
+		
+		return contentsID;
 	}
 }

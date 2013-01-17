@@ -101,29 +101,30 @@ public class AlbumService {
 	 * @throws RecordNotFoundException 
 	 * @throws InvalidParameterException 
 	 */
-	public String registContents( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException{
+	public Integer registContents( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException{
 		ContentsType contentsType = albumStructureBusiness.getContentsTypeFromFilename( fileName );
 		if( contentsType==null ){
 			throw new InvalidParameterException( "指定されたファイルが画像でも動画でもないか、対応していないフォーマットです。File="+fileName );
 		}
 		
 		// 種類ごとに処理を分ける
+		Integer registedContentsID = null;
 		switch( contentsType ){
 		case Photo:
 			// 写真を登録する
-			fileName = albumStructureBusiness.registPhoto(contentsGroupID, tempFile, fileName);
+			registedContentsID = albumStructureBusiness.registPhoto(contentsGroupID, tempFile, fileName);
 			break;
 			
 		case Movie:
 			// 動画を登録する
-			fileName = albumStructureBusiness.registMovie(contentsGroupID, tempFile, fileName);
+			registedContentsID = albumStructureBusiness.registMovie(contentsGroupID, tempFile, fileName);
 			break;
 			
 		default:
 			// 不正ないコンテンツタイプ
 			throw new InvalidParameterException( "不正なコンテンツタイプです。ContentsType="+contentsType.getValue() );
 		}
-		return fileName;
+		return registedContentsID;
 	}
 
 	/**

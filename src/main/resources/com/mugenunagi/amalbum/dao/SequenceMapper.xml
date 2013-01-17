@@ -11,13 +11,30 @@
 		select nextval('materialIDSequence');
 	</select>
 
+	<!-- Materialの次のSeqNoを取得する -->
+	<select id="getNextMaterialSeqNo" parameterType="int" resultType="int">
+		select max(SeqNo)+1 from Material where ContentsID=#{contentsID}
+	</select>
+
+
 	<!-- 次のContentsIDを取得する -->
 	<select id="getNextContentsID" resultType="int">
 		select nextval('contentsIDSequence');
 	</select>
 
+	<!-- Contentsの次のSeqNoを取得する -->
+	<select id="getNextContentsSeqNo" parameterType="int" resultType="int">
+		select max(SeqNo)+1 from Contents where ContentsGroupID=#{contentsGroupID}
+	</select>
+
+
 	<!-- 次のContentsGroupIDを取得する -->
 	<select id="getNextContentsGroupID" resultType="int">
 		select nextval('contentsGroupIDSequence');
+	</select>
+
+	<!-- ContentsGroupの次のSeqNoを取得する -->
+	<select id="getNextContentsGroupSeqNo" parameterType="int" resultType="int">
+		select max(SeqNo)+1 from ContentsGroup where ParentID=#{parentID}
 	</select>
 </mapper>

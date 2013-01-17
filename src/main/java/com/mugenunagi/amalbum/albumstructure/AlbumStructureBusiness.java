@@ -142,9 +142,9 @@ public class AlbumStructureBusiness {
 	 * @throws RecordNotFoundException 
 	 * @throws InvalidParameterException 
 	 */
-	public String registPhoto( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
-		fileName = photoRegistrator.regist( contentsGroupID, tempFile, fileName );
-		return fileName;
+	public Integer registPhoto( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
+		Integer registedContentsID = photoRegistrator.regist( contentsGroupID, tempFile, fileName );
+		return registedContentsID;
 	}
 
 	/**
@@ -154,9 +154,9 @@ public class AlbumStructureBusiness {
 	 * @throws RecordNotFoundException 
 	 * @throws InvalidParameterException 
 	 */
-	public String registMovie( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
-		fileName = movieRegistrator.regist( contentsGroupID, tempFile, fileName );
-		return fileName;
+	public Integer registMovie( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
+		Integer registedContentsID = movieRegistrator.regist( contentsGroupID, tempFile, fileName );
+		return registedContentsID;
 	}
 
 	
@@ -215,10 +215,10 @@ public class AlbumStructureBusiness {
 		if( albumPageID!=null ){ return albumPageID; }
 
 		// コンテンツグループを追加する
-		dataStructureBusiness.createContentsGroup(albumID, albumPageName);
+		albumPageID = dataStructureBusiness.createContentsGroup(albumID, albumPageName);
 		
-		// 追加したグループについて、IDを取得する
-		albumPageID = dataStructureBusiness.getContentsGroupID( albumID, albumPageName );
+//		// 追加したグループについて、IDを取得する
+//		albumPageID = dataStructureBusiness.getContentsGroupID( albumID, albumPageName );
 
 		// 結果を返す
 		return albumPageID;
@@ -235,6 +235,7 @@ public class AlbumStructureBusiness {
 		ContentsType contentsType = null;
 
 		String mimeType = ImageUtils.getMimeTypeFromFilePath(fileName);
+		if( mimeType==null ){ return null; }
 		if( mimeType.startsWith("image") ){
 			contentsType = ContentsType.Photo;
 		} else if ( mimeType.startsWith("video") ){
