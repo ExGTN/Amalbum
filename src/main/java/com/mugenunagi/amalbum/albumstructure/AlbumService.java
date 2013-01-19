@@ -46,9 +46,9 @@ public class AlbumService {
 	 * 指定されたalbumPageIDについての、アルバムページの情報を構築し、DTOに格納して返す
 	 * @throws RecordNotFoundException 
 	 */
-	public AlbumPageListDTO getAlbumPageList( int albumID ) throws RecordNotFoundException {
+	public AlbumPageListDTO getAlbumPageList( int albumID, int page ) throws RecordNotFoundException {
 		// 指定されたアルバム属するアルバムページを取得する
-		List<ContentsGroupEntity> albumPageList = albumStructureBusiness.getAlbumPageList( albumID );
+		List<ContentsGroupEntity> albumPageList = albumStructureBusiness.getAlbumPageList( albumID, page );
 
 		// 指定されたアルバムの情報を取得する
 		ContentsGroupEntity albumInfo = dataStructureBusiness.getContentsGroup( albumID );
@@ -60,6 +60,15 @@ public class AlbumService {
 		
 		// 結果を返す
 		return albumPageListDTO;
+	}
+	
+	/**
+	 * アルバムページ数を取得します
+	 * @param parentID
+	 * @return
+	 */
+	public Integer getAlbumPageCount( Integer parentID ){
+		return albumStructureBusiness.getAlbumPageCount(parentID);
 	}
 	
 	/**

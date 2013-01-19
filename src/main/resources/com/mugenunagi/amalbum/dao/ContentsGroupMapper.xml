@@ -6,14 +6,38 @@
     ContentsGroupMapper
 -->
 <mapper namespace="com.mugenunagi.amalbum.datastructure.dao.ContentsGroupMapper">
+	<!--  ContentsGroupConditionを指定して検索する -->
+	<select id="selectContentsGroupByCondition" parameterType="ContentsGroupCondition" resultType="contentsGroupEntity">
+		select * from contentsGroup where
+			    DeleteDate is null
+			<if test="parentID != null">
+				and parentID = #{parentID}
+			</if>
+			<if test="contentsGroupID != null">
+				and contentsGroupID = #{contentsGroupID}
+			</if>
+			order by SeqNo desc
+			<if test="limit != null">
+				limit #{limit}
+			</if>
+			<if test="offset != null">
+				offset #{offset}
+			</if>
+	</select>
+	
 	<!-- ContentsGroupを、親IDで検索する -->
 	<select id="selectContentsGroupByParentID" parameterType="int" resultType="contentsGroupEntity">
-		select * from contentsGroup where parentID = #{parentID} and (DeleteDate is null) order by SeqNo
+		select * from ContentsGroup where parentID = #{parentID} and (DeleteDate is null) order by SeqNo
 	</select>
 	
 	<!-- ContentsGroupをIDで検索する -->
 	<select id="selectContentsGroupByContentsGroupID" parameterType="int" resultType="contentsGroupEntity">
-		select * from contentsGroup where ContentsGroupID = #{contentsGroupID} and (DeleteDate is null)
+		select * from ContentsGroup where ContentsGroupID = #{contentsGroupID} and (DeleteDate is null)
+	</select>
+	
+	<!-- ContentsGroupの数を取得する -->
+	<select id="getContentsGroupCountByParentID" parameterType="int" resultType="int">
+		select count(*) from ContentsGroup where ParentID=#{parentID}
 	</select>
 	
 	<!--  ContentsGroupIDを、名称から検索する -->
@@ -47,7 +71,7 @@
 				, #{name}
 				, #{brief}
 				, #{description}
-				, 0
+				, #{seqNo}
 				, null
 				, #{updateDate}
 				, #{createDate}

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.mugenunagi.amalbum.datastructure.condition.ContentsGroupCondition;
 import com.mugenunagi.amalbum.datastructure.dao.ContentsGroupMapper;
 import com.mugenunagi.amalbum.datastructure.dao.MaterialMapper;
 import com.mugenunagi.amalbum.datastructure.dao.ContentsMapper;
@@ -70,6 +71,30 @@ public class DataStructureBusiness {
 		//
 		return contentsGroupEntityList;
 	}
+	
+
+	/**
+	 * 指定した条件でコンテンツグループを取得します
+	 * @param condition
+	 * @return
+	 */
+	public List<ContentsGroupEntity> getContentsGroupListByCondition( Integer parentID, Integer limit, Integer offset ){
+		// -----< 検索する >-----
+		//
+		// 検索条件を作る
+		ContentsGroupCondition contentsGroupCondition = new ContentsGroupCondition();
+		contentsGroupCondition.setContentsGroupID( null );
+		contentsGroupCondition.setParentID( parentID );
+		contentsGroupCondition.setLimit(limit);
+		contentsGroupCondition.setOffset(offset);
+
+		// 検索
+		List<ContentsGroupEntity> contentsGroupEntityList = contentsGroupMapper.selectContentsGroupByCondition(contentsGroupCondition);
+		
+		// -----< 結果を返す >-----
+		//
+		return contentsGroupEntityList;
+	}
 
 
 	/**
@@ -88,6 +113,16 @@ public class DataStructureBusiness {
 		return contentsEntityList;
 	}
 
+	
+	/**
+	 * 親IDを指定して、個ノードの数を得る
+	 * @param parentID
+	 * @return
+	 */
+	public Integer getContentsGroupCount( Integer parentID ){
+		Integer count = contentsGroupMapper.getContentsGroupCountByParentID(parentID);
+		return count;
+	}
 
 	/**
 	 * IDを指定して、コンテンツを検索して返す

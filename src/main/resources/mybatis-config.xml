@@ -20,6 +20,8 @@
 		<typeAlias alias="contentsEntity" type="com.mugenunagi.amalbum.datastructure.entity.ContentsEntity"/>
 		<typeAlias alias="roleMasterEntity" type="com.mugenunagi.amalbum.datastructure.entity.RoleMasterEntity"/>
 		<typeAlias alias="backupMasterEntity" type="com.mugenunagi.amalbum.datastructure.entity.BackupMasterEntity"/>
+
+		<typeAlias alias="contentsGroupCondition" type="com.mugenunagi.amalbum.datastructure.condition.ContentsGroupCondition"/>
 	</typeAliases>
 
 	<mappers>

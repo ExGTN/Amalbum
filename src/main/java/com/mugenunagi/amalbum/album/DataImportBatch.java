@@ -47,7 +47,7 @@ public class DataImportBatch {
 			String path = args[0];
 			File targetDir = new File(path);
 			File[] dateDirs = targetDir.listFiles();
-			Arrays.sort( dateDirs , new FilenameComparatorDesc() );
+			Arrays.sort( dateDirs , new FilenameComparator() );
 
 			// ページごとに処理する
 			for( int dirIndex=0;dirIndex<dateDirs.length;dirIndex++ ){
@@ -130,7 +130,13 @@ public class DataImportBatch {
 		 
         StringBuffer sb = new StringBuffer();
         String line;
+        boolean first = true;
         while ((line = br.readLine()) != null) {
+        	if( first ){
+        		first = false;
+        	} else {
+        		sb.append("\n");
+        	}
             sb.append(line);
         }
 

@@ -26,7 +26,8 @@
 		--%>
 		<jsp:include page="common/PageHeader.jsp">
 			<jsp:param name="divID" value="PageHeader" />
-			<jsp:param name="pageName" value="${viewAlbumPageListDTO.albumPageListDTO.albumInfo.name} - ${viewAlbumPageListDTO.albumPageListDTO.albumInfo.brief}" />
+			<jsp:param name="pageName" value="${viewAlbumPageListDTO.albumPageListDTO.albumInfo.name}" />
+			<jsp:param name="brief" value="${viewAlbumPageListDTO.albumPageListDTO.albumInfo.brief}" />
 		</jsp:include>
 
 		<%-- 一覧を出力する
@@ -49,6 +50,22 @@
 				</c:forEach>
 			</table>
 		</div>
+		
+		<!-- ページ -->
+		<p>
+			${viewAlbumPageListDTO.page+1}ページ目を表示中<BR>
+			<c:if test="${viewAlbumPageListDTO.prevPage!=null}" >
+				<A href='${viewAlbumPageListDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}?page=${viewAlbumPageListDTO.prevPage}'>
+					&lt;&lt;前のページ
+				</A>
+				&nbsp;&nbsp;
+			</c:if>
+			<c:if test="${viewAlbumPageListDTO.nextPage!=null}" >
+				<A href='${viewAlbumPageListDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}?page=${viewAlbumPageListDTO.nextPage}'>
+					&gt;&gt;次のページ
+				</A>
+			</c:if>
+		</p>
 
 		<!-- フォーム部分 -->
 		<HR>

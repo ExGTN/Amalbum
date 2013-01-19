@@ -9,12 +9,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.mugenunagi.ApplicationProperties;
 import com.mugenunagi.amalbum.Constants;
 import com.mugenunagi.amalbum.Constants.ContentsType;
 import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.MovieRegistrator;
 import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.PhotoRegistrator;
 import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
+import com.mugenunagi.amalbum.datastructure.condition.ContentsGroupCondition;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
@@ -41,17 +43,37 @@ public class AlbumStructureBusiness {
 	
 	@Autowired
 	MovieRegistrator movieRegistrator;
+	
+	@Autowired
+	ApplicationProperties applicationProperties;
 
 	//=========================================================================
 	// メソッド
 	//=========================================================================
 	/**
+	 * 指定されたアルバムに含まれるアルバムページの数を返します
+	 */
+	public Integer getAlbumPageCount( Integer parentID ){
+		Integer albumPageCount = dataStructureBusiness.getContentsGroupCount( parentID );
+		return albumPageCount;
+	}
+
+	/**
 	 * 親IDを指定して、AlbumPageの一覧を作って返す
 	 */
-	public List<ContentsGroupEntity> getAlbumPageList( int parentID ){
+	public List<ContentsGroupEntity> getAlbumPageList( Integer parentID, Integer page ){
+		// ページングの制御
+		Integer limit = null;
+		Integer offset = null;
+		if( page!=null ){
+			limit = Integer.parseInt(applicationProperties.getString("PAGING_UNIT"));
+			if( page<0 ){ page = 0; }
+			offset = page * limit;
+		}
+		
 		// -----< DataStructureから情報を取り出す >-----
 		//
-		List<ContentsGroupEntity> contentsGroupEntityList = dataStructureBusiness.getContentsGroupListByParentID( parentID );
+		List<ContentsGroupEntity> contentsGroupEntityList = dataStructureBusiness.getContentsGroupListByCondition( parentID, limit, offset );
 		
 		// -----< 結果を返す >-----
 		//

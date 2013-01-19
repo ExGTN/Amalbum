@@ -25,7 +25,8 @@
 		--%>
 		<jsp:include page="common/PageHeader.jsp">
 			<jsp:param name="divID" value="PageHeader" />
-			<jsp:param name="pageName" value="${viewAlbumPageDTO.albumPageDTO.albumPageInfo.name} - ${viewAlbumPageDTO.albumPageDTO.albumPageInfo.brief}" />
+			<jsp:param name="pageName" value="${viewAlbumPageDTO.albumPageDTO.albumPageInfo.name}" />
+			<jsp:param name="brief" value="${viewAlbumPageDTO.albumPageDTO.albumPageInfo.brief}" />
 		</jsp:include>
 
 		<%-- ページ全体のコメント --%>

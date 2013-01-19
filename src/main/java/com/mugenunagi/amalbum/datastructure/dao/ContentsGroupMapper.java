@@ -2,6 +2,7 @@ package com.mugenunagi.amalbum.datastructure.dao;
 
 import java.util.List;
 
+import com.mugenunagi.amalbum.datastructure.condition.ContentsGroupCondition;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 
 /**
@@ -10,7 +11,14 @@ import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
  *
  */
 public interface ContentsGroupMapper {
-	/**
+    /**
+	 * 指定した条件でContentsGroupを取得する
+	 * @param contentsGroupEntity
+	 * @return
+	 */
+    public List<ContentsGroupEntity> selectContentsGroupByCondition( ContentsGroupCondition condition );
+
+    /**
 	 * 指定した親IDを持つContentsGroupを取得する
 	 * @param contentsGroupEntity
 	 * @return
@@ -23,6 +31,13 @@ public interface ContentsGroupMapper {
      * @return
      */
     public ContentsGroupEntity selectContentsGroupByContentsGroupID( Integer contentsGroupID );
+    
+    /**
+     * 指定したParentIDを持つContentsGroupの数を取得する
+     * @param parentID
+     * @return
+     */
+    public Integer getContentsGroupCountByParentID( Integer parentID );
     
     /**
      * 名称が name で、親がparentIDのレコードについて、そのコンテンツグループIDを返す

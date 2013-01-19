@@ -10,5 +10,10 @@
 <%-- ページ名を見出し表示する
 --%>
 <div id="${param['divID']}">
-	<H1>${param['pageName']}</H1>
+	<H1>
+		${param['pageName']}
+		<c:if test="${param['brief']!=null and param['brief']!=''}">
+			 - ${param['brief']}
+		</c:if>
+	</H1>
 </div>

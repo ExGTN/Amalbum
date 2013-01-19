@@ -81,11 +81,11 @@ public class AlbumController {
 	 * @return
 	 */
 	@RequestMapping("/viewAlbumPageList.do")
-	public String viewAlbumPageListSimple( ModelMap modelMap ) {
+	public String viewAlbumPageListSimple( @RequestParam(value="page", required=false) Integer page, ModelMap modelMap ) {
 		// デフォルトのIDを使ってブリッジする
 		Integer defaultAlbumID = 0;
 		
-		return this.viewAlbumPageList(defaultAlbumID, modelMap);
+		return this.viewAlbumPageList(defaultAlbumID, page, modelMap);
 	}
 
 	/**
@@ -95,13 +95,31 @@ public class AlbumController {
 	 * @throws RecordNotFoundException 
 	 */
 	@RequestMapping("/viewAlbumPageList.do/{albumID}")
-	public String viewAlbumPageList( @PathVariable Integer albumID, ModelMap modelMap ) {
+	public String viewAlbumPageList( @PathVariable Integer albumID, @RequestParam(value="page", required=false) Integer page, ModelMap modelMap ) {
 		try{
         	String baseURL = applicationProperties.getString( "BASE_URL" );
 
+        	// -----< ページング関連情報の取得 >-----
+        	//
+        	Integer pagingUnit = Integer.parseInt( applicationProperties.getString("PAGING_UNIT") );
+        	if( pagingUnit<=0 ){ pagingUnit = 20; }
+        	Integer albumPageCount = albumService.getAlbumPageCount( albumID );
+        	Integer pageMax = albumPageCount / pagingUnit;
+
+        	// -----< ページ番号制御 >-----
+        	//
+        	if( page==null ){ page = 0; }
+        	if( page<0 ){ page = 0; }
+        	if( page>pageMax ){ page=pageMax; }
+        	Integer nextPage = page+1;
+        	Integer prevPage = page-1;
+        	if( prevPage<0 ){ prevPage = null; }
+        	if( nextPage>pageMax){ nextPage = null; }
+        	
+
         	//-----< 参照可能なアルバムページの一覧を取得する >-----
 			//
-			AlbumPageListDTO albumPageListDTO = albumService.getAlbumPageList(albumID);
+			AlbumPageListDTO albumPageListDTO = albumService.getAlbumPageList(albumID, page);
 	
 		  	// -----< DTOに格納する >-----
 		  	//
@@ -117,6 +135,10 @@ public class AlbumController {
 		  	viewAlbumPageListDTO.setAlbumPageListDTO(albumPageListDTO);
 		  	viewAlbumPageListDTO.setBaseURL(baseURL);
 		  	viewAlbumPageListDTO.setDefaultAlbumPageName(defaultAlbumPageName);
+		  	viewAlbumPageListDTO.setPage(page);
+		  	viewAlbumPageListDTO.setPrevPage(prevPage);
+		  	viewAlbumPageListDTO.setNextPage(nextPage);
+		  	viewAlbumPageListDTO.setPagingUnit(pagingUnit);
 
 		  	// -----< VIEWに引き渡す >-----
 		  	//
