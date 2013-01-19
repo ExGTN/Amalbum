@@ -8,11 +8,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +28,9 @@ import com.mugenunagi.amalbum.Constants;
 import com.mugenunagi.amalbum.Constants.ContentsType;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageDTO;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageListDTO;
+import com.mugenunagi.amalbum.album.form.CreateAlbumPageForm;
+import com.mugenunagi.amalbum.album.form.EditAlbumPagePropertyForm;
+import com.mugenunagi.amalbum.album.form.EditPhotoPropertyForm;
 import com.mugenunagi.amalbum.albumstructure.AlbumService;
 import com.mugenunagi.amalbum.albumstructure.AlbumStructureBusiness;
 import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.ContentsFileUtil;
@@ -139,10 +146,16 @@ public class AlbumController {
 		  	viewAlbumPageListDTO.setPrevPage(prevPage);
 		  	viewAlbumPageListDTO.setNextPage(nextPage);
 		  	viewAlbumPageListDTO.setPagingUnit(pagingUnit);
+		  	
+		  	// -----< アルバムページ作成フォームの設定 >-----
+		  	//
+		  	CreateAlbumPageForm createAlbumPageForm = new CreateAlbumPageForm();
+		  	createAlbumPageForm.setAlbumID(albumID);
 
 		  	// -----< VIEWに引き渡す >-----
 		  	//
 		  	modelMap.addAttribute( "viewAlbumPageListDTO", viewAlbumPageListDTO );
+		  	modelMap.addAttribute( "createAlbumPageForm", createAlbumPageForm );
 		  	return "site/viewAlbumPageList";
 		} catch (Exception e) {
     		exceptionManager.handle(e);
@@ -157,7 +170,7 @@ public class AlbumController {
 //    * @return
 //    */
 //   @RequestMapping(value="/createAlbum.do", method=RequestMethod.POST)
-//   public String createAlbum( @ModelAttribute("createAlbumForm") CreateAlbumForm createAlbumForm, ModelMap modelMap ){
+//   public String createAlbum( @ModelAttribute("createAlbumForm") CreateAlbumPageForm createAlbumForm, ModelMap modelMap ){
 //   	//
 //   	String albumName = createAlbumForm.getAlbumName();
 //   	String brief = createAlbumForm.getBrief();
@@ -281,12 +294,18 @@ public class AlbumController {
      * @return
      */
     @RequestMapping(value="/aas/createAlbumPage.do", method=RequestMethod.POST)
-    public String createAlbumPage( @RequestParam("name") String name, @RequestParam("albumID") Integer albumID, @RequestParam("returnPath") String returnPath, ModelMap map ){
+    public String createAlbumPage(@Valid CreateAlbumPageForm createAlbumPageForm,BindingResult result, ModelMap map ){
+    	// バリデーション
+    	if( result.hasErrors() ){
+    		System.out.println( result.getFieldError("name") );
+    		return null;
+    	}
+    	
     	// アルバムページを作る
-    	Integer albumPageID = albumService.createAlbumPage(albumID, name);
+    	albumService.createAlbumPage(createAlbumPageForm.getAlbumID(), createAlbumPageForm.getName());
     	
     	// ModelMapに設定
-    	map.put("returnPath", returnPath);
+    	map.put("returnPath", createAlbumPageForm.getReturnPath());
 
     	// リンク先のJSPへ
     	return "site/albumPageCreated";
@@ -339,13 +358,11 @@ public class AlbumController {
      */
     @RequestMapping(value="/editPhotoProperty.do", method=RequestMethod.POST)
     public String editPhotoProperty( @RequestParam("contentsID") Integer contentsID
-    								, @RequestParam("description") String description
-    								, @RequestParam("baseURL") String baseURL
-    								, @RequestParam("returnPath") String returnPath
-    								, @RequestParam("editMode") String editMode
     								, ModelMap map ){
     	try{
-	    	// 確認
+        	String baseURL = applicationProperties.getString( "BASE_URL" );
+
+        	// 確認
 	    	if( contentsID==null ){
 	    		throw new InvalidParameterException( "contentsIDがnullです" );
 	    	}
@@ -354,14 +371,18 @@ public class AlbumController {
 	    	PhotoDTO photoDTO = albumStructureBusiness.getPhoto( contentsID );
 	    	
 	    	// 変換
-	    	description = photoDTO.getDescription();
+	    	String description = photoDTO.getDescription();
 	    	description = HTMLUtil.decodeHtmlSpecialChars(description);
 	    	photoDTO.setDescription(description);
+	    	
+	    	// フォームを作る
+	    	EditPhotoPropertyForm editPhotoPropertyForm = new EditPhotoPropertyForm();
+	    	editPhotoPropertyForm.setContentsID(contentsID);
+	    	editPhotoPropertyForm.setDescription(description);
 
 	    	// 結果を返す
-	    	map.put("editMode", editMode );
-	    	map.put("returnPath", returnPath);
 	    	map.put("photoDTO", photoDTO);
+	    	map.put("editPhotoPropertyForm", editPhotoPropertyForm);
 	    	map.put("baseURL", baseURL);
 	    	return "site/editPhotoProperty";
     	} catch (Exception e){
@@ -392,9 +413,17 @@ public class AlbumController {
 	    	description = HTMLUtil.decodeHtmlSpecialChars(description);
 	    	albumPageDTO.getAlbumPageInfo().setDescription(description);
 
+	    	// -----< フォームの情報を用意する >-----
+	    	//
+	    	EditAlbumPagePropertyForm editAlbumPagePropertyForm = new EditAlbumPagePropertyForm();
+	    	editAlbumPagePropertyForm.setContentsGroupID(contentsGroupID);
+	    	editAlbumPagePropertyForm.setBrief( albumPageDTO.getAlbumPageInfo().getBrief() );
+	    	editAlbumPagePropertyForm.setDescription( description );
+	    	
 	    	// 結果を返す
 	    	map.put("albumPageDTO", albumPageDTO);
 	    	map.put("baseURL", baseURL);
+	    	map.put("editAlbumPagePropertyForm", editAlbumPagePropertyForm);
 	    	return "site/editAlbumPageProperty";
     	} catch (Exception e){
     		exceptionManager.handle(e);
@@ -412,13 +441,12 @@ public class AlbumController {
      * @return
      */
     @RequestMapping(value="/updatePhotoProperty.do", method=RequestMethod.POST)
-    public String updatePhotoProperty( @RequestParam("contentsID") Integer contentsID
-    								, @RequestParam("description") String description
-    								, @RequestParam("baseURL") String baseURL
-    								, @RequestParam("returnPath") String returnPath
-    								, @RequestParam("editMode") String editMode
+    public String updatePhotoProperty( @Valid EditPhotoPropertyForm editPhotoPropertyForm, BindingResult result
     								, ModelMap map ){
     	try{
+    		Integer contentsID = editPhotoPropertyForm.getContentsID();
+    		String description = editPhotoPropertyForm.getDescription();
+    		
 	    	// 確認
 	    	if( contentsID==null ){
 	    		throw new InvalidParameterException( "contentsIDがnullです" );
@@ -452,12 +480,12 @@ public class AlbumController {
     }
 
     @RequestMapping(value="/updateAlbumPageProperty.do", method=RequestMethod.POST)
-    public String updateAlbumPageProperty(
-    								  @RequestParam("contentsGroupID") Integer contentsGroupID
-      								, @RequestParam("brief") String brief
-    								, @RequestParam("description") String description
-    								, ModelMap map ){
+    public String updateAlbumPageProperty( @Valid EditAlbumPagePropertyForm editAlbumPagePropertyForm, BindingResult result, ModelMap map ){
     	try{
+    		Integer contentsGroupID = editAlbumPagePropertyForm.getContentsGroupID();
+    		String brief = editAlbumPagePropertyForm.getBrief();
+    		String description = editAlbumPagePropertyForm.getDescription();
+    		
 	    	// 確認
 	    	if( contentsGroupID==null ){
 	    		throw new InvalidParameterException( "contentsGroupIDがnullです" );

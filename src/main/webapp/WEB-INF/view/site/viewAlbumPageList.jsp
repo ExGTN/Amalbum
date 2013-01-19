@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <%@ page import="com.mugenunagi.amalbum.album.dto.ViewAlbumPageListDTO" %>
 <% request.setCharacterEncoding( "UTF-8" ); %>
@@ -76,11 +77,11 @@
 			<input type="hidden" name="returnPath" value="${viewAlbumPageListDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
 			<input type="submit" value="アップロード" />
 		</form>
-		<form action="${viewAlbumPageListDTO.baseURL}/aas/createAlbumPage.do" method="POST">
-			ページ名：<input type="text" name="name" value="" />
-			<input type="hidden" name="albumID" value="${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
+		<form:form commandName="createAlbumPageForm" action="${viewAlbumPageListDTO.baseURL}/aas/createAlbumPage.do" method="post">
+			ページ名：<form:input path="name"/>
+			<form:hidden path="albumID" />
 			<input type="hidden" name="returnPath" value="${viewAlbumPageListDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
 			<input type="submit" value="アルバムページを作る" />
-		</form>
+		</form:form>
 	</body>
 </html>

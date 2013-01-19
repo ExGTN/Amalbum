@@ -93,11 +93,7 @@
 				<c:if test="${viewAlbumPageDTO.editMode}">
 					<%-- コメント編集ボタン --%>
 					<form action='${viewAlbumPageDTO.baseURL}/editPhotoProperty.do' method='POST'>
-						<input type='hidden' name='returnPath' value='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
-						<input type='hidden' name='editMode' value='true'>
 						<input type='hidden' name='contentsID' value='${photoDTO.contentsID}'>
-						<input type='hidden' name='description' value='${photoDTO.description}'>
-						<input type='hidden' name='baseURL' value='${viewAlbumPageDTO.baseURL}'>
 						<div align='right'>
 							<input type='submit' value='コメント編集'/>
 						</div>
