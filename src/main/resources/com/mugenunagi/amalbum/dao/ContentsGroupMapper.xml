@@ -16,7 +16,7 @@
 			<if test="contentsGroupID != null">
 				and contentsGroupID = #{contentsGroupID}
 			</if>
-			order by SeqNo desc
+			order by name desc
 			<if test="limit != null">
 				limit #{limit}
 			</if>

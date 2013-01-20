@@ -77,11 +77,12 @@
 			<input type="hidden" name="returnPath" value="${viewAlbumPageListDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
 			<input type="submit" value="アップロード" />
 		</form>
-		<form:form commandName="createAlbumPageForm" action="${viewAlbumPageListDTO.baseURL}/aas/createAlbumPage.do" method="post">
+		<form:form commandName="createAlbumPageForm" action="${viewAlbumPageListDTO.baseURL}/aas/createAlbumPage.do" method="post" onsubmit="return FileNameCheck(createAlbumPageForm.name.value)">
 			ページ名：<form:input path="name"/>
 			<form:hidden path="albumID" />
 			<input type="hidden" name="returnPath" value="${viewAlbumPageListDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
 			<input type="submit" value="アルバムページを作る" />
+			<p><form:errors path="name" class="errorMessage"/></p>
 		</form:form>
 	</body>
 </html>

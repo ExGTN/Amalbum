@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -92,7 +93,7 @@ public class AlbumController {
 		// デフォルトのIDを使ってブリッジする
 		Integer defaultAlbumID = 0;
 		
-		return this.viewAlbumPageList(defaultAlbumID, page, modelMap);
+		return this.viewAlbumPageList(null, null, defaultAlbumID, page, modelMap);
 	}
 
 	/**
@@ -102,7 +103,7 @@ public class AlbumController {
 	 * @throws RecordNotFoundException 
 	 */
 	@RequestMapping("/viewAlbumPageList.do/{albumID}")
-	public String viewAlbumPageList( @PathVariable Integer albumID, @RequestParam(value="page", required=false) Integer page, ModelMap modelMap ) {
+	public String viewAlbumPageList( @Valid CreateAlbumPageForm createAlbumPageForm, BindingResult result,@PathVariable Integer albumID, @RequestParam(value="page", required=false) Integer page, ModelMap modelMap ) {
 		try{
         	String baseURL = applicationProperties.getString( "BASE_URL" );
 
@@ -149,7 +150,9 @@ public class AlbumController {
 		  	
 		  	// -----< アルバムページ作成フォームの設定 >-----
 		  	//
-		  	CreateAlbumPageForm createAlbumPageForm = new CreateAlbumPageForm();
+		  	if(createAlbumPageForm==null){
+		  		createAlbumPageForm = new CreateAlbumPageForm();
+		  	}
 		  	createAlbumPageForm.setAlbumID(albumID);
 
 		  	// -----< VIEWに引き渡す >-----
@@ -292,13 +295,33 @@ public class AlbumController {
      * @param uploadFile
      * @param map
      * @return
+     * @throws InvalidParameterException 
      */
     @RequestMapping(value="/aas/createAlbumPage.do", method=RequestMethod.POST)
-    public String createAlbumPage(@Valid CreateAlbumPageForm createAlbumPageForm,BindingResult result, ModelMap map ){
+    public String createAlbumPage(@Valid CreateAlbumPageForm createAlbumPageForm,BindingResult result, ModelMap map ) throws InvalidParameterException{
+    	// 追加の入力チェック
+    	String name = createAlbumPageForm.getName();
+    	Boolean nameInvalid = name.matches("^.*[(\\\\|/|:|\\*|?|\\\"|<|>|\\|)].*$");
+    	if( nameInvalid ){
+	    	FieldError fieldError = new FieldError( createAlbumPageForm.getClass().getName(), "name", "使用できない文字が含まれています" );
+	    	result.addError(fieldError);
+    	}
+    	
+    	// 既存確認
+    	Integer existingAlbumID = albumService.getAlbumPageID(createAlbumPageForm.getAlbumID(), name);
+    	if( existingAlbumID!=null ){
+	    	FieldError fieldError = new FieldError( createAlbumPageForm.getClass().getName(), "name", "指定されたアルバムページは既存です" );
+	    	result.addError(fieldError);
+    	}
+
     	// バリデーション
     	if( result.hasErrors() ){
-    		System.out.println( result.getFieldError("name") );
-    		return null;
+    		Integer albumID = createAlbumPageForm.getAlbumID();
+    		Integer page = 0;
+    		FieldError error = result.getFieldError("name");
+    		String message = error.getDefaultMessage();
+    		return this.viewAlbumPageList(createAlbumPageForm, result, albumID, page, map);
+    		//throw new InvalidParameterException(message);
     	}
     	
     	// アルバムページを作る
@@ -551,13 +574,13 @@ public class AlbumController {
 	    	}
 	    	
 	    	// アルバムIDを取得する
-	    	Integer albumPageID = albumService.getAlbumIDFromAlbumPageID(contentsGroupID);
+	    	Integer albumID = albumService.getAlbumIDFromAlbumPageID(contentsGroupID);
 
 	    	// アルバムページを削除する
 	    	albumService.removeAlbumPage(contentsGroupID);
 
 	    	// アルバムページの一覧に戻る
-	    	return "redirect:/site/viewAlbumPageList.do/"+albumPageID;
+	    	return "redirect:/site/viewAlbumPageList.do/"+albumID;
     	} catch (Exception e){
     		exceptionManager.handle(e);
     		return null;
