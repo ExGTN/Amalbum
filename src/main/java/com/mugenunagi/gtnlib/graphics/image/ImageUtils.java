@@ -1,6 +1,7 @@
 package com.mugenunagi.gtnlib.graphics.image;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -130,6 +131,9 @@ public class ImageUtils {
 		af.setToIdentity();
 		af.scale( ratio, ratio );
 		
+		graphics2D.setRenderingHint(
+				RenderingHints.KEY_INTERPOLATION , 
+                RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 		graphics2D.drawImage(image, af, null);
 		graphics2D.dispose();
 		image.flush();
