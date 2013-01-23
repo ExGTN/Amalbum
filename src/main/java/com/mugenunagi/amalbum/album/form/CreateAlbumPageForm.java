@@ -8,7 +8,7 @@ public class CreateAlbumPageForm {
 	 * アルバムページ名
 	 */
 	//@Pattern(regexp="^.*[(\\|/|:|\*|?|\"|<|>|\|)].*$")
-	@Pattern(regexp="^[a-z]+$",message="only a-z allowed.")
+	//@Pattern(regexp="^[a-z]+$",message="only a-z allowed.")
 	private String name;
 	
 	/**
