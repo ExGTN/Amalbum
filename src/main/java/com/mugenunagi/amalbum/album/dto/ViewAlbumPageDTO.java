@@ -15,11 +15,6 @@ public class ViewAlbumPageDTO {
 	 * AlbumPage のDTO
 	 */
 	private AlbumPageDTO albumPageDTO;
-	
-	/**
-	 * ベースURL
-	 */
-	private String baseURL;
 
 	/**
 	 * 編集モードか否か
@@ -41,20 +36,6 @@ public class ViewAlbumPageDTO {
 	 */
 	public void setAlbumPageDTO(AlbumPageDTO albumPageDTO) {
 		this.albumPageDTO = albumPageDTO;
-	}
-
-	/**
-	 * @return the baseURL
-	 */
-	public String getBaseURL() {
-		return baseURL;
-	}
-
-	/**
-	 * @param baseURL the baseURL to set
-	 */
-	public void setBaseURL(String baseURL) {
-		this.baseURL = baseURL;
 	}
 
 	/**

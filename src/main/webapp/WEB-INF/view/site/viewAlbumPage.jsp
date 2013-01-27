@@ -17,7 +17,7 @@
 		<jsp:include page="common/HeadCommon.jsp">
 			<jsp:param name="pageName" value="${viewAlbumPageDTO.albumPageDTO.albumPageInfo.name}" />
 		</jsp:include>
-		<script src="<%=request.getContextPath()%>/viewAlbumPage.js"></script>
+		<script src="${pageContext.request.contextPath}/viewAlbumPage.js"></script>
 	</head>
 
 	<body class='APVBody'>
@@ -34,7 +34,7 @@
 		
 		<%-- ページ全体のコメント入力へのリンク --%>
 		<c:if test="${viewAlbumPageDTO.editMode}">
-			<form action='${viewAlbumPageDTO.baseURL}/aas/editAlbumPageProperty.do' method='POST'>
+			<form action='${pageContext.request.contextPath}/site/aas/editAlbumPageProperty.do' method='POST'>
 				<input type='hidden' name='contentsGroupID' value='${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
 				<div align='right'><input type='submit' value='コメント編集'></input></div>
 			</form>
@@ -50,8 +50,8 @@
 					<c:when test="${photoDTO.contentsType==0}">
 						<!-- 写真表示 -->
 						<div class="APVPhoto">
-							<a href="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/0" target="_blank">
-								<img src="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/1">
+							<a href="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/0" target="_blank">
+								<img src="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/1">
 							</a>
 							<BR>
 							${photoDTO.path}
@@ -60,8 +60,8 @@
 					<c:when test="${photoDTO.contentsType==1}">
 						<!-- 動画表示 -->
 						<div class="APVPhoto">
-							<a href="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/2" target="_blank">
-								<img src="${viewAlbumPageDTO.baseURL}/ads/restPhoto.do/${photoDTO.contentsID}/3">
+							<a href="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/2" target="_blank">
+								<img src="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/3">
 							</a>
 							<BR>
 							${photoDTO.path}
@@ -75,8 +75,8 @@
 
 				<%-- 回転指示ボタン --%>
 				<c:if test="${viewAlbumPageDTO.editMode}">
-					<form action='${viewAlbumPageDTO.baseURL}/aas/rotateImage.do' method='POST'>
-						<input type='hidden' name='returnPath' value='${viewAlbumPageDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.parentID}'>
+					<form action='${pageContext.request.contextPath}/site/aas/rotateImage.do' method='POST'>
+						<input type='hidden' name='returnPath' value='${pageContext.request.contextPath}/site/viewAlbumPageList.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.parentID}'>
 						<input type='hidden' name='editMode' value='true'>
 						<input type='hidden' name='contentsID' value='${photoDTO.contentsID}'>
 						<input type='hidden' name='rotate' value=''>
@@ -92,7 +92,7 @@
 
 				<c:if test="${viewAlbumPageDTO.editMode}">
 					<%-- コメント編集ボタン --%>
-					<form action='${viewAlbumPageDTO.baseURL}/editPhotoProperty.do' method='POST'>
+					<form action='${pageContext.request.contextPath}/site/editPhotoProperty.do' method='POST'>
 						<input type='hidden' name='contentsID' value='${photoDTO.contentsID}'>
 						<div align='right'>
 							<input type='submit' value='コメント編集'/>
@@ -100,7 +100,7 @@
 					</form>
 
 					<%-- ファイル削除ボタン --%>
-					<form name='deleteFileForm${varStatus.count}' action='${viewAlbumPageDTO.baseURL}/aas/deletePhoto.do' method='POST'>
+					<form name='deleteFileForm${varStatus.count}' action='${pageContext.request.contextPath}/site/aas/deletePhoto.do' method='POST'>
 						<input type='hidden' name='contentsGroupID' value='${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
 						<input type='hidden' name='contentsID' value='${photoDTO.contentsID}'>
 						<div align='right'>
@@ -115,26 +115,26 @@
 		<%-- エディットモードへ
 		--%>
 		<c:if test="${viewAlbumPageDTO.editMode==false}">
-			<form name='toEditMode' action='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}' method='GET'>
+			<form name='toEditMode' action='${pageContext.request.contextPath}/site/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}' method='GET'>
 			<input type='hidden' name='editMode' value='true'>
 			<div align='right'><input type='submit' value='エディットモードへ'></div>
 			</form>
 		</c:if>
 		<c:if test="${viewAlbumPageDTO.editMode==true}">
 			<!-- 参照モードに遷移するボタン -->
-			<form name='toReferMode' action='${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}' method='GET'>
+			<form name='toReferMode' action='${pageContext.request.contextPath}/site/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}' method='GET'>
 			<input type='hidden' name='editMode' value='false'>
 			<div align='right'><input type='submit' value='参照モードへ'></div>
 			</form>
 			
 			<!-- ページ削除 -->
-			<form name='deleteDirForm' action='${viewAlbumPageDTO.baseURL}/aas/deleteAlbumPage.do' method='POST'>
+			<form name='deleteDirForm' action='${pageContext.request.contextPath}/site/aas/deleteAlbumPage.do' method='POST'>
 				<input type='hidden' name='contentsGroupID' value='${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
 				<div align='right'><input type='button' value='このディレクトリを削除' onClick='javascript:onDeleteDir();'></div>
 			</form>
 			
 			<!-- サムネイル再作成 -->
-			<form name='remakeThumbsForm' action='${viewAlbumPageDTO.baseURL}/aas/remakeThumbs.do' method='POST'>
+			<form name='remakeThumbsForm' action='${pageContext.request.contextPath}/site/aas/remakeThumbs.do' method='POST'>
 				<input type='hidden' name='contentsGroupID' value='${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}'>
 				<div align='right'><input type='button' value='サムネイル再作成' onClick='javascript:onRemakeThumbs();'></div>
 			</form>
@@ -142,20 +142,20 @@
 
 		<%-- アップロードのフォーム
 		--%>
-		<form name="fileUploadForm" method="POST" enctype="multipart/form-data" action="${viewAlbumPageDTO.baseURL}/aas/uploadFile.do">
+		<form name="fileUploadForm" method="POST" enctype="multipart/form-data" action="${pageContext.request.contextPath}/site/aas/uploadFile.do">
 			<input type="file" name="uploadFile" size="30"/>
 			<input type="hidden" name="contentsGroupID" value="${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}" />
-			<input type="hidden" name="returnPath" value="${viewAlbumPageDTO.baseURL}/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}" />
+			<input type="hidden" name="returnPath" value="${pageContext.request.contextPath}/site/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}" />
 			<input type="submit" value="アップロード" />
 		</form>
 
 		<%-- 戻るリンク
 		--%>
-		<A href="${viewAlbumPageDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.parentID}">戻る</A>
+		<A href="${pageContext.request.contextPath}/site/viewAlbumPageList.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.parentID}">戻る</A>
 
 		<div align="right"><font size="-2">
 			このページでは、一部<a target="_vp" href="http://www.visualpharm.com/">VisualPharm</a>で公開されている素材を利用させていただいております。
-			<a target="_cc" href="http://creativecommons.org/licenses/by-nd/3.0/"><img src="<%=request.getContextPath()%>/images/88x31.png"></a>
+			<a target="_cc" href="http://creativecommons.org/licenses/by-nd/3.0/"><img src="${pageContext.request.contextPath}/images/88x31.png"></a>
 		</font></div>
 
 	</body>

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="Content-Style-Type" content="text/css">
 
-<link rel="stylesheet" href="<%=request.getContextPath()%>/amalbum.css" type="text/css" />
-<script src="<%=request.getContextPath()%>/amalbum.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/amalbum.css" type="text/css" />
+<script src="${pageContext.request.contextPath}/amalbum.js"></script>
 
 <title>Amalbum - ${param['pageName']}</title>

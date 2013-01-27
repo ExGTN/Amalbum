@@ -37,11 +37,6 @@ public class ViewAlbumPageListDTO {
 	private Integer pagingUnit;
 	
 	/**
-	 * ベースURL
-	 */
-	private String baseURL;
-
-	/**
 	 * デフォルトのページ名
 	 */
 	private String defaultAlbumPageName;
@@ -118,20 +113,6 @@ public class ViewAlbumPageListDTO {
 	 */
 	public void setPagingUnit(Integer pagingUnit) {
 		this.pagingUnit = pagingUnit;
-	}
-
-	/**
-	 * @param baseURL the baseURL to set
-	 */
-	public void setBaseURL(String baseURL) {
-		this.baseURL = baseURL;
-	}
-
-	/**
-	 * @return the baseURL
-	 */
-	public String getBaseURL() {
-		return baseURL;
 	}
 
 	/**

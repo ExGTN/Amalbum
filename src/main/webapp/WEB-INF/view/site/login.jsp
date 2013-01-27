@@ -5,15 +5,16 @@
 <% request.setCharacterEncoding( "UTF-8" ); %>
 
 <%-- ==========================================================================
-コンテンツのプロパティ編集画面
+ログイン画面
 ========================================================================== --%>
 <html>
 	<head>
 		<%-- HEADの共通部分
 		--%>
 		<jsp:include page="common/HeadCommon.jsp">
-			<jsp:param name="pageName" value="写真プロパティ編集" />
+			<jsp:param name="pageName" value="ログイン" />
 		</jsp:include>
+		<script src="${pageContext.request.contextPath}/md5.js"></script>
 	</head>
 
 	<body>
@@ -21,18 +22,20 @@
 		--%>
 		<jsp:include page="common/PageHeader.jsp">
 			<jsp:param name="divID" value="PageHeader" />
-			<jsp:param name="pageName" value="写真プロパティ編集" />
+			<jsp:param name="pageName" value="ログイン" />
 		</jsp:include>
 
-		<!-- フォーム -->
-		<H2>コメント編集</H2>
-		<form:form commandName="editPhotoPropertyForm" method="POST" action="${pageContext.request.contextPath}/site/updatePhotoProperty.do">
-			<form:hidden path="contentsID" />	<!-- コンテンツID -->
-			<form:textarea path='description' cols='80' rows='30' /><BR>
-			<input type='submit' value='送信'></input><BR>
+		<form:form commandName="loginForm" method="POST" action="${pageContext.request.contextPath}/site/loginCheck.do">
+			<table>
+				<tr>
+					<td>UserID</td><td><form:input path="userID" /></td>
+				</tr>
+				<tr>
+					<td>Password</td><td><input type="password" name="password" /></td>
+				</tr>
+			</table>
+			<input type='hidden' name='passwordMD5' value=''/>
+			<input type='submit' value='送信' onclick='javascript:passwordMD5.value=CybozuLabs.MD5.calc(password.value);'></input>
 		</form:form>
-		<c:if test="${returnPath!=null}" >
-			<a href="${returnPath}">戻る</a>
-		</c:if>
 	</body>
 </html>

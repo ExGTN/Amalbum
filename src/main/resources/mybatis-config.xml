@@ -29,5 +29,6 @@
 		<mapper resource="com/mugenunagi/amalbum/dao/ContentsMapper.xml" />
 		<mapper resource="com/mugenunagi/amalbum/dao/MaterialMapper.xml" />
 		<mapper resource="com/mugenunagi/amalbum/dao/SequenceMapper.xml" />
+		<mapper resource="com/mugenunagi/amalbum/dao/LoginUserMapper.xml" />
 	</mappers>
 </configuration>

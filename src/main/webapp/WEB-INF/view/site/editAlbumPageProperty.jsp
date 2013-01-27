@@ -26,7 +26,7 @@
 
 		<!-- フォーム -->
 		<H2>コメント編集</H2>
-		<form:form commandName="editAlbumPagePropertyForm" method="POST" action="${baseURL}/updateAlbumPageProperty.do">
+		<form:form commandName="editAlbumPagePropertyForm" method="POST" action="${pageContext.request.contextPath}/site/updateAlbumPageProperty.do">
 
 			<form:hidden path="contentsGroupID" />
 			ページタイトル：<form:input path="brief" size="80"/><BR>
@@ -35,6 +35,6 @@
 
 			<input type='submit' value='送信'></input><BR>
 		</form:form>		
-		<a href="${baseURL}/viewAlbumPage.do/${albumPageDTO.albumPageInfo.contentsGroupID}?editMode=true">戻る</a>
+		<a href="${pageContext.request.contextPath}/site/viewAlbumPage.do/${albumPageDTO.albumPageInfo.contentsGroupID}?editMode=true">戻る</a>
 	</body>
 </html>

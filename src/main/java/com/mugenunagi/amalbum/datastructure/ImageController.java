@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
@@ -46,7 +47,7 @@ public class ImageController {
 	 * @throws InvalidParameterException 
 	 */
     @RequestMapping("/ads/restImage.do/{materialID}")
-    public String restImage( @PathVariable Integer materialID, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
+    public String restImage( HttpServletRequest request, @PathVariable Integer materialID, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
     	// -----< パスを作る >-----
     	//
     	String filePath = contentsFileUtil.getMaterialPath(materialID);
@@ -93,7 +94,7 @@ public class ImageController {
 	 * @throws InvalidParameterException 
 	 */
     @RequestMapping("/ads/restPhoto.do/{photoID}/{materialType}")
-    public String restPhoto( @PathVariable Integer photoID, @PathVariable Integer materialType, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
+    public String restPhoto( HttpServletRequest request, @PathVariable Integer photoID, @PathVariable Integer materialType, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
     	// -----< コンテンツ（写真）を検索する >-----
     	//
     	String filePath = contentsFileUtil.getMaterialPathSingle(photoID, materialType);

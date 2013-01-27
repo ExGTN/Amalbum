@@ -39,12 +39,12 @@
 					<tr>
 						<!-- Brief表示 -->
 						<td>
-							<a href="${viewAlbumPageListDTO.baseURL}/viewAlbumPage.do/${albumPageInfo.contentsGroupID}">
+							<a href="${pageContext.request.contextPath}/site/viewAlbumPage.do/${albumPageInfo.contentsGroupID}">
 								${albumPageInfo.name}
 							</a>
 						</td>
 						<!-- 簡易説明表示 -->
-						<td>
+						<td class="APVPageListTable">
 							${albumPageInfo.brief}
 						</td>
 					</tr>
@@ -56,13 +56,13 @@
 		<p>
 			${viewAlbumPageListDTO.page+1}ページ目を表示中<BR>
 			<c:if test="${viewAlbumPageListDTO.prevPage!=null}" >
-				<A href='${viewAlbumPageListDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}?page=${viewAlbumPageListDTO.prevPage}'>
+				<A href='${pageContext.request.contextPath}/site/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}?page=${viewAlbumPageListDTO.prevPage}'>
 					&lt;&lt;前のページ
 				</A>
 				&nbsp;&nbsp;
 			</c:if>
 			<c:if test="${viewAlbumPageListDTO.nextPage!=null}" >
-				<A href='${viewAlbumPageListDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}?page=${viewAlbumPageListDTO.nextPage}'>
+				<A href='${pageContext.request.contextPath}/site/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}?page=${viewAlbumPageListDTO.nextPage}'>
 					&gt;&gt;次のページ
 				</A>
 			</c:if>
@@ -70,17 +70,17 @@
 
 		<!-- フォーム部分 -->
 		<HR>
-		<form name="fileUploadForm" method="POST" enctype="multipart/form-data" action="${viewAlbumPageListDTO.baseURL}/aas/uploadFileToDefaultAlbumPage.do">
+		<form name="fileUploadForm" method="POST" enctype="multipart/form-data" action="${pageContext.request.contextPath}/site/aas/uploadFileToDefaultAlbumPage.do">
 			<input type="file" name="uploadFile" size="30"/>
 			<input type="hidden" name="albumID" value="${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
 			<input type="hidden" name="defaultAlbumPageName" value="${viewAlbumPageListDTO.defaultAlbumPageName}" />
-			<input type="hidden" name="returnPath" value="${viewAlbumPageListDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
+			<input type="hidden" name="returnPath" value="${pageContext.request.contextPath}/site/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
 			<input type="submit" value="アップロード" />
 		</form>
-		<form:form commandName="createAlbumPageForm" action="${viewAlbumPageListDTO.baseURL}/aas/createAlbumPage.do" method="post" onsubmit="return FileNameCheck(createAlbumPageForm.name.value)">
+		<form:form commandName="createAlbumPageForm" action="${pageContext.request.contextPath}/site/aas/createAlbumPage.do" method="post" onsubmit="return FileNameCheck(createAlbumPageForm.name.value)">
 			ページ名：<form:input path="name"/>
 			<form:hidden path="albumID" />
-			<input type="hidden" name="returnPath" value="${viewAlbumPageListDTO.baseURL}/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
+			<input type="hidden" name="returnPath" value="${pageContext.request.contextPath}/site/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
 			<input type="submit" value="アルバムページを作る" />
 			<p><form:errors path="name" class="errorMessage"/></p>
 		</form:form>

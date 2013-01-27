@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    LoginUserMapper
+-->
+<mapper namespace="com.mugenunagi.amalbum.datastructure.dao.LoginUserMapper">
+	<!-- UserIDを指定してLoginUserを取得する -->
+	<select id="getLoginUser" parameterType="String" resultType="loginUserEntity">
+		select * from loginUser where UserID = #{userID} and DeleteDate is null
+	</select>
+</mapper>

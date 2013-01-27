@@ -8,12 +8,15 @@ import org.springframework.stereotype.Component;
 
 import com.mugenunagi.amalbum.datastructure.condition.ContentsGroupCondition;
 import com.mugenunagi.amalbum.datastructure.dao.ContentsGroupMapper;
+import com.mugenunagi.amalbum.datastructure.dao.LoginUserMapper;
 import com.mugenunagi.amalbum.datastructure.dao.MaterialMapper;
 import com.mugenunagi.amalbum.datastructure.dao.ContentsMapper;
+import com.mugenunagi.amalbum.datastructure.entity.LoginUserEntity;
 import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
+import com.mugenunagi.gtnlib.crypt.MD5;
 
 /**
  * データ構造を取り扱うビジネスクラス
@@ -33,6 +36,9 @@ public class DataStructureBusiness {
 
 	@Autowired
 	MaterialMapper materialMapper;
+	
+	@Autowired
+	LoginUserMapper loginUserMapper;
 	
 	//=========================================================================
 	// メソッド
@@ -292,5 +298,29 @@ public class DataStructureBusiness {
 	 */
 	public void updateContentsGroup( ContentsGroupEntity contentsGroupEntity ){
 		contentsGroupMapper.updateContentsGroup(contentsGroupEntity);
+	}
+
+	/**
+	 * パスワードチェック
+	 * @param userID
+	 * @param passwordMD5
+	 * @return
+	 */
+	public Boolean checkPassword(String userID, String passwordMD5) {
+		// 入力確認
+		if( userID==null ){ return false; }
+		if( passwordMD5==null ){ return false; }
+		
+		// ユーザ情報を取得する
+		LoginUserEntity loginUserEntity = loginUserMapper.getLoginUser( userID );
+		if( loginUserEntity==null ){ return false; }
+		
+		// パスワードを確認する
+		String target = loginUserEntity.getEncPassword();
+		if( !passwordMD5.equals(target) ){
+			return false;
+		}
+		return true;
+		
 	}
 }

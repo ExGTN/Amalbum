@@ -16,6 +16,7 @@ import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageListDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
+import com.mugenunagi.amalbum.datastructure.form.LoginForm;
 import com.mugenunagi.amalbum.exception.InvalidParameterException;
 import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
@@ -222,6 +223,19 @@ public class AlbumService {
 				throw new InvalidParameterException( "不正なコンテンツタイプです。ContentsType="+contentsType.getValue() );
 			}
 		}
+	}
+
+	/**
+	 * パスワードチェック
+	 * @param loginForm
+	 * @return
+	 */
+	public Boolean checkPassword(LoginForm loginForm) {
+		String userID = loginForm.getUserID();
+		String passwordMD5 = loginForm.getPasswordMD5();
+		
+		Boolean result = dataStructureBusiness.checkPassword( userID, passwordMD5 );
+		return result;
 	}
 
 	
