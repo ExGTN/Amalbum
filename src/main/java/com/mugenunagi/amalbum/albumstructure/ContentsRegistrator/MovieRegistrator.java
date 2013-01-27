@@ -188,8 +188,8 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 		FilePathUtil.prepareDirectory( thumbnailPath );
 
 		// サムネイルを作る
-		int width =  contentsFileUtil.getThumbnailWidth();
-		int height = contentsFileUtil.getThumbnailHeight();
+		int width =  400; //contentsFileUtil.getThumbnailWidth();
+		int height = 300; //contentsFileUtil.getThumbnailHeight();
 
 		BufferedImage bi = ImageUtils.createThumbnailImage(destFilePath, width, height);
 		File thumbnailFile = new File( thumbnailPath );
