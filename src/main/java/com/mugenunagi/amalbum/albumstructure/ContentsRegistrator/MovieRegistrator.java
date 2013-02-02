@@ -118,7 +118,9 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 		fileName = serverFileName;
 		
 		File destFile = new File( destFilePath );
-		tempFile.renameTo( destFile );
+		//tempFile.renameTo( destFile );
+		FileUtils.copyFile(tempFile, destFile);
+		tempFile.delete();
 		
 		// サムネイルを作る
 		String thumbnailPath = locateThumbnail( contentsGroupBasePath, fileName );
