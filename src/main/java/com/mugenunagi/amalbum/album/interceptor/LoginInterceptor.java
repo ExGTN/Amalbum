@@ -43,19 +43,20 @@ public class LoginInterceptor implements MethodInterceptor {
 	    	return invocation.proceed();
 	    }
 
-	    // セッションに直前のURLを置いておく
+	    // ログイン情報がなければログイン画面へ
 	    HttpSession session = request.getSession(true);
-	    String url = request.getRequestURL().toString();
-	    session.removeAttribute("requestURL");
-	    session.setAttribute("requestURL", url);
-
-	    // セッションがあってもログイン情報がなければログイン画面へ
     	LoginInfoDTO loginInfoDTO = (LoginInfoDTO)session.getAttribute("loginInfoDTO");
     	if(loginInfoDTO==null){
-        	return "redirect:/site/login.do";
+    		// 現在のURLをセッションに入れておく
+    	    String url = request.getRequestURL().toString();
+    	    session.removeAttribute("requestURL");
+    	    session.setAttribute("requestURL", url);
+
+    	    return "redirect:/site/login.do";
         }
 
     	// OK.
+    	session.removeAttribute("requestURL");
     	return invocation.proceed();
     }
 }

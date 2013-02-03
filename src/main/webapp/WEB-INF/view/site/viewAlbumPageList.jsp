@@ -39,7 +39,7 @@
 					<tr>
 						<!-- Brief表示 -->
 						<td>
-							<a href="${pageContext.request.contextPath}/site/viewAlbumPage.do/${albumPageInfo.contentsGroupID}">
+							<a href="${pageContext.request.contextPath}/site/viewAlbumPage.do/${albumPageInfo.contentsGroupID}?pageFrom=${viewAlbumPageListDTO.page}">
 								${albumPageInfo.name}
 							</a>
 						</td>

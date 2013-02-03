@@ -46,8 +46,8 @@ public class ImageController {
 	 * @throws RecordNotFoundException 
 	 * @throws InvalidParameterException 
 	 */
-    @RequestMapping("/ads/restImage.do/{materialID}")
-    public String restImage( HttpServletRequest request, @PathVariable Integer materialID, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
+    @RequestMapping("/ads/restImage.do/{materialID}/{dummyFileName}")
+    public String restImage( HttpServletRequest request, @PathVariable Integer materialID, @PathVariable String dummyFileName, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
     	// -----< パスを作る >-----
     	//
     	String filePath = contentsFileUtil.getMaterialPath(materialID);
@@ -93,8 +93,8 @@ public class ImageController {
 	 * @throws RecordNotFoundException 
 	 * @throws InvalidParameterException 
 	 */
-    @RequestMapping("/ads/restPhoto.do/{photoID}/{materialType}")
-    public String restPhoto( HttpServletRequest request, @PathVariable Integer photoID, @PathVariable Integer materialType, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
+    @RequestMapping("/ads/restPhoto.do/{photoID}/{materialType}/{dummyFileName}")
+    public String restPhoto( HttpServletRequest request, @PathVariable Integer photoID, @PathVariable Integer materialType, @PathVariable String dummyFileName, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
     	// -----< コンテンツ（写真）を検索する >-----
     	//
     	String filePath = contentsFileUtil.getMaterialPathSingle(photoID, materialType);

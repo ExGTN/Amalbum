@@ -1,5 +1,7 @@
 package com.mugenunagi.amalbum.albumstructure.dto;
 
+import java.io.File;
+
 /**
  * アルバム内に表示される１枚の写真を取り扱うDTO
  * @author gtn
@@ -71,5 +73,19 @@ public class PhotoDTO {
 	 */
 	public void setPath(String path) {
 		this.path = path;
+	}
+	
+	/**
+	 * パスのなかのファイル名の部分を返す
+	 * @return
+	 */
+	public String getFilename() {
+		if( path==null ){
+			return null;
+		}
+		
+		File file =new File( path );
+		String filename = file.getName();
+		return filename;
 	}
 }

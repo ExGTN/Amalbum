@@ -239,7 +239,7 @@ public class AlbumController {
 	 * @return
 	 */
     @RequestMapping("/viewAlbumPage.do/{albumPageID}")
-    public String viewAlbumPage( HttpServletRequest request, @PathVariable Integer albumPageID, @RequestParam(value="editMode", required=false) String editModeString, ModelMap modelMap ) {
+    public String viewAlbumPage( HttpServletRequest request, @PathVariable Integer albumPageID, @RequestParam(value="pageFrom", required=false) Integer pageFrom, @RequestParam(value="editMode", required=false) String editModeString, ModelMap modelMap ) {
     	// editMode判定
     	boolean editMode = false;
     	if( (editModeString!=null)&&(editModeString.equals("true")) ){
@@ -250,7 +250,7 @@ public class AlbumController {
 	    	// -----< アルバムページの情報を取得する  >-----
 	    	//
 	    	AlbumPageDTO albumPageDTO = albumService.getAlbumPage(albumPageID);
-	
+	    	
 	    	// -----< DTOに格納する >-----
 	    	//
 	    	// DTO を作る
@@ -260,7 +260,12 @@ public class AlbumController {
 	    	
 	    	// -----< VIEWに引き渡す >-----
 	    	//
+	    	if( pageFrom==null ){
+	    		pageFrom = 0;
+	    	}
+	    	modelMap.addAttribute( "pageFrom", pageFrom );
 	    	modelMap.addAttribute( "viewAlbumPageDTO", viewAlbumPageDTO );
+
 	    	return "site/viewAlbumPage";
     	} catch (Exception e){
     		exceptionManager.handle(e);

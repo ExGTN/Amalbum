@@ -50,8 +50,8 @@
 					<c:when test="${photoDTO.contentsType==0}">
 						<!-- 写真表示 -->
 						<div class="APVPhoto">
-							<a href="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/0" target="_blank">
-								<img src="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/1">
+							<a href="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/0/${photoDTO.filename}" target="_blank">
+								<img src="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/1/${photoDTO.filename}">
 							</a>
 							<BR>
 							${photoDTO.path}
@@ -60,8 +60,8 @@
 					<c:when test="${photoDTO.contentsType==1}">
 						<!-- 動画表示 -->
 						<div class="APVPhoto">
-							<a href="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/2" target="_blank">
-								<img src="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/3">
+							<a href="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/2/${photoDTO.filename}" target="_blank">
+								<img src="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/3/${photoDTO.filename}">
 							</a>
 							<BR>
 							${photoDTO.path}
@@ -76,7 +76,7 @@
 				<%-- 回転指示ボタン --%>
 				<c:if test="${viewAlbumPageDTO.editMode}">
 					<form action='${pageContext.request.contextPath}/site/aas/rotateImage.do' method='POST'>
-						<input type='hidden' name='returnPath' value='${pageContext.request.contextPath}/site/viewAlbumPageList.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.parentID}'>
+						<input type='hidden' name='returnPath' value='${pageContext.request.contextPath}/site/viewAlbumPage.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.contentsGroupID}?editMode=true'>
 						<input type='hidden' name='editMode' value='true'>
 						<input type='hidden' name='contentsID' value='${photoDTO.contentsID}'>
 						<input type='hidden' name='rotate' value=''>
@@ -151,7 +151,7 @@
 
 		<%-- 戻るリンク
 		--%>
-		<A href="${pageContext.request.contextPath}/site/viewAlbumPageList.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.parentID}">戻る</A>
+		<A href="${pageContext.request.contextPath}/site/viewAlbumPageList.do/${viewAlbumPageDTO.albumPageDTO.albumPageInfo.parentID}?page=${pageFrom}">戻る</A>
 
 		<div align="right"><font size="-2">
 			このページでは、一部<a target="_vp" href="http://www.visualpharm.com/">VisualPharm</a>で公開されている素材を利用させていただいております。
