@@ -60,7 +60,7 @@
 					<c:when test="${photoDTO.contentsType==1}">
 						<!-- 動画表示 -->
 						<div class="APVPhoto">
-							<a href="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/2/${photoDTO.filename}" target="_blank">
+							<a href="${pageContext.request.contextPath}/site/ads/restMovie.do/${photoDTO.contentsID}/2/${photoDTO.filename}" target="_blank">
 								<img src="${pageContext.request.contextPath}/site/ads/restPhoto.do/${photoDTO.contentsID}/3/${photoDTO.filename}">
 							</a>
 							<BR>
