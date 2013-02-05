@@ -163,6 +163,7 @@ public class ImageController {
     	Integer len = 0;
     	boolean r206 = false;
     	if( httpRange!=null ){
+    		logger.debug( "httpRange=" + httpRange );
     		httpRange=httpRange.trim().toLowerCase().replaceAll(" ", "");
     		if( httpRange.startsWith("bytes") ){
     			int indexEq = httpRange.indexOf("=");
