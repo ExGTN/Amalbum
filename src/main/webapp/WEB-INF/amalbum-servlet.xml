@@ -59,12 +59,14 @@
 	</aop:config>
 
 	<!-- コンテンツの権限制御 -->
+	<!--
 	<bean id="authorizationInterceptor" class="com.mugenunagi.amalbum.datastructure.interceptor.AuthorizationInterceptor" />
 	<aop:config>
 		<aop:advisor
 			pointcut="execution(* com.mugenunagi.amalbum.datastructure.ImageController.*(..))"
 			advice-ref="authorizationInterceptor" />
 	</aop:config>
+	-->
 
 	<!-- 定数オブジェクトへのプロパティ値の注入  -->	
 	<bean id="amalbumConstants" class="com.mugenunagi.amalbum.Constants">

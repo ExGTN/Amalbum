@@ -194,13 +194,13 @@ public class ImageController {
         	response.setHeader("Content-Disposition", "filename=\"" + fileName + "\"");
         	
         	if( r206 ){
-        	    //response.setHeader('HTTP/1.1 206 Partial content');
+        		response.setStatus( HttpServletResponse.SC_PARTIAL_CONTENT );
         	    response.setHeader("Accept-Ranges", "bytes");
         	    response.setContentLength( len );
         	    response.setHeader("Content-Range", "bytes "+offset+"-"+end+"/"+fsize );
         	    response.setHeader("Last-Modified", lastModifiedString );
         	} else {
-        		response.setHeader("x-jphone-copyright", "no-transfer");
+        		//response.setHeader("x-jphone-copyright", "no-transfer");
         	    response.setHeader("Last-Modified", lastModifiedString );
         	    response.setHeader("Accept-Ranges" ,"bytes");
         	    response.setContentLength( fsize );
@@ -211,6 +211,17 @@ public class ImageController {
 
             int count;
             byte[] buffer = new byte[65536];
+
+            // Offsetまで読み捨てる
+            if( offset>0 ){
+	            int max = offset / buffer.length;
+	            for( int i=0;i<max;i++ ){
+	            	in.read(buffer);
+	            }
+	            in.read( buffer, 0, offset % buffer.length );
+            }
+            
+            // データ転送
             while ((count = in.read( buffer )) != -1) {
                 //System.out.print(Integer.toHexString(ch) + " ");
                 outputStream.write( buffer, 0, count );

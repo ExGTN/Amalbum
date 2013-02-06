@@ -1,6 +1,7 @@
 package com.mugenunagi.gtnlib.graphics.image;
 
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -121,25 +122,23 @@ public class ImageUtils {
 
 		// -----< 変換する >-----
 		//
-		// <<< 比率計算 >>>
-		double ratio = ImageUtils.getFittingRatio( image.getWidth(), image.getHeight(), width, height );
-		
 		// <<< 変換先のGraphicsを取得する >>>
 		Graphics2D graphics2D = resizedImage.createGraphics();
 
 		// <<< 変換先に描き込む >>>
+		Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 		AffineTransform af = new AffineTransform();
 		af.setToIdentity();
-		af.scale( ratio, ratio );
-		
 		graphics2D.setRenderingHint(
 				RenderingHints.KEY_INTERPOLATION , 
-                RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		graphics2D.drawImage(image, af, null);
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		graphics2D.drawImage(scaledImage, af, null);
 		graphics2D.dispose();
+		scaledImage.flush();
 		image.flush();
 
-		// -----< 描画結果を
+		// -----< 描画結果を返す >-----
+		//
 		return resizedImage;
 	}
 	
