@@ -48,9 +48,10 @@ public class ImageController {
 	 * @return
 	 * @throws RecordNotFoundException 
 	 * @throws InvalidParameterException 
+	 * @throws IOException 
 	 */
     @RequestMapping("/ads/restImage.do/{materialID}/{dummyFileName}")
-    public String restImage( HttpServletRequest request, @PathVariable Integer materialID, @PathVariable String dummyFileName, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
+    public String restImage( HttpServletRequest request, @PathVariable Integer materialID, @PathVariable String dummyFileName, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException, IOException {
     	// -----< パスを作る >-----
     	//
     	String filePath = contentsFileUtil.getMaterialPath(materialID);
@@ -76,12 +77,14 @@ public class ImageController {
                 //System.out.print(Integer.toHexString(ch) + " ");
                 outputStream.write( buffer, 0, count );
             }
-            
-            in.close();
             outputStream.flush();
-            outputStream.close();
-        } catch (IOException e) {
+        } catch (IOException ioe) {
+        	logger.debug("File transfer aborted.");
+        } catch (Exception e) {
         	logger.error(e,e);
+        } finally {
+            if( in!=null ){ in.close(); }
+            if( outputStream!=null ){ outputStream.close(); }
         }
         
     	// -----< 結果を返す >-----
@@ -95,9 +98,10 @@ public class ImageController {
 	 * @return
 	 * @throws RecordNotFoundException 
 	 * @throws InvalidParameterException 
+	 * @throws IOException 
 	 */
     @RequestMapping("/ads/restPhoto.do/{photoID}/{materialType}/{dummyFileName}")
-    public String restPhoto( HttpServletRequest request, @PathVariable Integer photoID, @PathVariable Integer materialType, @PathVariable String dummyFileName, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
+    public String restPhoto( HttpServletRequest request, @PathVariable Integer photoID, @PathVariable Integer materialType, @PathVariable String dummyFileName, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException, IOException {
     	// -----< コンテンツ（写真）を検索する >-----
     	//
     	String filePath = contentsFileUtil.getMaterialPathSingle(photoID, materialType);
@@ -124,11 +128,14 @@ public class ImageController {
                 outputStream.write( buffer, 0, count );
             }
             
-            in.close();
             outputStream.flush();
-            outputStream.close();
-        } catch (IOException e) {
+        } catch (IOException ioe) {
+        	logger.debug("File transfer aborted.");
+        } catch (Exception e) {
         	logger.error(e,e);
+        } finally {
+            if( in!=null ){ in.close(); }
+            if( outputStream!=null ){ outputStream.close(); }
         }
         
     	// -----< 結果を返す >-----
@@ -147,9 +154,10 @@ public class ImageController {
      * @return
      * @throws RecordNotFoundException
      * @throws InvalidParameterException
+     * @throws IOException 
      */
     @RequestMapping("/ads/restMovie.do/{movieID}/{materialType}/{dummyFileName}")
-    public String restMovie( HttpServletRequest request, @PathVariable Integer movieID, @PathVariable Integer materialType, @PathVariable String dummyFileName, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException {
+    public String restMovie( HttpServletRequest request, @PathVariable Integer movieID, @PathVariable Integer materialType, @PathVariable String dummyFileName, HttpServletResponse response ) throws RecordNotFoundException, InvalidParameterException, IOException {
     	// -----< コンテンツ（写真）を検索する >-----
     	//
     	String filePath = contentsFileUtil.getMaterialPathSingle(movieID, materialType);
@@ -227,11 +235,14 @@ public class ImageController {
                 outputStream.write( buffer, 0, count );
             }
             
-            in.close();
             outputStream.flush();
-            outputStream.close();
-        } catch (IOException e) {
+        } catch (IOException ioe) {
+        	logger.debug("File transfer aborted.");
+        } catch (Exception e) {
         	logger.error(e,e);
+        } finally {
+            in.close();
+            outputStream.close();
         }
         
     	// -----< 結果を返す >-----
