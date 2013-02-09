@@ -11,11 +11,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
 
 import com.mugenunagi.gtnlib.io.FilePathUtil;
 
@@ -216,6 +222,32 @@ public class ImageUtils {
 
 		// -----< 描画結果を
 		return rotatedImage;
+	}
+	
+	
+	/**
+	 * 指定されたBufferedImageを、thumbnailFile に書きだします。
+	 * @param bi
+	 * @param imageType
+	 * @param thumbnailPath
+	 * @throws IOException
+	 */
+	public static void writeImage( BufferedImage bi, String imageType, File thumbnailFile ) throws IOException{
+		if( imageType.toUpperCase().equals("JPG") ){
+			// JPGの場合は品質設定を行う
+			JPEGImageWriteParam jiparam = new JPEGImageWriteParam(Locale.getDefault());
+			jiparam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+			jiparam.setCompressionQuality(0.95f);
+
+			ImageWriter iw = ImageIO.getImageWritersByFormatName(imageType).next();
+			ImageOutputStream outputStream = ImageIO.createImageOutputStream( thumbnailFile );
+			iw.setOutput( outputStream );
+			iw.write(null, new IIOImage(bi, null, null), jiparam);
+			bi.flush();
+			outputStream.close();
+		} else {
+			ImageIO.write(bi, imageType, thumbnailFile);
+		}
 	}
 
 

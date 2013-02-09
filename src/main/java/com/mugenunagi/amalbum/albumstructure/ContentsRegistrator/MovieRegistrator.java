@@ -195,7 +195,7 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 
 		BufferedImage bi = ImageUtils.createThumbnailImage(destFilePath, width, height);
 		File thumbnailFile = new File( thumbnailPath );
-		ImageIO.write(bi, imageType, thumbnailFile);
+		ImageUtils.writeImage(bi, imageType, thumbnailFile);
 
 		return thumbnailPath;
 	}

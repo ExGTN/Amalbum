@@ -7,9 +7,15 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,15 +189,17 @@ public class PhotoRegistrator extends AbstractContentsRegistrator {
 		// サムネイルの配置先ディレクトリを用意する
 		String thumbnailDirPath	= photoFileUtil.makeThumbnailDirPath( contentsGroupBasePath );
 		String thumbnailPath	= photoFileUtil.makeThumbnailPath( contentsGroupBasePath , fileName );
-		FilePathUtil.prepareDirectory( thumbnailPath );
+		FilePathUtil.prepareDirectory( thumbnailDirPath );
 
 		// サムネイルを作る
 		int width =  photoFileUtil.getThumbnailWidth();
 		int height = photoFileUtil.getThumbnailHeight();
 		BufferedImage bi = ImageUtils.createThumbnailImage(destFilePath, width, height);
-		File thumbnailFile = new File( thumbnailPath );
-		ImageIO.write(bi, imageType, thumbnailFile);
 
+		// サムネイル画像を保存する
+		File thumbnailFile = new File( thumbnailPath );
+		ImageUtils.writeImage( bi, imageType, thumbnailFile );
+		
 		return thumbnailPath;
 	}
 	
@@ -314,7 +322,7 @@ public class PhotoRegistrator extends AbstractContentsRegistrator {
     	} else {
     		bi = ImageUtils.createRotateImage(tempFilePath, -90.0);
     	}
-    	ImageIO.write(bi, formatName, tempFile);
+    	ImageUtils.writeImage(bi, formatName, tempFile);
     	
     	// 回転した画像を書き戻す
     	FileUtils.copyFile( tempFile, photoFile );
