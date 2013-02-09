@@ -187,7 +187,7 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 		// サムネイルの配置先ディレクトリを用意する
 		String thumbnailDirPath	= contentsFileUtil.makeThumbnailDirPath( contentsGroupBasePath );
 		String thumbnailPath	= contentsFileUtil.makeThumbnailPath( contentsGroupBasePath , fileName+"."+thumbnailImageName );
-		FilePathUtil.prepareDirectory( thumbnailPath );
+		FilePathUtil.prepareDirectory( thumbnailDirPath );
 
 		// サムネイルを作る
 		int width =  400; //contentsFileUtil.getThumbnailWidth();
