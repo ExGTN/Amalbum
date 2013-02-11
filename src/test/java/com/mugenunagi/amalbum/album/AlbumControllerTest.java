@@ -6,6 +6,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +23,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
 import com.mugenunagi.ApplicationProperties;
+import com.mugenunagi.amalbum.album.dto.ViewAlbumPageListDTO;
+import com.mugenunagi.amalbum.album.form.CreateAlbumPageForm;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
+import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 import com.mugenunagi.amalbum.datastructure.form.LoginForm;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -64,10 +71,26 @@ public class AlbumControllerTest {
 	public void testUploadFile() throws Throwable {
 		// ----< 準備 >-----
 		//
+		Integer albumID = 0;
+		Date date = new Date();
+		long timeValue = date.getTime();
+		String albumPageNameForTest = "TestPageToUploadFile"+timeValue;
+		ContentsGroupEntity albumEntity = dataStructureBusiness.getContentsGroup( albumID );
+		String albumName = albumEntity.getName();
+
 		// テスト用ファイルのフルパスを作る
 		String testDataLocation = applicationProperties.getString("TESTDATA_LOCATION");
 		String testDataFilename = applicationProperties.getString("TESTDATA_PHOTO_1");
 		String testDataFilePath = testDataLocation + "/" + testDataFilename; 
+
+		// ファイルアップロード先のフルパスを作る
+		String targetLocation = applicationProperties.getString("LOCAL_CONTENTS_BASE_PATH");
+		String photoRelativePath = applicationProperties.getString("PHOTO_RELATIVE_PATH");
+		String thumbnailRelativePath = applicationProperties.getString("CONTENTS_THUMBNAIL_RELATIVE_PATH");
+		String thumbnailPrefix = applicationProperties.getString("CONTENTS_THUMBNAIL_PREFIX");
+
+		String targetFilePath = targetLocation + "/" + photoRelativePath + "/" + albumName + "/" + albumPageNameForTest + "/" + testDataFilename;
+		String thumbnailPath = targetLocation + "/" + photoRelativePath + "/" + albumName + "/" + albumPageNameForTest + "/" + thumbnailRelativePath + "/" + thumbnailPrefix +"." + testDataFilename;
 		
 		// モックオブジェクトを作る
 		FileInputStream inputStream = new FileInputStream( testDataFilePath );
@@ -77,24 +100,67 @@ public class AlbumControllerTest {
 		// テスト用オブジェクトを作る
 		ModelMap map = new ModelMap();
 		String returnPath = "http://www.mugenunagi.com/amalbum/login.do";
-		
+			
 		// アルバムページを作る
-		Integer albumID = 0;
-		Integer albumPageID = dataStructureBusiness.createContentsGroup( albumID , "TestPageToUploadFile" );
+		Integer albumPageID = dataStructureBusiness.createContentsGroup( albumID , albumPageNameForTest );
 		
 		// ----< アップロードする >-----
 		//
-		String jspName = albumController.uploadFile(request, albumPageID, uploadFile, returnPath, map);
+		{
+			String jspName = albumController.uploadFile(request, albumPageID, uploadFile, returnPath, map);
+			
+			// 確認する
+			assertEquals( "ファイルupload", "site/fileUploaded", jspName );
+			String mapRetPath = (String)( map.get("returnPath") );
+			assertEquals( "リターンパス", returnPath, mapRetPath );
+			
+			File targetFile = new File( targetFilePath );
+			File thumbnailFile = new File( thumbnailPath );
+			assertTrue( "TargetFile" , targetFile.exists() );
+			assertTrue( "ThumbnailFile" , thumbnailFile.exists() );
+		}
 		
-		// 確認する
-		assertEquals( "ファイルupload", "site/fileUploaded", jspName );
-		String mapRetPath = (String)( map.get("returnPath") );
-		assertEquals( "リターンパス", returnPath, mapRetPath );
+		
+		// -----< 表示する >-----
+		//
+		{
+			CreateAlbumPageForm createAlbumPageForm = null;
+			BindingResult result = Mockito.mock(BindingResult.class);
+			Mockito.when(result.hasErrors()).thenReturn(false);
+			int page = 0;
+			ModelMap modelMap = new ModelMap();
+
+			String jspName = albumController.viewAlbumPageList(request, createAlbumPageForm, result, albumID, page, modelMap);
+			
+			assertEquals("viewAlbumPageList", "site/viewAlbumPageList", jspName );
+
+		  	ViewAlbumPageListDTO viewAlbumPageListDTO = (ViewAlbumPageListDTO)modelMap.get( "viewAlbumPageListDTO" );
+		  	createAlbumPageForm = (CreateAlbumPageForm)( modelMap.get( "createAlbumPageForm" ) );
+		  	
+		  	assertNotNull( "createAlbumPageForm", createAlbumPageForm );
+		  	List<ContentsGroupEntity> albumPageList = viewAlbumPageListDTO.getAlbumPageListDTO().getAlbumPageList();
+		  	boolean nameExists = false;
+		  	for( ContentsGroupEntity albumPage : albumPageList){
+		  		String name = albumPage.getName();
+		  		if( albumPageNameForTest.equals( name ) ){
+		  			nameExists = true;
+		  		}
+		  	}
+		  	assertTrue( "Registed Album Page exists", nameExists );
+		}
+		
 		
 		// -----< 削除する >-----
 		//
-		String deleteResult = albumController.deleteAlbumPage(request, albumPageID, map);
-		String expected = "redirect:/site/viewAlbumPageList.do/"+albumID;
-		assertEquals( "アルバムページ削除", expected , deleteResult );
+		{
+			String deleteResult = albumController.deleteAlbumPage(request, albumPageID, map);
+			String expected = "redirect:/site/viewAlbumPageList.do/"+albumID;
+			assertEquals( "アルバムページ削除", expected , deleteResult );
+
+			File targetFile = new File( targetFilePath );
+			File thumbnailFile = new File( thumbnailPath );
+			assertFalse( "TargetFile" , targetFile.exists() );
+			assertFalse( "ThumbnailFile" , thumbnailFile.exists() );
+		}
 	}
 }
