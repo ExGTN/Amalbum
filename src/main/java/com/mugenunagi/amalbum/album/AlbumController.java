@@ -572,6 +572,7 @@ public class AlbumController {
 	    	dataStructureBusiness.updateContentsGroup(contentsGroupEntity);
 
 	    	// コメントを処理する
+	    	contentsFileUtil.writeAlbumPageTitle( contentsGroupID );
 	    	contentsFileUtil.writeAlbumPageComment( contentsGroupID );
     	
 	    	// 写真の一覧に戻る

@@ -170,6 +170,10 @@ public class AlbumService {
 	 * @throws Throwable 
 	 */
 	public void removeAlbumPage( Integer albumPageID ) throws Throwable{
+		// アルバムページのタイトルを削除する
+		String albumPageTitlePath = contentsFileUtil.getAlbumPageTitlePath(albumPageID);
+		contentsFileUtil.deleteFileWithRemoveDir( albumPageTitlePath );
+		
 		// アルバムページのコメントを削除する
 		String albumPageCommentPath = contentsFileUtil.getAlbumPageCommentPath(albumPageID);
 		contentsFileUtil.deleteFileWithRemoveDir( albumPageCommentPath );

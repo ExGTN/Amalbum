@@ -261,7 +261,28 @@ public class ContentsFileUtil {
 							+ applicationProperties.getString( "PHOTO_RELATIVE_PATH" );
 		return tempDirPath;
 	}
-	
+
+	/**
+	 * 
+	 * @param albumID
+	 * @return
+	 * @throws RecordNotFoundException 
+	 */
+	public String getAlbumPageTitlePath( Integer albumID ) throws RecordNotFoundException{
+		String result = this.getAlbumPagePropertyDescPath(albumID, "title.txt");
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param albumID
+	 * @return
+	 * @throws RecordNotFoundException 
+	 */
+	public String getAlbumPageCommentPath( Integer albumID ) throws RecordNotFoundException{
+		String result = this.getAlbumPagePropertyDescPath(albumID, "comment.txt");
+		return result;
+	}
 
 	/**
 	 * アルバムページに関するコメントファイルのフルパスを返す
@@ -269,7 +290,7 @@ public class ContentsFileUtil {
 	 * @return
 	 * @throws RecordNotFoundException
 	 */
-	public String getAlbumPageCommentPath( Integer albumPageID ) throws RecordNotFoundException{
+	private String getAlbumPagePropertyDescPath( Integer albumPageID, String filename ) throws RecordNotFoundException{
 		String contentsBasePath = applicationProperties.getString( "LOCAL_CONTENTS_BASE_PATH" );
 		String commentRelativePath = applicationProperties.getString( "COMMENT_RELATIVE_PATH" );
 		
@@ -285,7 +306,7 @@ public class ContentsFileUtil {
 						+ "/" + commentRelativePath
 						+ "/" + albumEntity.getName()
 						+ "/" + albumPageEntity.getName()
-						+ "/" + "comment.txt";
+						+ "/" + filename;
 		return fullPath;
 	}
 	
@@ -433,6 +454,41 @@ public class ContentsFileUtil {
 		FilePathUtil.prepareDirectory(dir);
 		PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(commentFile)));
 		pw.println( comment );
+		pw.close();
+	}
+
+	/**
+	 * 指定されたアルバムページに関するタイトルファイルを出力します
+	 * @param contentsGroupID
+	 * @throws RecordNotFoundException
+	 * @throws InvalidParameterException
+	 * @throws InvalidStateException
+	 * @throws IOException
+	 */
+	public void writeAlbumPageTitle(Integer contentsGroupID) throws RecordNotFoundException, InvalidParameterException, InvalidStateException, IOException {
+		// コンテンツグループの内容を取得する
+		ContentsGroupEntity contentsGroupEntity = this.dataStructureBusiness.getContentsGroup(contentsGroupID);
+		String title = contentsGroupEntity.getBrief();
+		title = HTMLUtil.decodeHtmlSpecialChars(title);
+		String titleFilePath = this.getAlbumPageTitlePath(contentsGroupID);
+		
+		// 内容が空なら削除
+		if( title.length()==0 ){
+			this.deleteFileWithRemoveDir( titleFilePath );
+			return;
+		}
+		
+		// 既存なら一旦消す
+		File titleFile = new File( titleFilePath );
+		if( titleFile.exists() ){
+			titleFile.delete();
+		}
+		
+		// ファイルを作成
+		String dir = titleFile.getParent();
+		FilePathUtil.prepareDirectory(dir);
+		PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(titleFile)));
+		pw.println( title );
 		pw.close();
 	}
 
