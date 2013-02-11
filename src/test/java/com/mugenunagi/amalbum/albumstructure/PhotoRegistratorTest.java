@@ -12,6 +12,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -44,6 +46,9 @@ public class PhotoRegistratorTest {
 	@Autowired
 	DataStructureBusiness dataStructureBusiness;
 	
+	@Autowired
+	DriverManagerDataSource dataSource;
+	
 	@Test
 	public void testRegistPhoto() throws Throwable {
 		// 各種のパスの情報を取得する
@@ -58,22 +63,34 @@ public class PhotoRegistratorTest {
 
 		String filePath = testDataDir + "/" + fileName;
 		String tempPath = basePath + "/" + tempName + "/" + fileName;
-
+		
 		// -----< 登録 >-----
 		//
 		ContentsGroupEntity contentsGroupEntity = null;
 		{
-			// -----< テスト用にContentsGroupを作る >-----
+			// -----< アルバム名を取得 >-----
+			//
+			Integer albumID = 0;
+			contentsGroupEntity = dataStructureBusiness.getContentsGroup( albumID );
+			String albumName = contentsGroupEntity.getName();
+			
+			// 登録前の状態を取得しておく
+			List<ContentsEntity> prevContentsList = contentsMapper.selectContentsByContentsGroupID(albumID);
+			
+			// -----< アルバムページを作る >-----
+			//
+			Integer albumPageID = dataStructureBusiness.createContentsGroup( albumID , pageName );
+			
+			// -----< テスト用に更新 >-----
 			//
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(2012, 8, 15, 23, 0, 0);
 			calendar.set(Calendar.MILLISECOND, 0);
 			Date date = calendar.getTime();
 			
-			Integer contentsGroupID = 1;
 			contentsGroupEntity = new ContentsGroupEntity();
-			contentsGroupEntity.setContentsGroupID( contentsGroupID );
-			contentsGroupEntity.setParentID( 0 );
+			contentsGroupEntity.setContentsGroupID( albumPageID );
+			contentsGroupEntity.setParentID( albumID );
 			contentsGroupEntity.setName( pageName );
 			contentsGroupEntity.setBrief( "TestBrief" );
 			contentsGroupEntity.setDescription( "TestDescription" );
@@ -82,11 +99,8 @@ public class PhotoRegistratorTest {
 			contentsGroupEntity.setUpdateDate( date );
 			contentsGroupEntity.setCreateDate( date );
 
-			// 登録前の状態を取得しておく
-			List<ContentsEntity> prevContentsList = contentsMapper.selectContentsByContentsGroupID(contentsGroupID);
-			
 			// 登録
-			contentsGroupMapper.insertContentsGroup(contentsGroupEntity);
+			contentsGroupMapper.updateContentsGroup(contentsGroupEntity);
 			
 			// -----< テストデータを使ってTempFileを用意する >-----
 			//
@@ -96,7 +110,7 @@ public class PhotoRegistratorTest {
 	
 			// -----< 登録したContentsGroupにContentsを登録 >-----
 			//
-			photoRegistrator.regist(contentsGroupID, destFile, fileName);
+			photoRegistrator.regist(albumPageID, destFile, fileName);
 	
 			// -----< 確認 >-----
 			//
@@ -105,8 +119,8 @@ public class PhotoRegistratorTest {
 			assertFalse( "一時ファイルが存在しないこと", tempFile.exists() );
 			
 			// フルサイズとサムネイルの画像が存在すること
-			String assertPath = basePath + "/" + photoDirName + "/" + pageName + "/" + fileName;
-			String assertThumbPath = basePath + "/" + photoDirName + "/" + pageName + "/" + thumbDirName + "/" + thumbPrefix + "." + fileName;
+			String assertPath = basePath + "/" + photoDirName + "/" + albumName + "/" + pageName + "/" + fileName;
+			String assertThumbPath = basePath + "/" + photoDirName + "/" + albumName + "/" + pageName + "/" + thumbDirName + "/" + thumbPrefix + "." + fileName;
 			File assertFile = new File( assertPath );
 			File assertThumbFile = new File( assertThumbPath );
 			assertTrue( "画像が存在すること", assertFile.exists() );
@@ -117,7 +131,7 @@ public class PhotoRegistratorTest {
 			assertTrue( "ファイルサイズが一致", fileSizeEquals );
 
 			// contentsが追加されていること
-			List<ContentsEntity> afterContentsList = contentsMapper.selectContentsByContentsGroupID(contentsGroupID);
+			List<ContentsEntity> afterContentsList = contentsMapper.selectContentsByContentsGroupID(albumPageID);
 			assertEquals( "contentsが追加されていること", prevContentsList.size()+1, afterContentsList.size() );
 		}
 		

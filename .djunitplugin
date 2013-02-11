@@ -1,5 +1,5 @@
 #djUnit Plugin Settings
-#Sun Aug 05 22:38:30 JST 2012
+#Mon Feb 11 16:11:06 JST 2013
 CoverageIncludedPatterns=com.mugenunagi.amalbum.*;
 VirtualMockIgnoreLibrary=false
 CoverageExcludedPatterns=.*Test$;

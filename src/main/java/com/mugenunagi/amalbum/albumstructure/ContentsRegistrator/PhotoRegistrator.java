@@ -92,7 +92,7 @@ public class PhotoRegistrator extends AbstractContentsRegistrator {
 		// DBに登録する
 		Integer contentsID = registToDB( contentsGroupID, filePathMap, fileName );
 		
-		// 実際に登録されたファイル名を返す
+		// 登録したコンテンツのコンテンツIDを返す
 		return contentsID;
 	}
 
