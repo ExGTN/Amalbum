@@ -4,6 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.mugenunagi.amalbum.album.AlbumControllerTest;
 import com.mugenunagi.amalbum.albumstructure.PhotoRegistratorTest;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTOTest;
 import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTOTest;
@@ -26,6 +27,8 @@ import com.mugenunagi.amalbum.exception.handler.ExceptionHandlerSelectorTest;
 @SuiteClasses({
 	// Constants
 	  ConstantsTest.class
+	// Controller
+	, AlbumControllerTest.class
 	// Test about Entity.
 	, ContentsEntityTest.class
 	, ContentsGroupEntityTest.class

@@ -82,9 +82,6 @@ public class AlbumController {
 	private PhotoRegistrator photoRegistrator;
 	
 	@Autowired
-	private MovieRegistrator movieRegistrator;
-	
-	@Autowired
 	private ContentsFileUtil contentsFileUtil;
 
 	/**
