@@ -125,7 +125,7 @@ public class DataImportBatch {
 		String path = file.getAbsolutePath();
 
 		FileInputStream fis = new FileInputStream(path);
-		InputStreamReader in = new InputStreamReader(fis, "Shift_JIS");
+		InputStreamReader in = new InputStreamReader(fis, "UTF-8");
 		BufferedReader br = new BufferedReader(in);
 		 
         StringBuffer sb = new StringBuffer();
