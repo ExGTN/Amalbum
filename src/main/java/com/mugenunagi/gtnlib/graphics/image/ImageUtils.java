@@ -313,7 +313,6 @@ public class ImageUtils {
 
 		// -----< フォーマットのタイプを取得する >-----
 		//
-		File file = new File( filePath );
 		String formatName = ImageUtils.getFormatName( filePath );
 		
 		// -----< MIMEタイプを得る >-----

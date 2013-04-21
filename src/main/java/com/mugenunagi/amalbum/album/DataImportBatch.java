@@ -3,34 +3,39 @@ package com.mugenunagi.amalbum.album;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.mugenunagi.amalbum.albumstructure.AlbumPageService;
 import com.mugenunagi.amalbum.albumstructure.AlbumService;
 import com.mugenunagi.amalbum.albumstructure.AlbumStructureBusiness;
 import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.ContentsFileUtil;
-import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
-import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
+import com.mugenunagi.amalbum.exception.InvalidParameterException;
+import com.mugenunagi.amalbum.exception.InvalidStateException;
+import com.mugenunagi.amalbum.exception.RecordNotFoundException;
 import com.mugenunagi.gtnlib.html.HTMLUtil;
 
 public class DataImportBatch {
-	private static Integer ALBUM_ID = 0;
+	private static Integer ALBUM_ID = -1;
+	
+	// Beans
+	public static AlbumService albumService;
+	public static AlbumPageService albumPageService;
+	public static DataStructureBusiness dataStructureBusiness;
+	public static AlbumStructureBusiness albumStructureBusiness;
+	public static ContentsFileUtil contentsFileUtil;
 
 	/**
-	 * @param args
+	 * データインポータ
+	 * @param args 引数の配列 args[0]:アルバムID args[1]:インポートするファイルを格納したディレクトリ
 	 */
 	public static void main(String[] args) {
     	//アプリケーションコンテキストの生成
@@ -38,89 +43,203 @@ public class DataImportBatch {
 
 		try{
 			// Beanの取得
-			AlbumService albumService = (AlbumService) context.getBean("albumService");
-			DataStructureBusiness dataStructureBusiness = (DataStructureBusiness) context.getBean("dataStructureBusiness");
-			AlbumStructureBusiness albumStructureBusiness = (AlbumStructureBusiness) context.getBean("albumStructureBusiness");
-			ContentsFileUtil contentsFileUtil = (ContentsFileUtil) context.getBean("contentsFileUtil");
+			albumService = (AlbumService) context.getBean("albumService");
+			dataStructureBusiness = (DataStructureBusiness) context.getBean("dataStructureBusiness");
+			albumStructureBusiness = (AlbumStructureBusiness) context.getBean("albumStructureBusiness");
+			contentsFileUtil = (ContentsFileUtil) context.getBean("contentsFileUtil");
 
+			// 引数の取り込み
+			if( args.length<2 ){
+				System.out.println("引数の指定が不正です。0:AlbumID, 1:InputFileDir");
+			}
+			ALBUM_ID = Integer.parseInt(args[0]);
+			String path = args[1];
+			
 			// パスのなかにあるディレクトリ（アルバムページ）の一覧を取得
-			String path = args[0];
 			File targetDir = new File(path);
-			File[] dateDirs = targetDir.listFiles();
-			Arrays.sort( dateDirs , new FilenameComparator() );
+			File[] albumPageDirs = targetDir.listFiles();
+			Arrays.sort( albumPageDirs , new FilenameComparator() );
 
-			// ページごとに処理する
-			for( int dirIndex=0;dirIndex<dateDirs.length;dirIndex++ ){
-				File dateDir = dateDirs[dirIndex];
-				System.out.println( dateDir.getAbsolutePath() + " ( " + (dirIndex+1)+" / "+dateDirs.length+" )" );
+			// アルバムページごとに処理する
+			for( int dirIndex=0;dirIndex<albumPageDirs.length;dirIndex++ ){
+				// 進捗状況の表示
+				File albumPageDir = albumPageDirs[dirIndex];
+				System.out.println( albumPageDir.getAbsolutePath() + " ( " + (dirIndex+1)+" / "+albumPageDirs.length+" )" );
 
-				// アルバムページが既存かいなかを調べる。なければ作ってalbumPageIDを得る。
-				String albumPageName = dateDir.getName();
-				Integer albumPageID = albumService.getAlbumPageID(ALBUM_ID, albumPageName);
-				if( albumPageID==null ){
-					albumPageID = albumStructureBusiness.createAlbumPage(ALBUM_ID, albumPageName);
-				}
-				
-				// アルバムページのコメントを処理する
-				String albumPageCommentPath = dateDir.getAbsolutePath()+"/"+"comment.txt";
-				File albumPageCommentFile = new File( albumPageCommentPath );
-				if( albumPageCommentFile.exists() ){
-					// コメントファイルが見つかったら処理する
-					String comment = readTextFile( albumPageCommentFile );
-					comment = HTMLUtil.htmlspecialchars(comment);
-					
-					// コンテンツグループのプロパティを書きかえる
-					ContentsGroupEntity contentsGroupEntity = dataStructureBusiness.getContentsGroup(albumPageID);
-					contentsGroupEntity.setDescription(comment);
-					dataStructureBusiness.updateContentsGroup(contentsGroupEntity);
-					
-					// コメントファイルを出力する
-					contentsFileUtil.writeAlbumPageComment(albumPageID);
-				}
-
-				// ディレクトリ内のファイル一覧を得る
-				File[] files = dateDir.listFiles();
-				Arrays.sort(files, new FilenameComparator());
-				
-				// ファイルごとに登録する
-				for( File file : files ){
-					// ファイル名で判断して、対象外はスキップする
-					String fileName = file.getName();
-					if( file.isDirectory() ){ continue; }
-					if( fileName.endsWith(".comment") ){ continue; }
-					if( fileName.equals("comment.txt") ){ continue; }
-
-					// 一時ファイル名を作って、もとファイルをコピー
-					System.out.println( file.getName() );
-					File tempFile = file.createTempFile("tmp", ".tmp");
-
-					// 登録
-					FileUtils.copyFile(file, tempFile);
-					Integer contentsID = albumService.registContents(albumPageID, tempFile.getAbsoluteFile(), fileName);
-					
-					// コメントを処理する
-					String commentFilePath = file.getAbsolutePath()+".comment";
-					File commentFile = new File( commentFilePath );
-					if( commentFile.exists() ){
-						// コメントファイルが見つかったら処理する
-						String comment = readTextFile( commentFile );
-						comment = HTMLUtil.htmlspecialchars(comment);
-						
-						// コンテンツのプロパティを書きかえる
-						ContentsEntity contentsEntity = dataStructureBusiness.getContentsByContentsID(contentsID);
-						contentsEntity.setDescription(comment);
-						dataStructureBusiness.updateContents(contentsEntity);
-						
-						// コメントファイルを出力する
-						contentsFileUtil.writeContentsComment(contentsID);
-					}
-				}
+				// アルバムページを処理する
+				importAlbumPageDir( albumPageDir );
 			}
 		} catch (Exception e){
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * 指定されたアルバムページのディレクトリについて、取り込みを実行します。
+	 * @param albumPageDir
+	 * @throws RecordNotFoundException
+	 * @throws InvalidParameterException
+	 * @throws InvalidStateException
+	 * @throws IOException
+	 */
+	private static void importAlbumPageDir(File albumPageDir)
+			throws RecordNotFoundException, InvalidParameterException,
+			InvalidStateException, IOException {
+
+		// アルバムページが既存かいなかを調べる。なければ作ってalbumPageIDを得る。
+		String albumPageName = albumPageDir.getName();
+		Integer albumPageID = albumService.getAlbumPageID(ALBUM_ID, albumPageName);
+		if( albumPageID==null ){
+			albumPageID = albumStructureBusiness.createAlbumPage(ALBUM_ID, albumPageName);
+		}
+		
+		// アルバムページのコメントを処理する
+		importAlbumPageComment(albumPageID, albumPageDir);
+
+		// ディレクトリ内のファイル一覧を得る
+		File[] contentsFiles = albumPageDir.listFiles();
+		Arrays.sort(contentsFiles, new FilenameComparator());
+		
+		// ファイルごとに登録する
+		for( File contentsFile : contentsFiles ){
+			String fileName = contentsFile.getName();
+
+			// ディレクトリはスキップする
+			if( contentsFile.isDirectory() ){ continue; }
+			
+			// コメントファイルは、コンテンツに対応した形で処理するのでスキップする
+			if( fileName.endsWith(".comment") ){ continue; }
+			if( fileName.equals("comment.txt") ){ continue; }
+
+			// ファイルを処理する
+			importContentsFile( albumPageID, contentsFile );
+		}
+	}
+
+	/**
+	 * アルバムページのコメントをインポートする
+	 * @param albumPageID 処理対象のアルバムページID
+	 * @param albumPageDir 取りこむファイルが格納されているディレクトリ
+	 * @throws IOException I/Oエラー
+	 * @throws RecordNotFoundException 指定したアルバムページIDが存在しない
+	 * @throws InvalidParameterException 入力パラメータが不正
+	 * @throws InvalidStateException 想定しない状態
+	 */
+	private static void importAlbumPageComment(Integer albumPageID, File albumPageDir)
+			throws IOException, RecordNotFoundException,
+			InvalidParameterException, InvalidStateException {
+		// コメントファイルの存在確認。無ければ処理不要。
+		String albumPageCommentPath = albumPageDir.getAbsolutePath()+"/"+"comment.txt";
+		File albumPageCommentFile = new File( albumPageCommentPath );
+		if( !albumPageCommentFile.exists() ){
+			return;
+		}
+		
+		// ファイルとDBを比較して、ファイルが同時刻か古ければ処理不要
+		long fileUpdateTime = albumPageCommentFile.lastModified();
+		long albumPageUpdateTime = albumPageService.getAlbumPageEntity(albumPageID).getUpdateDate().getTime();
+		if( albumPageUpdateTime>fileUpdateTime ){
+			System.out.println(albumPageCommentFile.getName() + "：更新日付がDBより古いのでスキップします");
+			return;
+		}
+
+		// コメントファイルを読み込む
+		String comment = readTextFile( albumPageCommentFile );
+		comment = HTMLUtil.htmlspecialchars(comment);
+		
+		// コンテンツグループのプロパティを書きかえる
+		ContentsGroupEntity contentsGroupEntity = dataStructureBusiness.getContentsGroup(albumPageID);
+		contentsGroupEntity.setDescription(comment);
+		dataStructureBusiness.updateContentsGroup(contentsGroupEntity);
+		
+		// コメントファイルを出力する
+		contentsFileUtil.writeAlbumPageComment(albumPageID);
+	}
+
+	/**
+	 * 指定したアルバムページIDに対して、指定のコンテンツファイルをインポートします。
+	 * @param albumPageID
+	 * @param contentsFile
+	 * @throws IOException 
+	 * @throws InvalidParameterException 
+	 * @throws InvalidStateException 
+	 * @throws RecordNotFoundException 
+	 */
+	private static void importContentsFile(Integer albumPageID, File contentsFile) throws IOException, RecordNotFoundException, InvalidStateException, InvalidParameterException {
+		// コンテンツファイルの情報収集
+		String contentsFileName = contentsFile.getName();
+		String contentsFilePath = contentsFile.getAbsolutePath();
+
+		// コメントファイルの情報収集
+		String commentFilePath = contentsFile.getAbsolutePath()+".comment";
+		File commentFile = new File( commentFilePath );
+		
+		// 既存コンテンツなら、コンテンツIDを取得する
+		Integer contentsID = albumPageService.getContentsEntityByFilename(albumPageID, contentsFileName).getContentsID();
+		if( contentsID!=null ){
+			// コンテンツファイル、もしくはコメントファイルのいずれかがDBより新しければ更新。
+			// そうでなければスキップ。
+			long fileUpdateTime = contentsFile.lastModified();
+			if(commentFile.lastModified()>fileUpdateTime){
+				fileUpdateTime = commentFile.lastModified();
+			}
+
+			long contentsUpdateTime = albumPageService.getContentsEntity(albumPageID, contentsID).getUpdateDate().getTime();
+			if( contentsUpdateTime>fileUpdateTime ){
+				System.out.println(contentsFileName+"：更新日付がDBより古いのでスキップします");
+				return;
+			}
+		}
+		
+		// 一時ファイル名を作って、もとファイルをコピー
+		System.out.println( contentsFile.getName() );
+		File tempFile = File.createTempFile("tmp", ".tmp");
+		FileUtils.copyFile(contentsFile, tempFile);
+
+		// 登録
+		if( contentsID==null ){
+			contentsID = albumPageService.registContents(albumPageID, tempFile.getAbsoluteFile(), contentsFileName);
+		} else {
+			albumPageService.updateContents(albumPageID, contentsID, tempFile.getAbsoluteFile(), contentsFileName);
+		}
+		
+		// コメントを処理する
+		if( commentFile.exists() ){
+			// コメントファイルが見つかったら処理する
+			importContentsComment(contentsID, commentFile);
+		}
+	}
+
+	/**
+	 * コンテンツに対応するコメントファイルをインポートします
+	 * @param contentsID
+	 * @param commentFile
+	 * @throws IOException
+	 * @throws InvalidStateException
+	 * @throws RecordNotFoundException
+	 * @throws InvalidParameterException
+	 */
+	private static void importContentsComment(Integer contentsID,
+			File commentFile) throws IOException, InvalidStateException,
+			RecordNotFoundException, InvalidParameterException {
+		String comment = readTextFile( commentFile );
+		comment = HTMLUtil.htmlspecialchars(comment);
+		
+		// コンテンツのプロパティを書きかえる
+		ContentsEntity contentsEntity = dataStructureBusiness.getContentsByContentsID(contentsID);
+		contentsEntity.setDescription(comment);
+		dataStructureBusiness.updateContents(contentsEntity);
+		
+		// コメントファイルを出力する
+		contentsFileUtil.writeContentsComment(contentsID);
+	}
+
+	/**
+	 * テキストファイルの内容を読み込んで、Stringに格納して返します。
+	 * @param file 読み込むファイル
+	 * @return テキストファイルの内容
+	 * @throws IOException I/Oエラー
+	 */
 	private static String readTextFile( File file ) throws IOException{
 		String path = file.getAbsolutePath();
 

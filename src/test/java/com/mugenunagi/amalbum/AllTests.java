@@ -8,7 +8,7 @@ import com.mugenunagi.amalbum.album.AlbumControllerTest;
 import com.mugenunagi.amalbum.albumstructure.PhotoRegistratorTest;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTOTest;
 import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTOTest;
-import com.mugenunagi.amalbum.datastructure.ImageControllerTest;
+import com.mugenunagi.amalbum.datastructure.controller.ImageControllerTest;
 import com.mugenunagi.amalbum.datastructure.entity.BackupMasterEntityTest;
 import com.mugenunagi.amalbum.datastructure.entity.BackupRuleEntityTest;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsEntityTest;

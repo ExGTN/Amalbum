@@ -23,11 +23,13 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
 import com.mugenunagi.ApplicationProperties;
+import com.mugenunagi.amalbum.album.dto.ViewAlbumPageDTO;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageListDTO;
 import com.mugenunagi.amalbum.album.form.CreateAlbumPageForm;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 import com.mugenunagi.amalbum.datastructure.form.LoginForm;
+import com.mugenunagi.amalbum.exception.InvalidParameterException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( locations={"classpath:amalbum-servlet-test.xml"} )
@@ -107,7 +109,7 @@ public class AlbumControllerTest {
 		// ----< アップロードする >-----
 		//
 		{
-			String jspName = albumController.uploadFile(request, albumPageID, uploadFile, returnPath, map);
+			String jspName = albumController.uploadFile(request, albumPageID, uploadFile, null, null, null, null, returnPath, map);
 			
 			// 確認する
 			assertEquals( "ファイルupload", "site/fileUploaded", jspName );
@@ -121,7 +123,7 @@ public class AlbumControllerTest {
 		}
 		
 		
-		// -----< 表示する >-----
+		// -----< アルバムページリストを表示する >-----
 		//
 		{
 			CreateAlbumPageForm createAlbumPageForm = null;
@@ -149,6 +151,24 @@ public class AlbumControllerTest {
 		  	assertTrue( "Registed Album Page exists", nameExists );
 		}
 		
+		// -----< アルバムページを表示する >-----
+		//
+		{
+			ModelMap modelMap = new ModelMap();
+			String jspName = albumController.viewAlbumPage(request, albumPageID, null, "true", modelMap);
+			assertEquals( "アルバムページ表示", "site/viewAlbumPage", jspName );
+
+			Integer pageFrom = (Integer)modelMap.get("pageFrom");
+			assertEquals("pageFrom", new Integer(0), pageFrom);
+
+			ViewAlbumPageDTO viewAlbumPageDTO = (ViewAlbumPageDTO)modelMap.get("viewAlbumPageDTO");
+			String pageName = viewAlbumPageDTO.getAlbumPageDTO().getAlbumPageInfo().getName();
+			assertEquals("PageName", albumPageNameForTest, pageName);
+
+			Integer photoCount = viewAlbumPageDTO.getAlbumPageDTO().getPhotoDTOList().size();
+			assertEquals("PhotoCount", new Integer(1), photoCount);
+		}
+		
 		
 		// -----< 削除する >-----
 		//
@@ -162,5 +182,24 @@ public class AlbumControllerTest {
 			assertFalse( "TargetFile" , targetFile.exists() );
 			assertFalse( "ThumbnailFile" , thumbnailFile.exists() );
 		}
+	}
+	
+	//@Test
+	public void testViewPhoto() throws InvalidParameterException {
+		// アルバムページを作る
+		{
+			MockHttpServletRequest request = new MockHttpServletRequest();
+			BindingResult result = Mockito.mock(BindingResult.class);
+			Mockito.when(result.hasErrors()).thenReturn(false);
+			ModelMap map = new ModelMap();
+	
+			CreateAlbumPageForm createAlbumPageForm = new CreateAlbumPageForm();
+			createAlbumPageForm.setAlbumID(0);
+			createAlbumPageForm.setName("TestAlbumPage");
+			createAlbumPageForm.setReturnPath("http://www.mugenunagi.com");
+			albumController.createAlbumPage(request, createAlbumPageForm, result, map);
+		}
+		
+		// ファイルをアップロードする
 	}
 }

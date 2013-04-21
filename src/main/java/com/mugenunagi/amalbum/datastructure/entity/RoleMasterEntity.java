@@ -4,7 +4,14 @@
 
 package com.mugenunagi.amalbum.datastructure.entity;
 
-public class RoleMasterEntity {
+import java.io.Serializable;
+
+public class RoleMasterEntity implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5213910928927749075L;
+
 	/**
 	 * 権限ID
 	 */

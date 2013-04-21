@@ -71,7 +71,11 @@
 		<!-- フォーム部分 -->
 		<HR>
 		<form name="fileUploadForm" method="POST" enctype="multipart/form-data" action="${pageContext.request.contextPath}/site/aas/uploadFileToDefaultAlbumPage.do">
-			<input type="file" name="uploadFile" size="30"/>
+			1. <input type="file" name="uploadFile1" size="30"/><BR/>
+			2. <input type="file" name="uploadFile2" size="30"/><BR/>
+			3. <input type="file" name="uploadFile3" size="30"/><BR/>
+			4. <input type="file" name="uploadFile4" size="30"/><BR/>
+			5. <input type="file" name="uploadFile5" size="30"/><BR/>
 			<input type="hidden" name="albumID" value="${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />
 			<input type="hidden" name="defaultAlbumPageName" value="${viewAlbumPageListDTO.defaultAlbumPageName}" />
 			<input type="hidden" name="returnPath" value="${pageContext.request.contextPath}/site/viewAlbumPageList.do/${viewAlbumPageListDTO.albumPageListDTO.albumInfo.contentsGroupID}" />

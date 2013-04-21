@@ -1,10 +1,9 @@
 package com.mugenunagi.amalbum.album;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,18 +25,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mugenunagi.ApplicationProperties;
-import com.mugenunagi.amalbum.Constants;
-import com.mugenunagi.amalbum.Constants.ContentsType;
 import com.mugenunagi.amalbum.album.dto.LoginInfoDTO;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageDTO;
 import com.mugenunagi.amalbum.album.dto.ViewAlbumPageListDTO;
 import com.mugenunagi.amalbum.album.form.CreateAlbumPageForm;
 import com.mugenunagi.amalbum.album.form.EditAlbumPagePropertyForm;
 import com.mugenunagi.amalbum.album.form.EditPhotoPropertyForm;
+import com.mugenunagi.amalbum.albumstructure.AlbumPageService;
 import com.mugenunagi.amalbum.albumstructure.AlbumService;
 import com.mugenunagi.amalbum.albumstructure.AlbumStructureBusiness;
 import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.ContentsFileUtil;
-import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.MovieRegistrator;
 import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.PhotoRegistrator;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageDTO;
 import com.mugenunagi.amalbum.albumstructure.dto.AlbumPageListDTO;
@@ -51,7 +47,6 @@ import com.mugenunagi.amalbum.exception.InvalidParameterException;
 import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
 import com.mugenunagi.amalbum.exception.handler.AmalbumExceptionManager;
-import com.mugenunagi.gtnlib.graphics.image.ImageUtils;
 import com.mugenunagi.gtnlib.html.HTMLUtil;
 
 /**
@@ -70,6 +65,9 @@ public class AlbumController {
 	private AlbumService albumService;
 	
 	@Autowired
+	private AlbumPageService albumPageService;
+	
+	@Autowired
 	private AlbumStructureBusiness albumStructureBusiness;
 	
 	@Autowired
@@ -83,7 +81,7 @@ public class AlbumController {
 	
 	@Autowired
 	private ContentsFileUtil contentsFileUtil;
-
+	
 	/**
 	 * ログイン画面
 	 * @return
@@ -278,7 +276,15 @@ public class AlbumController {
      * @return
      */
     @RequestMapping(value="/aas/uploadFileToDefaultAlbumPage.do", method=RequestMethod.POST)
-    public String uploadFileToDefaultAlbumPage( HttpServletRequest request, @RequestParam("defaultAlbumPageName") String defaultAlbumPageName, @RequestParam("albumID") Integer albumID, @RequestParam("uploadFile") MultipartFile uploadFile, @RequestParam("returnPath") String returnPath, ModelMap map ){
+	public String uploadFileToDefaultAlbumPage(HttpServletRequest request,
+			@RequestParam("defaultAlbumPageName") String defaultAlbumPageName,
+			@RequestParam("albumID") Integer albumID,
+			@RequestParam("uploadFile1") MultipartFile uploadFile1,
+			@RequestParam("uploadFile2") MultipartFile uploadFile2,
+			@RequestParam("uploadFile3") MultipartFile uploadFile3,
+			@RequestParam("uploadFile4") MultipartFile uploadFile4,
+			@RequestParam("uploadFile5") MultipartFile uploadFile5,
+			@RequestParam("returnPath") String returnPath, ModelMap map) {
     	// デフォルトのアルバムページ名について、コンテンツIDを取得する
     	Integer albumPageID = albumService.getAlbumPageID( albumID, defaultAlbumPageName );
     	if( albumPageID==null ){
@@ -286,7 +292,7 @@ public class AlbumController {
     	}
     	
     	// コンテンツIDを指定して、登録処理を実行する
-    	String result = uploadFile( request, albumPageID, uploadFile, returnPath, map );
+    	String result = uploadFile( request, albumPageID, uploadFile1, uploadFile2, uploadFile3, uploadFile4, uploadFile5, returnPath, map );
     	return result;
     }
 
@@ -298,8 +304,23 @@ public class AlbumController {
      * @return
      */
     @RequestMapping(value="/aas/uploadFile.do", method=RequestMethod.POST)
-    public String uploadFile( HttpServletRequest request, @RequestParam("contentsGroupID") Integer contentsGroupID, @RequestParam("uploadFile") MultipartFile uploadFile, @RequestParam("returnPath") String returnPath, ModelMap map ){
+	public String uploadFile(HttpServletRequest request,
+			@RequestParam("contentsGroupID") Integer contentsGroupID,
+			@RequestParam("uploadFile1") MultipartFile uploadFile1,
+			@RequestParam("uploadFile2") MultipartFile uploadFile2,
+			@RequestParam("uploadFile3") MultipartFile uploadFile3,
+			@RequestParam("uploadFile4") MultipartFile uploadFile4,
+			@RequestParam("uploadFile5") MultipartFile uploadFile5,
+			@RequestParam("returnPath") String returnPath, ModelMap map) {
     	try {
+    		// MultipartFileをリストにまとめる
+    		List<MultipartFile> uploadFileList = new ArrayList<MultipartFile>();
+    		if((uploadFile1!=null)&&(uploadFile1.getSize()>0)){ uploadFileList.add(uploadFile1); }
+    		if((uploadFile2!=null)&&(uploadFile2.getSize()>0)){ uploadFileList.add(uploadFile2); }
+    		if((uploadFile3!=null)&&(uploadFile3.getSize()>0)){ uploadFileList.add(uploadFile3); }
+    		if((uploadFile4!=null)&&(uploadFile4.getSize()>0)){ uploadFileList.add(uploadFile4); }
+    		if((uploadFile5!=null)&&(uploadFile5.getSize()>0)){ uploadFileList.add(uploadFile5); }
+    		
 	    	// 一時ファイルの配置先ディレクトリを用意する
 	    	String tempDirPath = contentsFileUtil.getTempPath();
 	    	File tempDir = new File( tempDirPath );
@@ -315,20 +336,24 @@ public class AlbumController {
 	    	}
     
 	    	// ファイルを取り込む
-	    	File destinationFile = null;
-			if (!uploadFile.isEmpty()) {
-				destinationFile = File.createTempFile("amalbum", ".tmp", tempDir );
-				uploadFile.transferTo(destinationFile);
-			} else {
-				throw new InvalidParameterException( "uploadFile was empty." );
-			}
-
-			// 取り込んだファイルについて処理する
-			String fileName = uploadFile.getOriginalFilename();
-			Integer contentsID = albumService.registContents( contentsGroupID, destinationFile, fileName );
-			
-			// 処理が終わったら一時ファイルを破棄する
-			destinationFile.delete();
+	    	for(MultipartFile uploadFile : uploadFileList ){
+		    	File destinationFile = null;
+				if (!uploadFile.isEmpty()) {
+					destinationFile = File.createTempFile("amalbum", ".tmp", tempDir );
+					uploadFile.transferTo(destinationFile);
+				} else {
+					throw new InvalidParameterException( "uploadFile was empty." );
+				}
+	
+				try {
+					// 取り込んだファイルについて処理する
+					String fileName = uploadFile.getOriginalFilename();
+					albumPageService.registContents( contentsGroupID, destinationFile, fileName );
+				} finally {
+					// 処理が終わったら一時ファイルを破棄する
+					destinationFile.delete();
+				}
+	    	}
 			
 			// 戻り先を設定する
 			map.put("returnPath", returnPath);
@@ -367,8 +392,8 @@ public class AlbumController {
     	if( result.hasErrors() ){
     		Integer albumID = createAlbumPageForm.getAlbumID();
     		Integer page = 0;
-    		FieldError error = result.getFieldError("name");
-    		String message = error.getDefaultMessage();
+    		//FieldError error = result.getFieldError("name");
+    		//String message = error.getDefaultMessage();
     		return this.viewAlbumPageList(request, createAlbumPageForm, result, albumID, page, map);
     		//throw new InvalidParameterException(message);
     	}
