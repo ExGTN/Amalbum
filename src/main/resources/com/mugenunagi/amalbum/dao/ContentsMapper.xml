@@ -15,6 +15,11 @@
 	<select id="getContentsByContentsID" parameterType="contentsEntity" resultType="contentsEntity">
 		select * from contents where contentsID = #{contentsID} and DeleteDate is null
 	</select>
+
+	<!-- 指定名のContentsを取得する-->
+	<select id="getContentsByContentsName" parameterType="contentsEntity" resultType="contentsEntity">
+		select * from contents where name = #{name} and ContentsGroupID = #{contentsGroupID} and DeleteDate is null
+	</select>
 	
 	<!-- コンテンツIDを発行する -->
 	<select id="getNextContentsID" resultType="Integer">

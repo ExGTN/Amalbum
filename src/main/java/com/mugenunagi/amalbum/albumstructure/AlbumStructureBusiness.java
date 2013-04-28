@@ -16,7 +16,6 @@ import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.MovieRegistrato
 import com.mugenunagi.amalbum.albumstructure.ContentsRegistrator.PhotoRegistrator;
 import com.mugenunagi.amalbum.albumstructure.dto.PhotoDTO;
 import com.mugenunagi.amalbum.datastructure.DataStructureBusiness;
-import com.mugenunagi.amalbum.datastructure.condition.ContentsGroupCondition;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
 import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
@@ -179,6 +178,28 @@ public class AlbumStructureBusiness {
 	public Integer registMovie( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
 		Integer registedContentsID = movieRegistrator.regist( contentsGroupID, tempFile, fileName );
 		return registedContentsID;
+	}
+
+	/**
+	 * 指定されたcontentsGroupIDのアルバムページに、tempFileの写真を追加します
+	 * @throws IOException 
+	 * @throws InvalidStateException 
+	 * @throws RecordNotFoundException 
+	 * @throws InvalidParameterException 
+	 */
+	public void replacePhoto( Integer contentsGroupID, Integer contentsID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
+		photoRegistrator.replace( contentsGroupID, contentsID, tempFile, fileName );
+	}
+
+	/**
+	 * 指定されたcontentsGroupIDのアルバムページに、tempFileの動画を追加します
+	 * @throws IOException 
+	 * @throws InvalidStateException 
+	 * @throws RecordNotFoundException 
+	 * @throws InvalidParameterException 
+	 */
+	public void replaceMovie( Integer contentsGroupID, Integer contentsID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
+		movieRegistrator.replace( contentsGroupID, contentsID, tempFile, fileName );
 	}
 
 	

@@ -168,7 +168,7 @@ public class PhotoRegistratorTest {
 		//
 		// <<< ContentsGroup不在の例外 >>>
 		try{
-			photoRegistrator.locatePhotoFiles(99999999, new File("test"), "test");
+			photoRegistrator.locatePhotoFiles(99999999, new File("test"), "test", false);
 		} catch (RecordNotFoundException e) {
 			// 想定通り
 		} catch (Exception e){
