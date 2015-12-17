@@ -58,6 +58,7 @@ public class ImageUtils {
 		mimeTypeMap.put( "wmx", "video/x-ms-wmx" );
 		mimeTypeMap.put( "mts", "video/avchd" );
 		mimeTypeMap.put( "avi", "video/avi" );
+		mimeTypeMap.put( "mov", "video/quicktime" );
 
 		// 音声
 		mimeTypeMap.put( "wma", "audio/x-ms-wma" );
