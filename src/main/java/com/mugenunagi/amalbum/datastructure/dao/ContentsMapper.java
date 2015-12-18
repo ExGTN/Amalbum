@@ -26,6 +26,13 @@ public interface ContentsMapper {
     ContentsEntity getContentsByContentsID( ContentsEntity contentsEntity );
     
     /**
+     * 指定したコンテンツ名を持つコンテンツを検索する
+     * @param contentsEntity
+     * @return
+     */
+    List<ContentsEntity> getContentsByContentsName( ContentsEntity contentsEntity );
+    
+    /**
      * コンテンツを追加します
      * @param contentsEntity
      */

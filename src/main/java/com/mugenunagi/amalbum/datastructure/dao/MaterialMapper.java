@@ -31,6 +31,12 @@ public interface MaterialMapper {
     void insertMaterial( MaterialEntity materialEntity );
     
     /**
+     * materialをupdateします
+     * @param materialEntity
+     */
+    void updateMaterial( MaterialEntity materialEntity );
+    
+    /**
      * materialを物理削除します
      * @param materialID
      */

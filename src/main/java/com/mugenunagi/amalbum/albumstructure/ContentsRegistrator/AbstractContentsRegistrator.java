@@ -48,6 +48,12 @@ public abstract class AbstractContentsRegistrator {
 	abstract public Integer regist( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException;
 
 	/**
+	 * コンテンツを置き換えます
+	 * @throws InvalidParameterException 
+	 */
+	abstract public void replace( Integer contentsGroupID, Integer contentsID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException;
+
+	/**
 	 * 指定したコンテンツIDの写真について、サムネイルを生成して配置します。<BR>
 	 * このメソッドは、ContentsがすでにDB上に登録されている必要があります。Thumbnailを再作成するときに利用します。<BR>
 	 * すでにファイルが存在する場合は上書きします。

@@ -44,16 +44,21 @@ public class DataImportBatch {
 		try{
 			// Beanの取得
 			albumService = (AlbumService) context.getBean("albumService");
+			albumPageService = (AlbumPageService) context.getBean("albumPageService");
 			dataStructureBusiness = (DataStructureBusiness) context.getBean("dataStructureBusiness");
 			albumStructureBusiness = (AlbumStructureBusiness) context.getBean("albumStructureBusiness");
 			contentsFileUtil = (ContentsFileUtil) context.getBean("contentsFileUtil");
 
 			// 引数の取り込み
 			if( args.length<2 ){
-				System.out.println("引数の指定が不正です。0:AlbumID, 1:InputFileDir");
+				System.out.println("引数の指定が不正です。0:AlbumID, 1:InputFileDir, 2:Force");
 			}
 			ALBUM_ID = Integer.parseInt(args[0]);
 			String path = args[1];
+			Boolean force = false;
+			if( args.length>=3 ){
+				force = Boolean.parseBoolean(args[2]);
+			}
 			
 			// パスのなかにあるディレクトリ（アルバムページ）の一覧を取得
 			File targetDir = new File(path);
@@ -67,11 +72,12 @@ public class DataImportBatch {
 				System.out.println( albumPageDir.getAbsolutePath() + " ( " + (dirIndex+1)+" / "+albumPageDirs.length+" )" );
 
 				// アルバムページを処理する
-				importAlbumPageDir( albumPageDir );
+				importAlbumPageDir( albumPageDir, force );
 			}
 		} catch (Exception e){
 			e.printStackTrace();
 		}
+		System.out.println( "Finish." );
 	}
 	
 	/**
@@ -82,7 +88,7 @@ public class DataImportBatch {
 	 * @throws InvalidStateException
 	 * @throws IOException
 	 */
-	private static void importAlbumPageDir(File albumPageDir)
+	private static void importAlbumPageDir(File albumPageDir, Boolean force)
 			throws RecordNotFoundException, InvalidParameterException,
 			InvalidStateException, IOException {
 
@@ -94,7 +100,7 @@ public class DataImportBatch {
 		}
 		
 		// アルバムページのコメントを処理する
-		importAlbumPageComment(albumPageID, albumPageDir);
+		importAlbumPageComment(albumPageID, albumPageDir, force);
 
 		// ディレクトリ内のファイル一覧を得る
 		File[] contentsFiles = albumPageDir.listFiles();
@@ -112,7 +118,7 @@ public class DataImportBatch {
 			if( fileName.equals("comment.txt") ){ continue; }
 
 			// ファイルを処理する
-			importContentsFile( albumPageID, contentsFile );
+			importContentsFile( albumPageID, contentsFile, force );
 		}
 	}
 
@@ -125,7 +131,7 @@ public class DataImportBatch {
 	 * @throws InvalidParameterException 入力パラメータが不正
 	 * @throws InvalidStateException 想定しない状態
 	 */
-	private static void importAlbumPageComment(Integer albumPageID, File albumPageDir)
+	private static void importAlbumPageComment(Integer albumPageID, File albumPageDir, Boolean force)
 			throws IOException, RecordNotFoundException,
 			InvalidParameterException, InvalidStateException {
 		// コメントファイルの存在確認。無ければ処理不要。
@@ -138,7 +144,7 @@ public class DataImportBatch {
 		// ファイルとDBを比較して、ファイルが同時刻か古ければ処理不要
 		long fileUpdateTime = albumPageCommentFile.lastModified();
 		long albumPageUpdateTime = albumPageService.getAlbumPageEntity(albumPageID).getUpdateDate().getTime();
-		if( albumPageUpdateTime>fileUpdateTime ){
+		if( (albumPageUpdateTime>fileUpdateTime)&&(!force) ){
 			System.out.println(albumPageCommentFile.getName() + "：更新日付がDBより古いのでスキップします");
 			return;
 		}
@@ -165,7 +171,7 @@ public class DataImportBatch {
 	 * @throws InvalidStateException 
 	 * @throws RecordNotFoundException 
 	 */
-	private static void importContentsFile(Integer albumPageID, File contentsFile) throws IOException, RecordNotFoundException, InvalidStateException, InvalidParameterException {
+	private static void importContentsFile(Integer albumPageID, File contentsFile, Boolean force) throws IOException, RecordNotFoundException, InvalidStateException, InvalidParameterException {
 		// コンテンツファイルの情報収集
 		String contentsFileName = contentsFile.getName();
 		String contentsFilePath = contentsFile.getAbsolutePath();
@@ -175,17 +181,21 @@ public class DataImportBatch {
 		File commentFile = new File( commentFilePath );
 		
 		// 既存コンテンツなら、コンテンツIDを取得する
-		Integer contentsID = albumPageService.getContentsEntityByFilename(albumPageID, contentsFileName).getContentsID();
+		Integer contentsID = null;
+		ContentsEntity contentsEntity = albumPageService.getContentsEntityByFilename(albumPageID, contentsFileName);
+		if( contentsEntity!=null ){
+			contentsID = contentsEntity.getContentsID();
+		}
 		if( contentsID!=null ){
 			// コンテンツファイル、もしくはコメントファイルのいずれかがDBより新しければ更新。
 			// そうでなければスキップ。
 			long fileUpdateTime = contentsFile.lastModified();
-			if(commentFile.lastModified()>fileUpdateTime){
+			if(commentFile.exists()&&(commentFile.lastModified()>fileUpdateTime)){
 				fileUpdateTime = commentFile.lastModified();
 			}
 
 			long contentsUpdateTime = albumPageService.getContentsEntity(albumPageID, contentsID).getUpdateDate().getTime();
-			if( contentsUpdateTime>fileUpdateTime ){
+			if( (contentsUpdateTime>fileUpdateTime)&&(!force) ){
 				System.out.println(contentsFileName+"：更新日付がDBより古いのでスキップします");
 				return;
 			}

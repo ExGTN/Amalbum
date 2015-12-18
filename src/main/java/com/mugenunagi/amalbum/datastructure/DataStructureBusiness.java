@@ -8,15 +8,15 @@ import org.springframework.stereotype.Component;
 
 import com.mugenunagi.amalbum.datastructure.condition.ContentsGroupCondition;
 import com.mugenunagi.amalbum.datastructure.dao.ContentsGroupMapper;
+import com.mugenunagi.amalbum.datastructure.dao.ContentsMapper;
 import com.mugenunagi.amalbum.datastructure.dao.LoginUserMapper;
 import com.mugenunagi.amalbum.datastructure.dao.MaterialMapper;
-import com.mugenunagi.amalbum.datastructure.dao.ContentsMapper;
-import com.mugenunagi.amalbum.datastructure.entity.LoginUserEntity;
-import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsEntity;
 import com.mugenunagi.amalbum.datastructure.entity.ContentsGroupEntity;
+import com.mugenunagi.amalbum.datastructure.entity.LoginUserEntity;
+import com.mugenunagi.amalbum.datastructure.entity.MaterialEntity;
+import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
-import com.mugenunagi.gtnlib.crypt.MD5;
 
 /**
  * データ構造を取り扱うビジネスクラス
@@ -148,6 +148,34 @@ public class DataStructureBusiness {
 		// -----< 結果を返す >-----
 		//
 		return result;
+	}
+
+	/**
+	 * ファイル名を指定して、コンテンツを検索して返す
+	 * @param parentID
+	 * @return
+	 * @throws InvalidStateException 
+	 */
+	public ContentsEntity getContentsByContentsName( Integer contentsGroupID, String contentsName ) throws InvalidStateException{
+		// -----< 検索する >-----
+		//
+		// 検索条件を作る
+		ContentsEntity contentsEntity = new ContentsEntity();
+		contentsEntity.setContentsGroupID(contentsGroupID);
+		contentsEntity.setName(contentsName);
+		
+		// 検索
+		List<ContentsEntity> result = contentsMapper.getContentsByContentsName( contentsEntity );
+		if(result.size()>=2){
+			throw new InvalidStateException("２個以上のレコードがヒットしました");
+		}
+		
+		// -----< 結果を返す >-----
+		//
+		if( result.size()==0 ){
+			return null;
+		}
+		return result.get(0);
 	}
 
 

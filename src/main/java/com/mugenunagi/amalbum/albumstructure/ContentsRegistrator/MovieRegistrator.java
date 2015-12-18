@@ -80,7 +80,7 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 	 */
 	public Integer regist( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
 		// 動画ファイルを配置する
-		Map<String,String> filePathMap = this.locateMovieFiles(contentsGroupID, tempFile, fileName);
+		Map<String,String> filePathMap = this.locateMovieFiles(contentsGroupID, tempFile, fileName, false);
 		fileName = filePathMap.get( "ServerFileName" );
 		
 		// DBに登録する
@@ -88,6 +88,16 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 		
 		// 実際に登録されたファイル名を返す
 		return contentsID;
+	}
+
+
+	public void replace( Integer contentsGroupID, Integer contentsID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
+		// 動画ファイルを配置する
+		Map<String,String> filePathMap = this.locateMovieFiles(contentsGroupID, tempFile, fileName, true);
+		fileName = filePathMap.get( "ServerFileName" );
+		
+		// DBに登録する
+		updateToDB( contentsGroupID, contentsID, filePathMap, fileName );
 	}
 
 
@@ -103,7 +113,7 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 	 * @throws IOException
 	 * @throws InvalidParameterException 
 	 */
-	public Map<String,String> locateMovieFiles( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
+	public Map<String,String> locateMovieFiles( Integer contentsGroupID, File tempFile, String fileName, Boolean overwrite ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
 		
 		// アルバムページの情報を取得する
 		String contentsGroupBasePath = contentsFileUtil.getContentsGroupBasePath(contentsGroupID, ContentsType.Movie);
@@ -112,13 +122,18 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 		FilePathUtil.prepareDirectory( contentsGroupBasePath );
 
 		// 画像ファイルを配置する
-		String destFilePath = FilePathUtil.makeUniqueFileName( contentsGroupBasePath + "/" + fileName );
+		String destFilePath = contentsGroupBasePath + "/" + fileName;
+		if( !overwrite ){
+			destFilePath = FilePathUtil.makeUniqueFileName( destFilePath );
+		}
 		File serverFile = new File( destFilePath );
 		String serverFileName = serverFile.getName();
 		fileName = serverFileName;
 		
 		File destFile = new File( destFilePath );
-		//tempFile.renameTo( destFile );
+		if (destFile.exists()) {
+			destFile.delete();
+		}
 		FileUtils.copyFile(tempFile, destFile);
 		tempFile.delete();
 		
@@ -195,6 +210,9 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 
 		BufferedImage bi = ImageUtils.createThumbnailImage(destFilePath, width, height);
 		File thumbnailFile = new File( thumbnailPath );
+		if (thumbnailFile.exists()) {
+			thumbnailFile.delete();
+		}
 		ImageUtils.writeImage(bi, imageType, thumbnailFile);
 
 		return thumbnailPath;
@@ -319,6 +337,59 @@ public class MovieRegistrator extends AbstractContentsRegistrator {
 			
 			// DBに書き込む
 			materialMapper.insertMaterial(materialEntity);
+		}
+		
+		return contentsID;
+	}
+
+	/**
+	 * 動画についての情報を更新する。
+	 * @param contentsGroupID
+	 * @param filePathMap
+	 * @param fileName
+	 */
+	private Integer updateToDB( Integer contentsGroupID, Integer contentsID, Map<String,String> filePathMap, String fileName ) {
+		Date currentDate = new Date();
+		
+		// 写真
+		{
+			ContentsEntity contentsEntity = new ContentsEntity();
+			contentsEntity.setContentsID(contentsID);
+			contentsEntity = contentsMapper.getContentsByContentsID(contentsEntity);
+			
+			contentsEntity.setUpdateDate(currentDate);
+			
+			// コンテンツを新規に追加して、発行されたIDを取得する
+			contentsMapper.updateContents(contentsEntity);
+		}
+
+		//　マテリアル
+		List<MaterialEntity> materialEntityList = materialMapper.selectMaterialByContentsID(contentsID);
+		MaterialEntity materialMovie = null;
+		MaterialEntity materialThumbnail = null;
+		for( MaterialEntity materialEntity : materialEntityList ){
+			if( materialEntity.getMaterialType()==Constants.MaterialType.Movie.getValue().intValue() ){
+				materialMovie = materialEntity;
+			}
+			if( materialEntity.getMaterialType()==Constants.MaterialType.Thumbnail.getValue().intValue() ){
+				materialThumbnail = materialEntity;
+			}
+		}
+		
+		//　マテリアル（写真）
+		if( materialMovie!=null ){
+			materialMovie.setUpdateDate(currentDate);
+			
+			// DBに書き込む
+			materialMapper.updateMaterial(materialMovie);
+		}
+
+		//　マテリアル（サムネイル）のDTO
+		if( materialThumbnail!=null ){
+			materialThumbnail.setUpdateDate(currentDate);
+			
+			// DBに書き込む
+			materialMapper.updateMaterial(materialThumbnail);
 		}
 		
 		return contentsID;

@@ -86,7 +86,7 @@ public class PhotoRegistrator extends AbstractContentsRegistrator {
 	 */
 	public Integer regist( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
 		// 写真ファイルを配置する
-		Map<String,String> filePathMap = this.locatePhotoFiles(contentsGroupID, tempFile, fileName);
+		Map<String,String> filePathMap = this.locatePhotoFiles(contentsGroupID, tempFile, fileName, false);
 		fileName = filePathMap.get( "ServerFileName" );
 		
 		// DBに登録する
@@ -94,6 +94,15 @@ public class PhotoRegistrator extends AbstractContentsRegistrator {
 		
 		// 登録したコンテンツのコンテンツIDを返す
 		return contentsID;
+	}
+
+	public void replace( Integer contentsGroupID, Integer contentsID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
+		// 写真ファイルを配置する
+		Map<String,String> filePathMap = this.locatePhotoFiles(contentsGroupID, tempFile, fileName, true);
+		fileName = filePathMap.get( "ServerFileName" );
+		
+		// DBに登録する
+		updateToDB( contentsGroupID, contentsID, filePathMap, fileName );
 	}
 
 
@@ -109,7 +118,7 @@ public class PhotoRegistrator extends AbstractContentsRegistrator {
 	 * @throws IOException
 	 * @throws InvalidParameterException 
 	 */
-	public Map<String,String> locatePhotoFiles( Integer contentsGroupID, File tempFile, String fileName ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
+	public Map<String,String> locatePhotoFiles( Integer contentsGroupID, File tempFile, String fileName, Boolean overwrite ) throws RecordNotFoundException, InvalidStateException, IOException, InvalidParameterException {
 		
 		// アルバムページの情報を取得する
 		String contentsGroupBasePath = contentsFileUtil.getContentsGroupBasePath(contentsGroupID, ContentsType.Photo);
@@ -118,13 +127,18 @@ public class PhotoRegistrator extends AbstractContentsRegistrator {
 		FilePathUtil.prepareDirectory( contentsGroupBasePath );
 
 		// 画像ファイルを配置する
-		String destFilePath = FilePathUtil.makeUniqueFileName( contentsGroupBasePath + "/" + fileName );
+		String destFilePath = contentsGroupBasePath + "/" + fileName;
+		if( !overwrite ){
+			destFilePath = FilePathUtil.makeUniqueFileName( contentsGroupBasePath + "/" + fileName );
+		}
 		File serverFile = new File( destFilePath );
 		String serverFileName = serverFile.getName();
 		fileName = serverFileName;
 		
 		File destFile = new File( destFilePath );
-		//tempFile.renameTo( destFile );
+		if (destFile.exists()) {
+			destFile.delete();
+		}
 		FileUtils.copyFile( tempFile, destFile );
 		tempFile.delete();
 		
@@ -198,8 +212,11 @@ public class PhotoRegistrator extends AbstractContentsRegistrator {
 
 		// サムネイル画像を保存する
 		File thumbnailFile = new File( thumbnailPath );
+		if (thumbnailFile.exists()) {
+			thumbnailFile.delete();
+		}
 		ImageUtils.writeImage( bi, imageType, thumbnailFile );
-		
+
 		return thumbnailPath;
 	}
 	
@@ -287,8 +304,62 @@ public class PhotoRegistrator extends AbstractContentsRegistrator {
 		
 		return contentsID;
 	}
-
 	
+
+	/**
+	 * 写真についての情報を更新する。
+	 * @param contentsGroupID
+	 * @param filePathMap
+	 * @param fileName
+	 */
+	private Integer updateToDB( Integer contentsGroupID, Integer contentsID, Map<String,String> filePathMap, String fileName ) {
+		Date currentDate = new Date();
+		
+		// 写真
+		{
+			ContentsEntity contentsEntity = new ContentsEntity();
+			contentsEntity.setContentsID(contentsID);
+			contentsEntity = contentsMapper.getContentsByContentsID(contentsEntity);
+			
+			contentsEntity.setUpdateDate(currentDate);
+			
+			// コンテンツを新規に追加して、発行されたIDを取得する
+			contentsMapper.updateContents(contentsEntity);
+		}
+
+		//　マテリアル
+		List<MaterialEntity> materialEntityList = materialMapper.selectMaterialByContentsID(contentsID);
+		MaterialEntity materialPhoto = null;
+		MaterialEntity materialThumbnail = null;
+		for( MaterialEntity materialEntity : materialEntityList ){
+			if( materialEntity.getMaterialType()==Constants.MaterialType.Photo.getValue().intValue() ){
+				materialPhoto = materialEntity;
+			}
+			if( materialEntity.getMaterialType()==Constants.MaterialType.Thumbnail.getValue().intValue() ){
+				materialThumbnail = materialEntity;
+			}
+		}
+		
+		//　マテリアル（写真）
+		if( materialPhoto!=null ){
+			materialPhoto.setUpdateDate(currentDate);
+			
+			// DBに書き込む
+			materialMapper.updateMaterial(materialPhoto);
+		}
+
+		//　マテリアル（サムネイル）のDTO
+		if( materialThumbnail!=null ){
+			materialThumbnail.setUpdateDate(currentDate);
+			
+			// DBに書き込む
+			materialMapper.updateMaterial(materialThumbnail);
+		}
+		
+		return contentsID;
+	}
+
+
 	/**
 	 * 指定されたコンテンツIDの写真を回転させます
 	 * @param direction

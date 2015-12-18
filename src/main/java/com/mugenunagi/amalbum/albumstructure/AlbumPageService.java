@@ -1,6 +1,7 @@
 package com.mugenunagi.amalbum.albumstructure;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,6 @@ public class AlbumPageService {
 	@Autowired
 	private DataStructureBusiness dataStructureBusiness;
 	
-	@Autowired
-	private ContentsFileUtil contentsFileUtil;
-
 	//=========================================================================
 	// メソッド
 	//=========================================================================
@@ -70,6 +68,42 @@ public class AlbumPageService {
 		return registedContentsID;
 	}
 
+	/**
+	 * コンテンツの更新登録を行う。物理ファイルも書き換える。
+	 * @param albumPageID
+	 * @param contentsID
+	 * @param absoluteFile
+	 * @param contentsFileName
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
+	 * @throws InvalidParameterException 
+	 * @throws InvalidStateException 
+	 * @throws RecordNotFoundException 
+	 */
+	public void updateContents(Integer albumPageID, Integer contentsID, File tempFile, String fileName) throws FileNotFoundException, IOException, InvalidParameterException, RecordNotFoundException, InvalidStateException {
+		ContentsType contentsType = albumStructureBusiness.getContentsTypeFromFilename( fileName );
+		if( contentsType==null ){
+			throw new InvalidParameterException( "指定されたファイルが画像でも動画でもないか、対応していないフォーマットです。File="+fileName );
+		}
+		
+		// 種類ごとに処理を分ける
+		switch( contentsType ){
+		case Photo:
+			// 写真を更新する
+			albumStructureBusiness.replacePhoto(albumPageID, contentsID, tempFile, fileName);
+			break;
+			
+		case Movie:
+			// 動画を更新する
+			albumStructureBusiness.replaceMovie(albumPageID, contentsID, tempFile, fileName);
+			break;
+			
+		default:
+			// 不正ないコンテンツタイプ
+			throw new InvalidParameterException( "不正なコンテンツタイプです。ContentsType="+contentsType.getValue() );
+		}
+	}
+
 
 	/**
 	 * 指定したIDのコンテンツを返します
@@ -86,11 +120,10 @@ public class AlbumPageService {
 	 * @param albumPageID
 	 * @param contentsFilename
 	 * @return
+	 * @throws InvalidStateException 
 	 */
-	public ContentsEntity getContentsEntityByFilename(Integer albumPageID, String contentsFilename) {
-//		return dataStructureBusiness.getContentsByContentsName(albumPageID, contentsFilname);
-		// TODO 実装
-		return null;
+	public ContentsEntity getContentsEntityByFilename(Integer albumPageID, String contentsFilename) throws InvalidStateException {
+		return dataStructureBusiness.getContentsByContentsName(albumPageID, contentsFilename);
 	}
 
 	/**
@@ -101,20 +134,5 @@ public class AlbumPageService {
 	 */
 	public ContentsGroupEntity getAlbumPageEntity(Integer albumPageID) throws RecordNotFoundException {
 		return dataStructureBusiness.getContentsGroup(albumPageID);
-	}
-
-	/**
-	 * コンテンツの更新登録を行う。物理ファイルも書き換える。
-	 * @param albumPageID
-	 * @param contentsID
-	 * @param absoluteFile
-	 * @param contentsFileName
-	 */
-	public void updateContents(Integer albumPageID, Integer contentsID,
-			File absoluteFile, String contentsFileName) {
-
-		//this.contentsFileUtil.
-		// TODO 実装
-		
 	}
 }

@@ -50,6 +50,22 @@
 			);
 	</insert>
 	
+	<!-- Materialを新規に作成する -->
+	<update id="updateMaterial" parameterType="materialEntity">
+		update Material set
+			  ContentsID = #{contentsID}
+			, MaterialType = #{materialType}
+			, Path = #{path}
+			, Status = #{status}
+			, Brief = #{brief}
+			, Description = #{description}
+			, SeqNo = #{seqNo}
+			, DeleteDate = #{deleteDate}
+			, UpdateDate = #{updateDate}
+			, CreateDate = #{createDate}
+			where MaterialID = #{materialID};
+	</update>
+	
 	<!-- Materialを物理削除する -->
 	<delete id="deleteMaterial" parameterType="int" >
 		delete from material where MaterialID=#{materialID};
