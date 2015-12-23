@@ -48,6 +48,7 @@ import com.mugenunagi.amalbum.exception.InvalidStateException;
 import com.mugenunagi.amalbum.exception.RecordNotFoundException;
 import com.mugenunagi.amalbum.exception.handler.AmalbumExceptionManager;
 import com.mugenunagi.gtnlib.html.HTMLUtil;
+import com.mugenunagi.gtnlib.io.FilePathUtil;
 
 /**
  * アルバムのコントローラ
@@ -347,7 +348,7 @@ public class AlbumController {
 	
 				try {
 					// 取り込んだファイルについて処理する
-					String fileName = uploadFile.getOriginalFilename();
+					String fileName = FilePathUtil.getDateFormattedFilename(destinationFile, uploadFile.getOriginalFilename());
 					albumPageService.registContents( contentsGroupID, destinationFile, fileName );
 				} finally {
 					// 処理が終わったら一時ファイルを破棄する

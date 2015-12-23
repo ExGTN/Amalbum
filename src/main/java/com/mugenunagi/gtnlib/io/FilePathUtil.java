@@ -5,6 +5,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.exif.ExifDirectory;
 import com.mugenunagi.amalbum.exception.InvalidStateException;
 
 /**
@@ -147,5 +153,42 @@ public class FilePathUtil {
 			return fileName.substring(point + 1);
 		}
 		return fileName;
+	}
+
+	/**
+	 * 指定されたファイル file について、作成日付でフォーマットされたファイル名を作って返します。拡張子には、originalFilename で指定されるファイル名の拡張子が使われます。
+	 * @param file ファイル
+	 * @param originalFilename オリジナルのファイル名
+	 * @return 生成されたファイル名
+	 */
+	public static String getDateFormattedFilename(File file, String originalFilename) {
+		// JPEGでなければ、そのまま返す
+		String extention = FilePathUtil.getExtension(originalFilename).toLowerCase();
+		if(extention==null){
+			return originalFilename;
+		}
+		if((!extention.equals("jpg"))&&(!extention.equals("jpeg"))){
+			return originalFilename;
+		}
+
+		// 作成日付が取れる場合は、その日付でファイル名を作る
+		try {
+			String fileName = originalFilename;
+			Metadata metadata = JpegMetadataReader.readMetadata(file);
+			Directory directory = metadata.getDirectory(ExifDirectory.class);
+			if(!directory.containsTag(ExifDirectory.TAG_DATETIME)){
+				return originalFilename;
+			}
+
+			Date date = directory.getDate(ExifDirectory.TAG_DATETIME);
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+			fileName = "Image-" + sf.format(date) + "." + extention;
+			
+			return fileName;
+		} catch (JpegProcessingException e) {
+			return originalFilename;
+		} catch (MetadataException e) {
+			return originalFilename;
+		}
 	}
 }
