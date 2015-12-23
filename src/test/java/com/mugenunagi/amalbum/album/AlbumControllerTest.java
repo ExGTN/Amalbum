@@ -1,16 +1,16 @@
 package com.mugenunagi.amalbum.album;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -70,6 +70,7 @@ public class AlbumControllerTest {
 	 * @throws Throwable 
 	 */
 	@Test
+	@Ignore
 	public void testUploadFile() throws Throwable {
 		// ----< 準備 >-----
 		//
