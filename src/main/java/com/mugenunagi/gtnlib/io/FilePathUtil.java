@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.drew.imaging.jpeg.JpegMetadataReader;
-import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.metadata.Directory;
+import org.apache.log4j.Logger;
+
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
-import com.drew.metadata.exif.ExifDirectory;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.mugenunagi.amalbum.exception.InvalidStateException;
 
 /**
@@ -19,6 +19,7 @@ import com.mugenunagi.amalbum.exception.InvalidStateException;
  *
  */
 public class FilePathUtil {
+	private static Logger logger = Logger.getLogger(FilePathUtil.class); 
 	/**
 	 * 日付とベースパスを指定して実行すると、ベースパス以下にYYYYMMDDの名前のディレクトリを作成します。
 	 * ディレクトリが既存の場合は、何もせずに返ります。
@@ -172,23 +173,30 @@ public class FilePathUtil {
 		}
 
 		// 作成日付が取れる場合は、その日付でファイル名を作る
+		String fileName = originalFilename;
+		Metadata metadata = null;
 		try {
-			String fileName = originalFilename;
-			Metadata metadata = JpegMetadataReader.readMetadata(file);
-			Directory directory = metadata.getDirectory(ExifDirectory.class);
-			if(!directory.containsTag(ExifDirectory.TAG_DATETIME)){
-				return originalFilename;
-			}
-
-			Date date = directory.getDate(ExifDirectory.TAG_DATETIME);
-			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-			fileName = "Image-" + sf.format(date) + "." + extention;
-			
-			return fileName;
-		} catch (JpegProcessingException e) {
+			metadata = ImageMetadataReader.readMetadata(file);
+		} catch (ImageProcessingException e) {
+			logger.error(e, e);
 			return originalFilename;
-		} catch (MetadataException e) {
+		} catch (IOException e) {
+			logger.error(e, e);
 			return originalFilename;
 		}
+
+		ExifIFD0Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
+		if ((directory == null) || (!directory.containsTag(ExifIFD0Directory.TAG_DATETIME))) {
+			return originalFilename;
+		}
+
+		Date date = directory.getDate(ExifIFD0Directory.TAG_DATETIME);
+		if (date == null) {
+			return originalFilename;
+		}
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+		fileName = "Image-" + sf.format(date) + "." + extention;
+
+		return fileName;
 	}
 }
