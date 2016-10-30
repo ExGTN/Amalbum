@@ -59,6 +59,9 @@ public class ImageUtils {
 		mimeTypeMap.put( "mts", "video/avchd" );
 		mimeTypeMap.put( "avi", "video/avi" );
 		mimeTypeMap.put( "mov", "video/quicktime" );
+		mimeTypeMap.put( "mp4", "video/mp4" );
+		mimeTypeMap.put( "mpg", "video/mpeg" );
+		mimeTypeMap.put( "mpeg", "video/mpeg" );
 
 		// 音声
 		mimeTypeMap.put( "wma", "audio/x-ms-wma" );
